@@ -1,5 +1,5 @@
 {
-  "name": "rustcost-frontend",
+  "name": "rustcost-dashboard",
   "private": true,
   "version": "1.0.0-dev.1",
   "type": "module",
