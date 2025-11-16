@@ -1,12 +1,10 @@
 import { useI18n } from "../../../app/providers/I18nProvider";
-import { InfoCard } from "../../../entities/info/ui/InfoCard";
-import { useSettings } from "../../../entities/info/api/endpoints/settings";
+import { InfoCard } from "../../../shared/components/InfoCard";
+import { useSettings } from "../hooks/useSettings";
 
 export const SettingsPage = () => {
   const { t } = useI18n();
   const settings = useSettings();
-  console.log("hello");
-  console.log(settings);
   const data = settings.data?.is_successful ? settings.data.data : null;
 
   const generalRows = data

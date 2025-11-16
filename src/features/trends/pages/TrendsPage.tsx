@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useI18n } from "../../../app/providers/I18nProvider";
 import { TrendChart } from "../components/TrendChart";
 import { createDefaultMetricsParams } from "../../dashboard/hooks/useMetrics";
-import { useClusterTrendMetrics } from "../../../entities/metrics/api/endpoints/cluster";
-import { useNamespaceTrendMetrics } from "../../../entities/metrics/api/endpoints/namespaces";
+import {
+  useClusterTrendMetrics,
+  useNamespaceTrendMetrics,
+} from "../../metrics/hooks/resourceHooks";
 
 export const TrendsPage = () => {
   const { t } = useI18n();
@@ -54,7 +56,7 @@ export const TrendsPage = () => {
 
       <TrendChart
         title={t("trends.chart.cluster")}
-        data={clusterTrends.data?.data}
+        data={clusterTrends.data}
         isLoading={clusterTrends.isLoading}
         error={
           clusterTrends.error instanceof Error
@@ -66,7 +68,7 @@ export const TrendsPage = () => {
       />
       <TrendChart
         title={t("trends.chart.namespace")}
-        data={namespaceTrends.data?.data}
+        data={namespaceTrends.data}
         isLoading={namespaceTrends.isLoading}
         error={
           namespaceTrends.error instanceof Error

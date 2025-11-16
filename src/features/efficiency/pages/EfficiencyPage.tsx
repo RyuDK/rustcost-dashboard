@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useI18n } from "../../../app/providers/I18nProvider";
 import { EfficiencyTable } from "../components/EfficiencyTable";
 import { createDefaultMetricsParams } from "../../dashboard/hooks/useMetrics";
-import { useNamespaceEfficiencyMetrics } from "../../../entities/metrics/api/endpoints/namespaces";
-import { useDeploymentEfficiencyMetrics } from "../../../entities/metrics/api/endpoints/deployments";
+import {
+  useNamespaceEfficiencyMetrics,
+  useDeploymentEfficiencyMetrics,
+} from "../../metrics/hooks/resourceHooks";
 
 export const EfficiencyPage = () => {
   const { t } = useI18n();
@@ -23,7 +25,7 @@ export const EfficiencyPage = () => {
 
       <EfficiencyTable
         title={t("efficiency.table.namespace")}
-        data={namespaceEfficiency.data?.data}
+        data={namespaceEfficiency.data}
         isLoading={namespaceEfficiency.isLoading}
         error={
           namespaceEfficiency.error instanceof Error
@@ -36,7 +38,7 @@ export const EfficiencyPage = () => {
 
       <EfficiencyTable
         title={t("efficiency.table.deployment")}
-        data={deploymentEfficiency.data?.data}
+        data={deploymentEfficiency.data}
         isLoading={deploymentEfficiency.isLoading}
         error={
           deploymentEfficiency.error instanceof Error

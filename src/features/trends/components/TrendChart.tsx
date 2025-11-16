@@ -1,5 +1,5 @@
-import type { TrendMetricPoint } from "../../../entities/metrics/model/types";
-import { MetricChart, type MetricChartSeries } from "../../../entities/metrics/ui/MetricChart";
+import type { TrendMetricPoint } from "../../metrics/types";
+import { MetricChart, type MetricChartSeries } from "../../../shared/components/MetricChart";
 
 interface TrendChartProps {
   title: string;

@@ -1,5 +1,5 @@
-import type { EfficiencyMetric } from "../../../entities/metrics/model/types";
-import { MetricTable } from "../../../entities/metrics/ui/MetricTable";
+import type { EfficiencyMetric } from "../../metrics/types";
+import { MetricTable } from "../../../shared/components/MetricTable";
 import { formatPercent, formatCurrency } from "../../../shared/lib/formatters";
 
 interface EfficiencyTableProps {

@@ -1,80 +1,78 @@
 import { useCallback, useMemo } from "react";
+import { metricApi } from "../../../shared/api";
+import type { MetricsQueryOptions } from "../../metrics/types";
 import {
-  useNodesSummaryMetrics,
-  useNodesTrendMetrics,
-} from "../../../entities/metrics/api/endpoints/nodes";
-import {
-  usePodsEfficiencyMetrics,
-  usePodsSummaryMetrics,
-} from "../../../entities/metrics/api/endpoints/pods";
-import type { MetricsQueryOptions } from "../../../entities/metrics/model/types";
+  buildMetricsQueryKey,
+  toEfficiencyMetrics,
+  toSummaryMetrics,
+  toTrendMetrics,
+} from "../../metrics/lib/transformers";
 import { getDefaultDateRange } from "../../../shared/lib/dateUtils";
 import { DEFAULT_PAGE_SIZE } from "../../../shared/api/constants";
+import { useFetch } from "../../../shared/hooks/useFetch";
 
-/**
- * Creates default query parameters for dashboard metrics views.
- */
+const serializeParams = (params?: MetricsQueryOptions) =>
+  JSON.stringify(params ?? {});
+
+const extractPayload = <T,>(response?: { is_successful?: boolean; data?: T }) =>
+  response?.is_successful ? response.data : undefined;
+
 export const createDefaultMetricsParams = (): MetricsQueryOptions => {
   const { start, end } = getDefaultDateRange();
   return {
     start,
     end,
     limit: DEFAULT_PAGE_SIZE,
-    sort: "cpuUsage:desc",
-    metric: ["cpuUsage", "memoryUsage"],
+    sort: "cpu_usage_nano_cores:desc",
+    metric: ["cpu_usage", "memory_usage"],
   };
 };
 
-/**
- * Aggregates node summary and trend metrics for the dashboard.
- */
 export const useNodesMetrics = (params: MetricsQueryOptions) => {
-  const summary = useNodesSummaryMetrics(params);
-  const trends = useNodesTrendMetrics(params);
+  const query = useFetch(
+    buildMetricsQueryKey("nodes", "raw", params),
+    () => metricApi.fetchNodesRaw(params),
+    { deps: [serializeParams(params)] }
+  );
+
+  const payload = extractPayload(query.data);
 
   const data = useMemo(
     () => ({
-      summary: summary.data?.data ?? [],
-      trends: trends.data?.data ?? [],
+      summary: toSummaryMetrics(payload),
+      trends: toTrendMetrics(payload),
     }),
-    [summary.data, trends.data]
+    [payload]
   );
-
-  const refetch = useCallback(async () => {
-    await Promise.all([summary.refetch(), trends.refetch()]);
-  }, [summary, trends]);
 
   return {
     data,
-    isLoading: summary.isLoading || trends.isLoading,
-    error: summary.error ?? trends.error,
-    refetch,
+    isLoading: query.isLoading,
+    error: query.error ?? (!query.data?.is_successful ? query.data?.error_msg : undefined),
+    refetch: query.refetch,
   };
 };
 
-/**
- * Aggregates pod efficiency and summary metrics for the dashboard.
- */
 export const usePodsEfficiency = (params: MetricsQueryOptions) => {
-  const efficiency = usePodsEfficiencyMetrics(params);
-  const summary = usePodsSummaryMetrics(params);
-
-  const data = useMemo(
-    () => ({
-      efficiency: efficiency.data?.data ?? [],
-      summary: summary.data?.data ?? [],
-    }),
-    [efficiency.data, summary.data]
+  const query = useFetch(
+    buildMetricsQueryKey("pods", "raw", params),
+    () => metricApi.fetchPodsRaw(params),
+    { deps: [serializeParams(params)] }
   );
 
+  const payload = extractPayload(query.data);
+  const summary = useMemo(() => toSummaryMetrics(payload), [payload]);
+  const efficiency = useMemo(() => toEfficiencyMetrics(payload), [payload]);
+
   const refetch = useCallback(async () => {
-    await Promise.all([efficiency.refetch(), summary.refetch()]);
-  }, [efficiency, summary]);
+    await query.refetch();
+  }, [query]);
 
   return {
-    data,
-    isLoading: efficiency.isLoading || summary.isLoading,
-    error: efficiency.error ?? summary.error,
+    data: { efficiency, summary },
+    isLoading: query.isLoading,
+    error: query.error ?? (!query.data?.is_successful ? query.data?.error_msg : undefined),
     refetch,
   };
 };
+

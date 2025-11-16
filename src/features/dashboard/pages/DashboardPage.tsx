@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "../../../app/providers/I18nProvider";
-import { MetricChart } from "../../../entities/metrics/ui/MetricChart";
-import { MetricTable } from "../../../entities/metrics/ui/MetricTable";
-import { SystemStatus } from "../../../entities/system/ui/SystemStatus";
+import { MetricChart } from "../../../shared/components/MetricChart";
+import { MetricTable } from "../../../shared/components/MetricTable";
+import { SystemStatus } from "../../system/components/SystemStatus";
 import { OverviewPanel } from "../components/OverviewPanel";
 import {
   createDefaultMetricsParams,
