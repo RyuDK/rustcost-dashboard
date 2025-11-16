@@ -14,3 +14,61 @@
   to {
   }
 }
+
+/* -------------------------------------------------------
+   LIGHT THEME (default)
+-------------------------------------------------------- */
+@layer base {
+  :root {
+    --primary: rgb(230, 140, 20);
+    --primary-hover: rgb(204, 119, 17);
+    --primary-active: rgb(179, 102, 14);
+
+    --bg: #f6f6f4;
+    --bg-muted: #ffffff;
+    --bg-subtle: #f1f1ef;
+
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --overlay: rgba(0, 0, 0, 0.04);
+
+    --border: #dcdcdc;
+    --border-subtle: #e4e4e3;
+    --border-strong: #bfbfbf;
+
+    --text: #1d1d1f;
+    --text-muted: #4b4b4e;
+    --text-subtle: #6f6f71;
+
+    --accent: var(--color-amber-300);
+    --accent-contrast: #1d1d1f;
+  }
+
+  /* -------------------------------------------------------
+     DARK THEME — toggled by Tailwind dark:
+  -------------------------------------------------------- */
+  .dark {
+    --primary: rgb(255, 191, 70);
+    --primary-hover: rgb(255, 204, 102);
+    --primary-active: rgb(255, 221, 153);
+
+    --bg: #1e1f22;
+    --bg-muted: #0f0f0f;
+    --bg-subtle: #2a2b2f;
+
+    --surface: #2a2b2f;
+    --surface-raised: #323338;
+    --overlay: rgba(255, 255, 255, 0.06);
+
+    --border: #3a3b40;
+    --border-subtle: #2e2f33;
+    --border-strong: #4b4c52;
+
+    --text: #ffffff;
+    --text-muted: #d1d1d3;
+    --text-subtle: #a9a9ac;
+
+    --accent: var(--color-amber-300);
+    --accent-contrast: #1e1f22;
+  }
+}
