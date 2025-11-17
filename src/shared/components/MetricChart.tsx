@@ -1,29 +1,7 @@
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
 import { useMemo } from "react";
+import ReactECharts from "echarts-for-react";
 import { LoadingSpinner } from "./LoadingSpinner";
 import type { TrendMetricPoint } from "../../features/metrics/types";
-
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  CategoryScale,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
 
 export interface MetricChartSeries {
   key: keyof TrendMetricPoint;
@@ -51,21 +29,53 @@ export const MetricChart = ({
   const safeMetrics = Array.isArray(metrics) ? metrics : [];
 
   const labels = useMemo(
-    () => safeMetrics.map((p) => new Date(p.timestamp).toLocaleTimeString()),
+    () => safeMetrics.map((p) => new Date(p.time).toLocaleDateString()),
     [safeMetrics]
   );
 
-  const data = useMemo(() => {
+  const echartsOption = useMemo(() => {
     return {
-      labels,
-      datasets: series.map((item) => ({
-        label: item.label,
-        data: safeMetrics.map((point) => point[item.key] ?? 0),
-        borderColor: item.color,
-        backgroundColor: `${item.color}33`,
-        tension: 0.3,
-        fill: true,
-        pointRadius: 0,
+      tooltip: {
+        trigger: "axis",
+      },
+      legend: {
+        textStyle: { color: "#fcd34d" },
+      },
+      grid: {
+        left: "3%",
+        right: "3%",
+        bottom: "3%",
+        top: "10%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+        data: labels,
+        axisLabel: { color: "#9ca3af" },
+        axisLine: { lineStyle: { color: "#9ca3af" } },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        type: "value",
+        axisLabel: { color: "#9ca3af" },
+        axisLine: { show: false },
+        splitLine: {
+          lineStyle: { color: "rgba(148, 163, 184, 0.15)" },
+        },
+      },
+      series: series.map((item) => ({
+        name: item.label,
+        type: "line",
+        data: safeMetrics.map((m) => m[item.key] ?? 0),
+        smooth: true,
+        symbol: "none",
+        lineStyle: {
+          width: 2,
+          color: item.color,
+        },
+        areaStyle: {
+          color: `${item.color}33`, // same transparency style you had
+        },
       })),
     };
   }, [labels, safeMetrics, series]);
@@ -79,39 +89,23 @@ export const MetricChart = ({
           {title}
         </h3>
       </div>
+
       <div className="h-64">
         {isLoading && (
           <LoadingSpinner label="Loading metrics" className="h-full" />
         )}
+
         {error && (
           <div className="flex h-full items-center justify-center text-sm text-red-500">
             {error}
           </div>
         )}
-        {!isLoading && !error && data && (
-          <Line
-            data={data}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  labels: {
-                    color: "#fcd34d",
-                  },
-                },
-              },
-              scales: {
-                x: {
-                  ticks: { color: "#9ca3af" },
-                  grid: { color: "rgba(148, 163, 184, 0.15)" },
-                },
-                y: {
-                  ticks: { color: "#9ca3af" },
-                  grid: { color: "rgba(148, 163, 184, 0.15)" },
-                },
-              },
-            }}
+
+        {!isLoading && !error && (
+          <ReactECharts
+            option={echartsOption}
+            style={{ width: "100%", height: "100%" }}
+            opts={{ renderer: "svg" }}
           />
         )}
       </div>

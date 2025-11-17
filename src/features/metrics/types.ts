@@ -12,10 +12,11 @@ export interface SummaryMetric {
 }
 
 export interface TrendMetricPoint {
-  timestamp: string;
-  cpuUsage: number;
-  memoryUsage: number;
-  cost?: number;
+  time: string;
+  total_cost_usd: number;
+  cpu_cost_usd: number;
+  memory_cost_usd: number;
+  storage_cost_usd: number;
 }
 
 export interface EfficiencyMetric {

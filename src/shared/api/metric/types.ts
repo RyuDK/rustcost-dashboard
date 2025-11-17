@@ -129,13 +129,31 @@ export interface MetricCostTrend {
   predicted_next_cost_usd?: number;
 }
 
+export interface MetricCostTrendPoint {
+  time: string;
+  total_cost_usd: number;
+  cpu_cost_usd: number;
+  memory_cost_usd: number;
+  storage_cost_usd: number;
+}
+
+export interface MetricCostTrendDto {
+  start_cost_usd: number;
+  end_cost_usd: number;
+  cost_diff_usd: number;
+  growth_rate_percent: number;
+  regression_slope_usd_per_granularity: number;
+  predicted_next_cost_usd: number | null;
+}
+
 export interface MetricCostTrendResponse {
-  start: IsoDateTimeString;
-  end: IsoDateTimeString;
-  scope: MetricScope;
-  target?: string | null;
-  granularity: MetricGranularity;
-  trend: MetricCostTrend;
+  start: string;
+  end: string;
+  scope: string;
+  target: string | null;
+  granularity: string;
+  trend: MetricCostTrendDto;
+  points: MetricCostTrendPoint[]; // ✅ THIS WAS MISSING
 }
 
 export interface NodeMetricTargetParams {
@@ -157,4 +175,3 @@ export interface NamespaceMetricTargetParams {
 export interface DeploymentMetricTargetParams {
   deployment: string;
 }
-

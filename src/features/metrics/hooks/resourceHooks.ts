@@ -51,7 +51,11 @@ export const useClusterTrendMetrics = (params: MetricsQueryOptions) => {
     () => metricApi.fetchClusterCostTrend(params),
     { deps: [serializeParams(params)] }
   );
-  return mapToTrendResult(query);
+
+  return mapToTrendResult(query, (payload) => ({
+    trend: payload?.trend,
+    points: payload?.points ?? [],
+  }));
 };
 
 export const useNamespaceTrendMetrics = (params: MetricsQueryOptions) => {
