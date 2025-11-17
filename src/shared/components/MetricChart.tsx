@@ -48,21 +48,19 @@ export const MetricChart = ({
   error,
   className = "",
 }: MetricChartProps) => {
+  const safeMetrics = Array.isArray(metrics) ? metrics : [];
+
   const labels = useMemo(
-    () => metrics?.map((point) => new Date(point.timestamp).toLocaleTimeString()) ?? [],
-    [metrics]
+    () => safeMetrics.map((p) => new Date(p.timestamp).toLocaleTimeString()),
+    [safeMetrics]
   );
 
   const data = useMemo(() => {
-    if (!metrics) {
-      return null;
-    }
-
     return {
       labels,
       datasets: series.map((item) => ({
         label: item.label,
-        data: metrics.map((point) => point[item.key] ?? 0),
+        data: safeMetrics.map((point) => point[item.key] ?? 0),
         borderColor: item.color,
         backgroundColor: `${item.color}33`,
         tension: 0.3,
@@ -70,7 +68,7 @@ export const MetricChart = ({
         pointRadius: 0,
       })),
     };
-  }, [labels, metrics, series]);
+  }, [labels, safeMetrics, series]);
 
   return (
     <div
@@ -82,7 +80,9 @@ export const MetricChart = ({
         </h3>
       </div>
       <div className="h-64">
-        {isLoading && <LoadingSpinner label="Loading metrics" className="h-full" />}
+        {isLoading && (
+          <LoadingSpinner label="Loading metrics" className="h-full" />
+        )}
         {error && (
           <div className="flex h-full items-center justify-center text-sm text-red-500">
             {error}
@@ -118,4 +118,3 @@ export const MetricChart = ({
     </div>
   );
 };
-

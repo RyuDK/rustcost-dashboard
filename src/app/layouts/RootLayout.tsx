@@ -10,6 +10,12 @@ import {
   IoTrendingUpOutline,
   IoConstructOutline,
   IoSettingsOutline,
+  IoLayersOutline,
+  IoGitBranchOutline,
+  IoCubeOutline,
+  IoFileTrayFullOutline,
+  IoAlertCircleOutline,
+  IoHardwareChipOutline,
 } from "react-icons/io5";
 
 const navItems = [
@@ -20,6 +26,20 @@ const navItems = [
     translationKey: "nav.efficiency",
     icon: IoConstructOutline,
   },
+  { to: "/workloads", translationKey: "nav.workloads", icon: IoLayersOutline },
+  {
+    to: "/resources",
+    translationKey: "nav.resources",
+    icon: IoCubeOutline,
+  },
+  {
+    to: "/allocation",
+    translationKey: "nav.allocation",
+    icon: IoGitBranchOutline,
+  },
+  { to: "/metrics", translationKey: "nav.metrics", icon: IoFileTrayFullOutline },
+  { to: "/alerts", translationKey: "nav.alerts", icon: IoAlertCircleOutline },
+  { to: "/system", translationKey: "nav.system", icon: IoHardwareChipOutline },
   { to: "/settings", translationKey: "nav.settings", icon: IoSettingsOutline },
 ];
 

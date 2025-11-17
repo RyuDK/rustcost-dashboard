@@ -5,11 +5,16 @@ export const subtractDays = (date: Date, days: number) => {
   clone.setDate(clone.getDate() - days);
   return clone;
 };
+const toIsoDateTime = (d: Date) => d.toISOString().slice(0, 19); // removes trailing "Z"
 
 export const getDefaultDateRange = (days = 7) => {
   const end = new Date();
   const start = subtractDays(end, days);
-  return { start: toIsoDate(start), end: toIsoDate(end) };
+
+  return {
+    start: toIsoDateTime(start), // e.g. 2025-11-10T00:00:00
+    end: toIsoDateTime(end), // e.g. 2025-11-17T14:22:31
+  };
 };
 
 export const formatDateTime = (value: string | Date) => {

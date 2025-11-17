@@ -1,29 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { metricApi } from "../../../shared/api";
 import type { ApiResponse } from "../../../shared/api/base";
-import type { MetricGetResponse } from "../../../shared/api/metric";
+import type {
+  MetricCostTrendResponse,
+  MetricGetResponse,
+} from "../../../shared/api/metric";
 import { useFetch, type UseFetchResult } from "../../../shared/hooks/useFetch";
 import type { MetricsQueryOptions } from "../types";
-import {
-  buildMetricsQueryKey,
-  toEfficiencyMetrics,
-  toTrendMetrics,
-} from "../lib/transformers";
+import { buildMetricsQueryKey, toEfficiencyMetrics } from "../lib/transformers";
 
 const serializeParams = (params?: MetricsQueryOptions) =>
   JSON.stringify(params ?? {});
 
-const extractPayload = <T,>(response?: ApiResponse<T>) =>
+const extractPayload = <T>(response?: ApiResponse<T>) =>
   response?.is_successful ? response.data : undefined;
 
-const mapToTrendResult = (
-  query: UseFetchResult<ApiResponse<MetricGetResponse>>
+export const mapToTrendResult = <T>(
+  query: UseFetchResult<ApiResponse<T>>,
+  mapper: (payload: T | undefined) => any = (payload) => payload
 ) => {
   const payload = extractPayload(query.data);
+
   return {
-    data: toTrendMetrics(payload),
+    data: mapper(payload),
     isLoading: query.isLoading,
     error:
-      query.error ?? (!query.data?.is_successful ? query.data?.error_msg : undefined),
+      query.error ??
+      (!query.data?.is_successful ? query.data?.error_msg : undefined),
     refetch: query.refetch,
   };
 };
@@ -36,15 +39,16 @@ const mapToEfficiencyResult = (
     data: toEfficiencyMetrics(payload),
     isLoading: query.isLoading,
     error:
-      query.error ?? (!query.data?.is_successful ? query.data?.error_msg : undefined),
+      query.error ??
+      (!query.data?.is_successful ? query.data?.error_msg : undefined),
     refetch: query.refetch,
   };
 };
 
 export const useClusterTrendMetrics = (params: MetricsQueryOptions) => {
-  const query = useFetch<ApiResponse<MetricGetResponse>>(
-    buildMetricsQueryKey("cluster", "raw", params),
-    () => metricApi.fetchClusterRaw(params),
+  const query = useFetch<ApiResponse<MetricCostTrendResponse>>(
+    buildMetricsQueryKey("cluster", "costTrend", params),
+    () => metricApi.fetchClusterCostTrend(params),
     { deps: [serializeParams(params)] }
   );
   return mapToTrendResult(query);
