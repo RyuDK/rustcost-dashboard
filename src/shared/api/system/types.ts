@@ -19,7 +19,7 @@ export type SystemResponse = Record<string, unknown>;
 export interface SystemActionResponse {
   status: "accepted" | "in_progress" | "completed" | "failed";
   requestedAt: IsoDateTimeString;
-  message?: string;
+  message: string;
 }
 
 export interface BackupResponse extends SystemActionResponse {
@@ -29,4 +29,18 @@ export interface BackupResponse extends SystemActionResponse {
 
 export interface ResyncResponse extends SystemActionResponse {
   resyncId: string;
+}
+
+export interface LogFileListResponse {
+  fileNames: string[];
+}
+
+export interface LogFileInfo {
+  date: string; // yyyyMMdd
+}
+
+export interface LogLineResponse {
+  date: string;
+  lines: string[];
+  next_cursor: number | null;
 }

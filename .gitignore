@@ -1,5 +1,6 @@
 # Logs
 logs
+!src/shared/api/system/logs
 *.log
 npm-debug.log*
 yarn-debug.log*
