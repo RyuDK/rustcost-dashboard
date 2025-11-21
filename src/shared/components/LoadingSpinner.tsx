@@ -1,41 +1,50 @@
 import { memo } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface LoadingSpinnerProps {
   label?: string;
+  size?: number;
+  color?: string;
   className?: string;
 }
 
 const LoadingSpinnerComponent = ({
-  label = "Loading",
+  label = "Loading…",
+  size = 28,
+  color = "text-amber-500",
   className = "",
-}: LoadingSpinnerProps) => (
-  <div
-    className={`flex flex-col items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-300 ${className}`}
-    role="status"
-    aria-live="polite"
-  >
-    <svg
-      className="h-6 w-6 animate-spin text-amber-500"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z"
-      />
-    </svg>
-    <span>{label}</span>
-  </div>
-);
+}: LoadingSpinnerProps) => {
+  const mergedContainerClasses = twMerge(
+    "flex flex-col items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-300",
+    className
+  );
+
+  const mergedSvgClasses = twMerge("animate-spin", color);
+
+  return (
+    <div role="status" aria-live="polite" className={mergedContainerClasses}>
+      <svg
+        className={mergedSvgClasses}
+        width={size}
+        height={size}
+        viewBox="0 0 50 50"
+      >
+        <circle
+          cx="25"
+          cy="25"
+          r="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="100"
+          strokeDashoffset="60"
+        />
+      </svg>
+
+      <span className={!label ? "sr-only" : undefined}>{label}</span>
+    </div>
+  );
+};
 
 export const LoadingSpinner = memo(LoadingSpinnerComponent);
