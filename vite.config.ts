@@ -8,6 +8,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
     globals: true,
-    environment: "node", // No DOM needed for Api.ts
+    environment: "node",
   },
 });
