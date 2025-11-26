@@ -1,4 +1,4 @@
-export * from "./types";
+export * from "@/types/system";
 export * from "./status";
 export * from "./health";
 export * from "./backup";

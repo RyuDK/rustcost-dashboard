@@ -1,2 +1,2 @@
-export type { ResyncResponse } from "@/shared/api/system/types";
+export type { ResyncResponse } from "@/types/system";
 

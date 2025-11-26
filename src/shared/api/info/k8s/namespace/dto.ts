@@ -1,4 +1,4 @@
-import type { K8sResourceList } from "@/shared/api/info/k8s/types";
+import type { K8sResourceList } from "@/types/k8s";
 
 export type K8sNamespaceList = K8sResourceList;
 

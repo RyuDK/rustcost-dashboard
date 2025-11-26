@@ -2,8 +2,8 @@ import {
   METRICS_BASE,
   encode,
   metricGet,
-  type MetricRangeQueryParams,
 } from "@/shared/api/base";
+import type { MetricRangeQueryParams } from "@/types/api";
 import type {
   NamespaceMetricTargetParams,
   MetricGetResponse,
@@ -11,7 +11,7 @@ import type {
   MetricRawEfficiencyResponse,
   MetricCostSummaryResponse,
   MetricCostTrendResponse,
-} from "@/shared/api/metric/types";
+} from "@/types/metrics";
 
 const BASE_URL = `${METRICS_BASE}/namespaces`;
 

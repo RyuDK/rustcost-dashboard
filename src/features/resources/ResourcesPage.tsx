@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MetricRawSummaryResponse } from "@/shared/api/metric";
+import type { MetricRawSummaryResponse } from "@/types/metrics";
 import { infoApi, metricApi } from "@/shared/api";
 
 type ResourceTab =

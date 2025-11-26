@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { metricApi } from "@/shared/api";
-import type { MetricsQueryOptions } from "@/features/metrics/types";
+import type { MetricsQueryOptions } from "@/types/metrics";
 import {
   buildMetricsQueryKey,
   toEfficiencyMetrics,
@@ -8,7 +8,7 @@ import {
   toTrendMetrics,
 } from "@/features/metrics/lib/transformers";
 import { getDefaultDateRange } from "@/shared/utils/date";
-import { DEFAULT_PAGE_SIZE } from "@/shared/api/constants";
+import { DEFAULT_PAGE_SIZE } from "@/constants/api";
 import { useFetch } from "@/shared/hooks/useFetch";
 
 const serializeParams = (params?: MetricsQueryOptions) =>

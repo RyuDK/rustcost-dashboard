@@ -1,5 +1,5 @@
-export type { LogFileListResponse } from "@/shared/api/system/types";
+export type { LogFileListResponse } from "@/types/system";
 
-export type { LogLineResponse } from "@/shared/api/system/types";
+export type { LogLineResponse } from "@/types/system";
 
-export type { LogFileInfo } from "@/shared/api/system/types";
+export type { LogFileInfo } from "@/types/system";

@@ -5,5 +5,5 @@ export {
   type MetricRawEfficiencyResponse,
   type MetricCostSummaryResponse,
   type MetricCostTrendResponse,
-} from "@/shared/api/metric/types";
+} from "@/types/metrics";
 

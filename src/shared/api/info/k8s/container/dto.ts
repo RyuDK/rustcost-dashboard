@@ -1,4 +1,4 @@
-import type { IsoDateTimeString } from "@/shared/api/base";
+import type { IsoDateTimeString } from "@/types/api";
 import type { InfoK8sNodePatchRequest } from "@/shared/api/info/k8s/node/dto";
 
 export interface InfoContainer {

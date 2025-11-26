@@ -1,4 +1,4 @@
-import type { EfficiencyMetric, SummaryMetric } from "@/features/metrics/types";
+import type { EfficiencyMetric, SummaryMetric } from "@/types/metrics";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { formatCpu, formatBytes, formatPercent, sum, formatCurrency } from "@/shared/utils/format";
 

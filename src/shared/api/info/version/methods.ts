@@ -1,6 +1,6 @@
 import { INFO_BASE } from "@/shared/api/base";
 import { request } from "@/shared/api/http";
-import type { ApiResponse } from "@/shared/api/base";
+import type { ApiResponse } from "@/types/api";
 import type { InfoVersion } from "./dto";
 
 const VERSIONS_URL = `${INFO_BASE}/versions`;

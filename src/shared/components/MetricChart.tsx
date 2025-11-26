@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { LoadingSpinner } from "./LoadingSpinner";
-import type { TrendMetricPoint } from "@/features/metrics/types";
+import type { TrendMetricPoint } from "@/types/metrics";
 
 export interface MetricChartSeries {
   key: keyof TrendMetricPoint;

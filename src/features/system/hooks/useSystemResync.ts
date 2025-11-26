@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { systemApi } from "@/shared/api";
-import type { ApiResponse } from "@/shared/api/base";
-import type { ResyncResponse } from "@/shared/api/system";
+import type { ApiResponse } from "@/types/api";
+import type { ResyncResponse } from "@/types/system";
 
 export const useSystemResync = () => {
   const [data, setData] = useState<ApiResponse<ResyncResponse> | undefined>();

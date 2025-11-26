@@ -7,12 +7,10 @@ import type {
   EfficiencyMetric,
   MetricsQueryOptions,
   SummaryMetric,
-} from "@/features/metrics/types";
-import type {
   MetricGetResponse,
   MetricRawEfficiencyResponse,
   MetricRawSummaryResponse,
-} from "@/shared/api/metric";
+} from "@/types/metrics";
 import { useNodesMetrics, usePodsEfficiency } from "./useMetrics";
 
 interface DashboardNodesSummary {

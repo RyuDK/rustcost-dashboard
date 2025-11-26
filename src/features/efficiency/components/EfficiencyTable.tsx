@@ -1,4 +1,4 @@
-import type { EfficiencyMetric } from "@/features/metrics/types";
+import type { EfficiencyMetric } from "@/types/metrics";
 import { MetricTable } from "@/shared/components/MetricTable";
 import { formatPercent, formatCurrency } from "@/shared/utils/format";
 

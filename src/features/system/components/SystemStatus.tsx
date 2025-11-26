@@ -4,7 +4,7 @@ import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
 import { useSystemStatus } from "@/features/system/hooks/useSystemStatus";
 import { useSystemBackup } from "@/features/system/hooks/useSystemBackup";
 import { useSystemResync } from "@/features/system/hooks/useSystemResync";
-import type { SystemComponentStatus } from "@/shared/api/system";
+import type { SystemComponentStatus } from "@/types/system";
 
 const badgeColor = (status: SystemComponentStatus["status"]) => {
   switch (status) {

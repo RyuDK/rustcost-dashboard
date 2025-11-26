@@ -1,5 +1,6 @@
-import { SYSTEM_BASE, type ApiResponse } from "@/shared/api/base";
+import { SYSTEM_BASE } from "@/shared/api/base";
 import { request } from "@/shared/api/http";
+import type { ApiResponse } from "@/types/api";
 import type { SystemResponse } from "./dto";
 
 const HEALTH_URL = `${SYSTEM_BASE}/health`;

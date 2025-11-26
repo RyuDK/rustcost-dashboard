@@ -4,12 +4,12 @@ import type {
   InfoUnitPrice,
   MutationResponse,
 } from "@/shared/api/info";
-import type { ApiResponse } from "@/shared/api/base";
+import type { ApiResponse } from "@/types/api";
 import type {
   SystemStatusResponse,
   SystemResponse,
   LogLineResponse,
-} from "@/shared/api/system";
+} from "@/types/system";
 import { infoApi, systemApi } from "@/shared/api";
 
 type SystemTab =

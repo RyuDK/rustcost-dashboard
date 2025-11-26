@@ -1,6 +1,7 @@
-import { INFO_BASE, type ApiResponse } from "@/shared/api/base";
+import { INFO_BASE } from "@/shared/api/base";
 import { request } from "@/shared/api/http";
-import type { K8sResourceList } from "./types";
+import type { ApiResponse } from "@/types/api";
+import type { K8sResourceList } from "@/types/k8s";
 
 export const makeK8sListFetcher = (resource: string) => () =>
   request<ApiResponse<K8sResourceList>>({

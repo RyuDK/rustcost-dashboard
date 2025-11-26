@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { EfficiencyMetric, SummaryMetric } from "@/features/metrics/types";
+import type { EfficiencyMetric, SummaryMetric } from "@/types/metrics";
 import { Chart, type ChartSeries } from "@/shared/components/Chart";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SystemStatus } from "@/features/system/components/SystemStatus";

@@ -1,4 +1,4 @@
-import type { IsoDateTimeString } from "@/shared/api/base";
+import type { IsoDateTimeString } from "@/types/api";
 
 export interface InfoNode {
   node_name?: string;

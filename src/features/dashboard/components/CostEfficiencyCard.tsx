@@ -1,4 +1,4 @@
-import type { EfficiencyMetric } from "@/features/metrics/types";
+import type { EfficiencyMetric } from "@/types/metrics";
 import { Card } from "@/shared/components/Card";
 import { formatCurrency, formatPercent } from "@/shared/utils/format";
 

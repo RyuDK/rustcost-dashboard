@@ -1,2 +1,2 @@
-export type { BackupResponse } from "@/shared/api/system/types";
+export type { BackupResponse } from "@/types/system";
 

@@ -1,2 +1,2 @@
-export type { SystemStatusResponse } from "@/shared/api/system/types";
+export type { SystemStatusResponse } from "@/types/system";
 
