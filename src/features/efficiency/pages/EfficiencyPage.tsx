@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "@/app/providers/I18nProvider";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 import { EfficiencyTable } from "@/features/efficiency/components/EfficiencyTable";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
 import {

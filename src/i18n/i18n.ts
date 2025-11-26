@@ -1,29 +1,34 @@
-import en from "./locales/en.json";
-import ko from "./locales/ko.json";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "@/constants/language";
 
-export const SUPPORTED_LANGUAGES = ["en", "ko"] as const;
+async function loadResources() {
+  const en = await import("./locales/en/translation.json");
+  const ko = await import("./locales/ko/translation.json");
 
-export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
+  return {
+    en: { translation: en.default },
+    ko: { translation: ko.default },
+  };
+}
 
-export type TranslationKey = keyof typeof en;
+const resources = await loadResources();
 
-type TranslationDictionary = Record<LanguageCode, Record<string, string>>;
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: DEFAULT_LANGUAGE,
+    supportedLngs: [...SUPPORTED_LANGUAGES],
+    detection: {
+      order: ["path", "localStorage", "navigator"],
+      lookupFromPathIndex: 0,
+    },
+    interpolation: {
+      escapeValue: false,
+    },
+    resources,
+  });
 
-const translations: TranslationDictionary = {
-  en,
-  ko,
-};
-
-export const defaultLanguage: LanguageCode = "en";
-
-export const getTranslation = (
-  key: TranslationKey,
-  language: LanguageCode = defaultLanguage
-): string => translations[language]?.[key] ?? key;
-
-export const hasTranslation = (
-  key: string,
-  language: LanguageCode = defaultLanguage
-): boolean => Boolean(translations[language]?.[key]);
-
-export const getDictionary = (language: LanguageCode) => translations[language];
+export default i18n;

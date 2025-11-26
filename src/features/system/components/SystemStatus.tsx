@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useI18n } from "@/app/providers/I18nProvider";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
 import { useSystemStatus } from "@/features/system/hooks/useSystemStatus";
 import { useSystemBackup } from "@/features/system/hooks/useSystemBackup";

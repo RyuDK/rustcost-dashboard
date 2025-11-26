@@ -1,9 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { ThemeToggle } from "../../shared/components/ThemeToggle";
-import { useI18n } from "../providers/I18nProvider";
-import { SUPPORTED_LANGUAGES } from "../../i18n/i18n";
-import { useTheme } from "../providers/ThemeProvider";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useTheme } from "@/app/providers/ThemeProvider";
 import { useState } from "react";
+import { Header } from "./Header";
 
 import {
   IoSpeedometerOutline,
@@ -37,14 +36,18 @@ const navItems = [
     translationKey: "nav.allocation",
     icon: IoGitBranchOutline,
   },
-  { to: "/metrics", translationKey: "nav.metrics", icon: IoFileTrayFullOutline },
+  {
+    to: "/metrics",
+    translationKey: "nav.metrics",
+    icon: IoFileTrayFullOutline,
+  },
   { to: "/alerts", translationKey: "nav.alerts", icon: IoAlertCircleOutline },
   { to: "/system", translationKey: "nav.system", icon: IoHardwareChipOutline },
   { to: "/settings", translationKey: "nav.settings", icon: IoSettingsOutline },
 ];
 
 export const RootLayout = () => {
-  const { t, language, setLanguage } = useI18n();
+  const { t } = useI18n();
   const { theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -58,62 +61,7 @@ export const RootLayout = () => {
       "
     >
       {/* ---------------- HEADER ---------------- */}
-      <header
-        className="
-          flex items-center justify-between px-4 py-3 
-          border-b border-[var(--border)]
-          bg-[var(--surface)]/70 backdrop-blur
-          dark:border-[var(--border)]
-          dark:bg-[var(--surface)]/70
-        "
-      >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSidebarOpen((s) => !s)}
-            className="
-              p-2 rounded-md 
-              hover:bg-[var(--overlay)] 
-              dark:hover:bg-[var(--overlay)]
-              transition
-            "
-          >
-            <img src="/logo-square.webp" alt="Logo" className="h-6 w-6" />
-          </button>
-
-          <h1 className="text-lg font-semibold text-[var(--text)] dark:text-[var(-text)]">
-            RustCost
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <select
-            className="
-              rounded-md border border-[var(--border)] 
-              bg-[var(--surface)]
-              px-2 py-1 text-sm shadow-sm
-              focus:border-[var(--primary)]
-              focus:ring-[var(--primary)]
-
-              dark:border-[var(--border)]
-              dark:bg-[var(--surface)]
-            "
-            value={language}
-            onChange={(e) =>
-              setLanguage(
-                e.target.value as (typeof SUPPORTED_LANGUAGES)[number]
-              )
-            }
-          >
-            {SUPPORTED_LANGUAGES.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang.toUpperCase()}
-              </option>
-            ))}
-          </select>
-
-          <ThemeToggle />
-        </div>
-      </header>
+      <Header onToggleSidebar={() => setSidebarOpen((s) => !s)} />
 
       {/* ---------------- LAYOUT ---------------- */}
       <div className="flex flex-1 overflow-hidden">
@@ -166,9 +114,7 @@ export const RootLayout = () => {
                   >
                     <Icon className="text-xl min-w-[20px]" />
                     {sidebarOpen && (
-                      <span className="truncate">
-                        {t(translationKey as never)}
-                      </span>
+                      <span className="truncate">{t(translationKey)}</span>
                     )}
                   </NavLink>
                 </li>

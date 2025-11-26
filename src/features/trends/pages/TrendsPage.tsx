@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "@/app/providers/I18nProvider";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 import { TrendChart } from "@/features/trends/components/TrendChart";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
 import {

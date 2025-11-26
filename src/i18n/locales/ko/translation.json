@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "trends": "트렌드",
+    "efficiency": "효율성",
+    "workloads": "워크로드",
+    "resources": "리소스",
+    "allocation": "할당",
+    "metrics": "메트릭",
+    "alerts": "알림",
+    "system": "시스템",
+    "settings": "설정"
+  },
+  "common": {
+    "refresh": "새로고침",
+    "retry": "재시도",
+    "loading": "불러오는 중",
+    "errorTitle": "데이터를 불러오지 못했습니다",
+    "timeRange": "기간",
+    "date": {
+      "start": "시작 날짜",
+      "end": "종료 날짜"
+    },
+    "limit": "개수",
+    "sort": "정렬"
+  },
+  "dashboard": {
+    "title": "RustCost 개요",
+    "subtitle": "비용과 효율 신호를 한눈에 확인하세요.",
+    "overview": {
+      "title": "주요 지표"
+    },
+    "metrics": {
+      "nodes": "노드 비용 및 사용량",
+      "pods": "파드 효율성",
+      "trends": "사용 추이",
+      "efficiency": "효율성 분석"
+    },
+    "cards": {
+      "nodeCpu": {
+        "title": "노드 CPU 사용량",
+        "description": "클러스터 전체의 milli-core 소비량"
+      },
+      "nodeMemory": {
+        "title": "노드 메모리 사용량",
+        "description": "파드 메모리 사용량 집계"
+      },
+      "podEfficiency": {
+        "title": "파드 효율성",
+        "description": "평균 워크로드 효율 점수"
+      },
+      "podCost": {
+        "title": "파드 비용",
+        "description": "필터링된 파드의 보고 비용"
+      }
+    }
+  },
+  "trends": {
+    "title": "트렌드",
+    "subtitle": "성능과 비용의 추세를 살펴보세요.",
+    "chart": {
+      "cluster": "클러스터 활용도 추세",
+      "namespace": "네임스페이스 CPU 추세"
+    }
+  },
+  "efficiency": {
+    "title": "효율성",
+    "subtitle": "네임스페이스와 워크로드의 효율을 비교하세요.",
+    "table": {
+      "namespace": "네임스페이스 효율성",
+      "deployment": "배포 효율성"
+    }
+  },
+  "settings": {
+    "title": "설정",
+    "subtitle": "환경을 조정하고 데이터 소스를 동기화하세요."
+  },
+  "system": {
+    "status": {
+      "title": "시스템 상태",
+      "refresh": "상태 새로고침",
+      "healthy": "모든 시스템이 정상입니다",
+      "degraded": "서비스 성능 저하가 감지되었습니다",
+      "backup": "백업",
+      "backingUp": "백업 중...",
+      "resync": "동기화",
+      "resyncing": "동기화 중..."
+    }
+  }
+}

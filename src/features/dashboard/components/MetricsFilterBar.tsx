@@ -1,6 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { MetricsQueryOptions } from "@/features/metrics/types";
-import { useI18n } from "@/app/providers/I18nProvider";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface MetricsFilterBarProps {
   params: MetricsQueryOptions;
