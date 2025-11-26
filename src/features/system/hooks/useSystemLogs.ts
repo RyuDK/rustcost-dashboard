@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { systemApi } from "../../../shared/api";
-import type { ApiResponse } from "../../../shared/api/base";
-import type { LogFileListResponse } from "../../../shared/api/system";
+import { systemApi } from "@/shared/api";
+import type { ApiResponse } from "@/shared/api/base";
+import type { LogFileListResponse } from "@/shared/api/system";
 
 export const useSystemLogFileList = () => {
   const [data, setData] = useState<

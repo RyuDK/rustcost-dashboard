@@ -3,8 +3,8 @@ import type {
   MetricCostSummaryResponse,
   MetricGetResponse,
   MetricRawEfficiencyResponse,
-} from "../../shared/api/metric";
-import { metricApi } from "../../shared/api";
+} from "@/shared/api/metric";
+import { metricApi } from "@/shared/api";
 
 type MetricsTab = "cost" | "usage" | "efficiency" | "trends" | "ai";
 

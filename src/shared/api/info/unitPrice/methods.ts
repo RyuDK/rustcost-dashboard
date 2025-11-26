@@ -1,7 +1,7 @@
-import { INFO_BASE } from "../../base";
-import { request } from "../../http";
-import type { ApiResponse } from "../../base";
-import type { MutationResponse } from "../types";
+import { INFO_BASE } from "@/shared/api/base";
+import { request } from "@/shared/api/http";
+import type { ApiResponse } from "@/shared/api/base";
+import type { MutationResponse } from "@/shared/api/info/types";
 import type { InfoUnitPrice, InfoUnitPriceUpsertRequest } from "./dto";
 
 const UNIT_PRICE_URL = `${INFO_BASE}/unit-prices`;

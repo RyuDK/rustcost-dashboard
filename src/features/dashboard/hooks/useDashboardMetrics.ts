@@ -1,18 +1,18 @@
 import { useMemo } from "react";
-import { metricApi } from "../../../shared/api";
-import { useFetch } from "../../../shared/hooks/useFetch";
-import { average, sum } from "../../../shared/utils/format";
-import { buildMetricsQueryKey } from "../../metrics/lib/transformers";
+import { metricApi } from "@/shared/api";
+import { useFetch } from "@/shared/hooks/useFetch";
+import { average, sum } from "@/shared/utils/format";
+import { buildMetricsQueryKey } from "@/features/metrics/lib/transformers";
 import type {
   EfficiencyMetric,
   MetricsQueryOptions,
   SummaryMetric,
-} from "../../metrics/types";
+} from "@/features/metrics/types";
 import type {
   MetricGetResponse,
   MetricRawEfficiencyResponse,
   MetricRawSummaryResponse,
-} from "../../../shared/api/metric";
+} from "@/shared/api/metric";
 import { useNodesMetrics, usePodsEfficiency } from "./useMetrics";
 
 interface DashboardNodesSummary {

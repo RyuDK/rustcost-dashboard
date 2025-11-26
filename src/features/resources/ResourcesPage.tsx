@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MetricRawSummaryResponse } from "../../shared/api/metric";
-import { infoApi, metricApi } from "../../shared/api";
+import type { MetricRawSummaryResponse } from "@/shared/api/metric";
+import { infoApi, metricApi } from "@/shared/api";
 
 type ResourceTab =
   | "namespaces"

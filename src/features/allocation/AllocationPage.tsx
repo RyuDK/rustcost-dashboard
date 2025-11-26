@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { infoApi } from "../../shared/api";
-import { request } from "../../shared/api/http";
+import { infoApi } from "@/shared/api";
+import { request } from "@/shared/api/http";
 
 interface ApiResponse<T> {
   data?: T;

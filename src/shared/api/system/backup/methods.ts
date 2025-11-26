@@ -1,5 +1,5 @@
-import { SYSTEM_BASE, type ApiResponse } from "../../base";
-import { request } from "../../http";
+import { SYSTEM_BASE, type ApiResponse } from "@/shared/api/base";
+import { request } from "@/shared/api/http";
 import type { BackupResponse } from "./dto";
 
 const BACKUP_URL = `${SYSTEM_BASE}/backup`;

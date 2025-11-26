@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { MetricsQueryOptions } from "../../metrics/types";
+import type { MetricsQueryOptions } from "@/features/metrics/types";
 import { createDefaultMetricsParams } from "./useMetrics";
 
 export const useDashboardParams = () => {

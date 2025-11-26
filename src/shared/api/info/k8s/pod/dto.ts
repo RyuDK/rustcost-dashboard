@@ -1,5 +1,5 @@
-import type { IsoDateTimeString } from "../../../base";
-import type { InfoK8sNodePatchRequest } from "../node/dto";
+import type { IsoDateTimeString } from "@/shared/api/base";
+import type { InfoK8sNodePatchRequest } from "@/shared/api/info/k8s/node/dto";
 
 export interface InfoPod {
   podName?: string;

@@ -3,14 +3,14 @@ import type {
   InfoSetting,
   InfoUnitPrice,
   MutationResponse,
-} from "../../shared/api/info";
-import type { ApiResponse } from "../../shared/api/base";
+} from "@/shared/api/info";
+import type { ApiResponse } from "@/shared/api/base";
 import type {
   SystemStatusResponse,
   SystemResponse,
   LogLineResponse,
-} from "../../shared/api/system";
-import { infoApi, systemApi } from "../../shared/api";
+} from "@/shared/api/system";
+import { infoApi, systemApi } from "@/shared/api";
 
 type SystemTab =
   | "status"

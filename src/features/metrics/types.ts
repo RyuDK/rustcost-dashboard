@@ -1,4 +1,4 @@
-import type { MetricRangeQueryParams } from "../../shared/api/base";
+import type { MetricRangeQueryParams } from "@/shared/api/base";
 
 export interface SummaryMetric {
   id: string;

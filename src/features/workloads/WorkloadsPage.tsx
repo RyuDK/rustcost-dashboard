@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import type { MetricRawSummaryResponse } from "../../shared/api/metric";
-import { infoApi, metricApi } from "../../shared/api";
+import type { RootState } from "@/store/store";
+import type { MetricRawSummaryResponse } from "@/shared/api/metric";
+import { infoApi, metricApi } from "@/shared/api";
 
 interface K8sMetadata {
   name: string;

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { metricApi } from "../../../shared/api";
-import type { ApiResponse } from "../../../shared/api/base";
+import { metricApi } from "@/shared/api";
+import type { ApiResponse } from "@/shared/api/base";
 import type {
   MetricCostTrendResponse,
   MetricGetResponse,
-} from "../../../shared/api/metric";
-import { useFetch, type UseFetchResult } from "../../../shared/hooks/useFetch";
-import type { MetricsQueryOptions } from "../types";
-import { buildMetricsQueryKey, toEfficiencyMetrics } from "../lib/transformers";
+} from "@/shared/api/metric";
+import { useFetch, type UseFetchResult } from "@/shared/hooks/useFetch";
+import type { MetricsQueryOptions } from "@/features/metrics/types";
+import { buildMetricsQueryKey, toEfficiencyMetrics } from "@/features/metrics/lib/transformers";
 
 const serializeParams = (params?: MetricsQueryOptions) =>
   JSON.stringify(params ?? {});

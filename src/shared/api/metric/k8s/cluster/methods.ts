@@ -1,11 +1,11 @@
-import { METRICS_BASE, metricGet, type MetricRangeQueryParams } from "../../../base";
+import { METRICS_BASE, metricGet, type MetricRangeQueryParams } from "@/shared/api/base";
 import type {
   MetricGetResponse,
   MetricRawSummaryResponse,
   MetricRawEfficiencyResponse,
   MetricCostSummaryResponse,
   MetricCostTrendResponse,
-} from "../../types";
+} from "@/shared/api/metric/types";
 
 const BASE_URL = `${METRICS_BASE}/cluster`;
 

@@ -2,7 +2,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { I18nProvider } from "./I18nProvider";
 import { QueryProvider } from "./QueryProvider";
 import { Provider as ReduxProvider } from "react-redux";
-import { store as appStore } from "../../store/store";
+import { store as appStore } from "@/store/store";
 import type { ReactNode } from "react";
 
 export interface AppProvidersProps {

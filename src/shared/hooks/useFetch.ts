@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "../../app/providers/QueryProvider";
+import { useQueryClient } from "@/app/providers/QueryProvider";
 
 export interface UseFetchOptions {
   enabled?: boolean;

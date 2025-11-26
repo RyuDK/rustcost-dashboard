@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { MetricGetResponse } from "../../shared/api/metric";
-import { infoApi, metricApi } from "../../shared/api";
+import type { MetricGetResponse } from "@/shared/api/metric";
+import { infoApi, metricApi } from "@/shared/api";
 
 interface WorkloadResource {
   name: string;

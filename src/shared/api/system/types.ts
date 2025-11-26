@@ -1,4 +1,4 @@
-import type { IsoDateTimeString } from "../base";
+import type { IsoDateTimeString } from "@/shared/api/base";
 
 export interface SystemComponentStatus {
   component: string;

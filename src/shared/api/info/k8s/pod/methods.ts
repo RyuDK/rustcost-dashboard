@@ -4,8 +4,8 @@ import {
   buildK8sListQuery,
   type ApiResponse,
   type K8sListQueryParams,
-} from "../../../base";
-import { request } from "../../../http";
+} from "@/shared/api/base";
+import { request } from "@/shared/api/http";
 import type { InfoPod, InfoK8sPodPatchRequest } from "./dto";
 
 const BASE_URL = `${INFO_BASE}/k8s/pods`;

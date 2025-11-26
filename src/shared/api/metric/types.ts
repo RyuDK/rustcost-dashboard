@@ -2,7 +2,7 @@ import type {
   IsoDateTimeString,
   MetricGranularity,
   MetricScope,
-} from "../base";
+} from "@/shared/api/base";
 
 export interface CommonMetricValues {
   cpu_usage_nano_cores?: number;

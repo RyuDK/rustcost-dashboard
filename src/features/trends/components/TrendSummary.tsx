@@ -1,5 +1,5 @@
 import React from "react";
-import type { MetricCostTrendDto } from "../../../shared/api/metric/types";
+import type { MetricCostTrendDto } from "@/shared/api/metric/types";
 
 export const TrendSummary = ({ trend }: { trend?: MetricCostTrendDto }) => {
   if (!trend) return null;

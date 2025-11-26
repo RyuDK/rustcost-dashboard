@@ -1,15 +1,15 @@
 import { useCallback, useMemo } from "react";
-import { metricApi } from "../../../shared/api";
-import type { MetricsQueryOptions } from "../../metrics/types";
+import { metricApi } from "@/shared/api";
+import type { MetricsQueryOptions } from "@/features/metrics/types";
 import {
   buildMetricsQueryKey,
   toEfficiencyMetrics,
   toSummaryMetrics,
   toTrendMetrics,
-} from "../../metrics/lib/transformers";
-import { getDefaultDateRange } from "../../../shared/utils/date";
-import { DEFAULT_PAGE_SIZE } from "../../../shared/api/constants";
-import { useFetch } from "../../../shared/hooks/useFetch";
+} from "@/features/metrics/lib/transformers";
+import { getDefaultDateRange } from "@/shared/utils/date";
+import { DEFAULT_PAGE_SIZE } from "@/shared/api/constants";
+import { useFetch } from "@/shared/hooks/useFetch";
 
 const serializeParams = (params?: MetricsQueryOptions) =>
   JSON.stringify(params ?? {});

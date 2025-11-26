@@ -3,7 +3,7 @@ import {
   encode,
   metricGet,
   type MetricRangeQueryParams,
-} from "../../../base";
+} from "@/shared/api/base";
 import type {
   DeploymentMetricTargetParams,
   MetricGetResponse,
@@ -11,7 +11,7 @@ import type {
   MetricRawEfficiencyResponse,
   MetricCostSummaryResponse,
   MetricCostTrendResponse,
-} from "../../types";
+} from "@/shared/api/metric/types";
 
 const BASE_URL = `${METRICS_BASE}/deployments`;
 

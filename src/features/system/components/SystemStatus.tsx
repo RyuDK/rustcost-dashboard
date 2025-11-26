@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import { useI18n } from "../../../app/providers/I18nProvider";
-import { LoadingSpinner } from "../../../shared/components/LoadingSpinner";
-import { useSystemStatus } from "../hooks/useSystemStatus";
-import { useSystemBackup } from "../hooks/useSystemBackup";
-import { useSystemResync } from "../hooks/useSystemResync";
-import type { SystemComponentStatus } from "../../../shared/api/system";
+import { useI18n } from "@/app/providers/I18nProvider";
+import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
+import { useSystemStatus } from "@/features/system/hooks/useSystemStatus";
+import { useSystemBackup } from "@/features/system/hooks/useSystemBackup";
+import { useSystemResync } from "@/features/system/hooks/useSystemResync";
+import type { SystemComponentStatus } from "@/shared/api/system";
 
 const badgeColor = (status: SystemComponentStatus["status"]) => {
   switch (status) {

@@ -1,4 +1,4 @@
-import { useTheme } from "../../app/providers/ThemeProvider";
+import { useTheme } from "@/app/providers/ThemeProvider";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 interface ThemeToggleProps {
