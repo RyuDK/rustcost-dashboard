@@ -1,24 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "../../app/providers/QueryProvider";
-
-export interface UseFetchOptions {
-  enabled?: boolean;
-  /**
-   * Query stale time in milliseconds.
-   */
-  staleTime?: number;
-  /**
-   * Arbitrary dependencies that should trigger refetch.
-   */
-  deps?: readonly unknown[];
-}
-
-export interface UseFetchResult<T> {
-  data?: T;
-  error?: unknown;
-  isLoading: boolean;
-  refetch: () => Promise<T | undefined>;
-}
+import { useQueryClient } from "@/app/providers/QueryProvider";
+import type { UseFetchOptions, UseFetchResult } from "@/types/fetch";
 
 const serializeKey = (key: string | readonly unknown[]): string =>
   Array.isArray(key) ? JSON.stringify(key) : key;

@@ -1,5 +1,5 @@
-export type { LogFileListResponse } from "../types";
+export type { LogFileListResponse } from "@/types/system";
 
-export type { LogLineResponse } from "../types";
+export type { LogLineResponse } from "@/types/system";
 
-export type { LogFileInfo } from "../types";
+export type { LogFileInfo } from "@/types/system";

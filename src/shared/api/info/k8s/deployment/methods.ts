@@ -1,5 +1,5 @@
-import { makeK8sListFetcher } from "../utils";
-import type { ApiResponse } from "../../../base";
+import { makeK8sListFetcher } from "@/shared/api/info/k8s/utils";
+import type { ApiResponse } from "@/types/api";
 import type { K8sDeploymentList } from "./dto";
 
 const fetcher = makeK8sListFetcher("deployments");

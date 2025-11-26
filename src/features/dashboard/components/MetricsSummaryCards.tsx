@@ -1,6 +1,6 @@
-import { Card } from "../../../shared/components/Card";
-import { formatCurrency, formatPercent } from "../../../shared/utils/format";
-import type { DashboardSummary } from "../hooks/useDashboardMetrics";
+import { Card } from "@/shared/components/Card";
+import { formatCurrency, formatPercent } from "@/shared/utils/format";
+import type { DashboardSummary } from "@/features/dashboard/hooks/useDashboardMetrics";
 
 interface MetricsSummaryCardsProps {
   summary: DashboardSummary;

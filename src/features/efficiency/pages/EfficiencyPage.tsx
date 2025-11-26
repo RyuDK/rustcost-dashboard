@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useI18n } from "../../../app/providers/I18nProvider";
-import { EfficiencyTable } from "../components/EfficiencyTable";
-import { createDefaultMetricsParams } from "../../dashboard/hooks/useMetrics";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { EfficiencyTable } from "@/features/efficiency/components/EfficiencyTable";
+import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
 import {
   useNamespaceEfficiencyMetrics,
   useDeploymentEfficiencyMetrics,
-} from "../../metrics/hooks/resourceHooks";
+} from "@/features/metrics/hooks/resourceHooks";
 
 export const EfficiencyPage = () => {
   const { t } = useI18n();

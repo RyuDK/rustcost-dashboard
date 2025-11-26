@@ -1,4 +1,4 @@
 export {
   fetchK8sPersistentVolumeClaims as fetchK8sPvcs,
-} from "../persistent_volume_claim/methods";
+} from "@/shared/api/info/k8s/persistent_volume_claim/methods";
 

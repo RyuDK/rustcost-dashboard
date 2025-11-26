@@ -1,2 +1,2 @@
-export type { SystemResponse } from "../types";
+export type { SystemResponse } from "@/types/system";
 

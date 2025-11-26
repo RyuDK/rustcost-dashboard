@@ -1,6 +1,6 @@
-import type { EfficiencyMetric } from "../../metrics/types";
-import { Card } from "../../../shared/components/Card";
-import { formatCurrency, formatPercent } from "../../../shared/utils/format";
+import type { EfficiencyMetric } from "@/types/metrics";
+import { Card } from "@/shared/components/Card";
+import { formatCurrency, formatPercent } from "@/shared/utils/format";
 
 interface CostEfficiencyCardProps {
   efficiency: EfficiencyMetric[];

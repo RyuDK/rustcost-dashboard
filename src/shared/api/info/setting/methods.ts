@@ -1,7 +1,7 @@
-import { INFO_BASE } from "../../base";
-import { request } from "../../http";
-import type { ApiResponse } from "../../base";
-import type { MutationResponse } from "../types";
+import { INFO_BASE } from "@/shared/api/base";
+import { request } from "@/shared/api/http";
+import type { ApiResponse } from "@/types/api";
+import type { MutationResponse } from "@/types/info";
 import type { InfoSetting, InfoSettingUpsertRequest } from "./dto";
 
 const SETTINGS_URL = `${INFO_BASE}/settings`;

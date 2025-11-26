@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MetricGetResponse } from "../../shared/api/metric";
-import { metricApi } from "../../shared/api";
+import type { MetricGetResponse } from "@/types/metrics";
+import { metricApi } from "@/shared/api";
 
 interface GeneratedAlert {
   id: string;

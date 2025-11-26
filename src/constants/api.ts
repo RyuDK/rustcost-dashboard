@@ -9,8 +9,6 @@ export const METRIC_RESOURCES = [
   "cluster",
 ] as const;
 
-export type MetricResource = (typeof METRIC_RESOURCES)[number];
-
 export const DEFAULT_PAGE_SIZE = 25;
 export const MAX_PAGE_SIZE = 100;
 

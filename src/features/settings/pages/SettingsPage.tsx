@@ -1,6 +1,6 @@
-import { useI18n } from "../../../app/providers/I18nProvider";
-import { InfoCard } from "../../../shared/components/InfoCard";
-import { useSettings } from "../hooks/useSettings";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { InfoCard } from "@/shared/components/InfoCard";
+import { useSettings } from "@/features/settings/hooks/useSettings";
 
 export const SettingsPage = () => {
   const { t } = useI18n();

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useI18n } from "../../../app/providers/I18nProvider";
-import { TrendChart } from "../components/TrendChart";
-import { createDefaultMetricsParams } from "../../dashboard/hooks/useMetrics";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { TrendChart } from "@/features/trends/components/TrendChart";
+import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
 import {
   useClusterTrendMetrics,
   useNamespaceTrendMetrics,
-} from "../../metrics/hooks/resourceHooks";
+} from "@/features/metrics/hooks/resourceHooks";
 
 export const TrendsPage = () => {
   const { t } = useI18n();

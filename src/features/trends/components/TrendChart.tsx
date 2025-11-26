@@ -1,9 +1,9 @@
-import type { TrendMetricPoint } from "../../metrics/types";
+import type { TrendMetricPoint } from "@/types/metrics";
 import {
   MetricChart,
   type MetricChartSeries,
-} from "../../../shared/components/MetricChart";
-import type { MetricCostTrendDto } from "../../../shared/api/metric/types";
+} from "@/shared/components/MetricChart";
+import type { MetricCostTrendDto } from "@/types/metrics";
 import { TrendSummary } from "./TrendSummary";
 
 interface TrendChartProps {

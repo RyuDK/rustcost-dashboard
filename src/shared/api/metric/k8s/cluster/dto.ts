@@ -4,5 +4,5 @@ export {
   type MetricRawEfficiencyResponse,
   type MetricCostSummaryResponse,
   type MetricCostTrendResponse,
-} from "../../types";
+} from "@/types/metrics";
 

@@ -1,5 +1,5 @@
 import ReactECharts from "echarts-for-react";
-import { useMetricChartOptions, type ChartSeries } from "../hooks/useMetricChartOptions";
+import { useMetricChartOptions, type ChartSeries } from "@/shared/hooks/useMetricChartOptions";
 import { Card } from "./Card";
 
 export type { ChartSeries };

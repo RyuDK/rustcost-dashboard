@@ -1,2 +1,2 @@
-export type { ResyncResponse } from "../types";
+export type { ResyncResponse } from "@/types/system";
 

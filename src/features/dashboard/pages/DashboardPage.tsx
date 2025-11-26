@@ -1,15 +1,15 @@
 import { useMemo } from "react";
-import type { EfficiencyMetric, SummaryMetric } from "../../metrics/types";
-import { Chart, type ChartSeries } from "../../../shared/components/Chart";
-import { Table, type TableColumn } from "../../../shared/components/Table";
-import { SystemStatus } from "../../system/components/SystemStatus";
-import { formatBytes, formatCpu, formatCurrency, formatPercent } from "../../../shared/utils/format";
-import { DashboardHeader } from "../components/DashboardHeader";
-import { MetricsFilterBar } from "../components/MetricsFilterBar";
-import { MetricsSummaryCards } from "../components/MetricsSummaryCards";
-import { CostEfficiencyCard } from "../components/CostEfficiencyCard";
-import { useDashboardMetrics } from "../hooks/useDashboardMetrics";
-import { useDashboardParams } from "../hooks/useDashboardParams";
+import type { EfficiencyMetric, SummaryMetric } from "@/types/metrics";
+import { Chart, type ChartSeries } from "@/shared/components/Chart";
+import { Table, type TableColumn } from "@/shared/components/Table";
+import { SystemStatus } from "@/features/system/components/SystemStatus";
+import { formatBytes, formatCpu, formatCurrency, formatPercent } from "@/shared/utils/format";
+import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
+import { MetricsFilterBar } from "@/features/dashboard/components/MetricsFilterBar";
+import { MetricsSummaryCards } from "@/features/dashboard/components/MetricsSummaryCards";
+import { CostEfficiencyCard } from "@/features/dashboard/components/CostEfficiencyCard";
+import { useDashboardMetrics } from "@/features/dashboard/hooks/useDashboardMetrics";
+import { useDashboardParams } from "@/features/dashboard/hooks/useDashboardParams";
 
 const POD_COLUMNS: TableColumn<EfficiencyMetric>[] = [
   {

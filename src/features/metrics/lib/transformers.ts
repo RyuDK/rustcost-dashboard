@@ -1,13 +1,11 @@
 import type {
+  EfficiencyMetric,
   MetricGetResponse,
   MetricSeries,
-} from "../../../shared/api/metric";
-import type {
-  EfficiencyMetric,
   MetricsQueryOptions,
   SummaryMetric,
   TrendMetricPoint,
-} from "../types";
+} from "@/types/metrics";
 
 const getLatestPoint = (series: MetricSeries) =>
   series.points[series.points.length - 1];

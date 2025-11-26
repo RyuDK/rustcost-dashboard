@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "trends": "Trends",
+    "efficiency": "Efficiency",
+    "workloads": "Workloads",
+    "resources": "Resources",
+    "allocation": "Allocation",
+    "metrics": "Metrics",
+    "alerts": "Alerts",
+    "system": "System",
+    "settings": "Settings"
+  },
+  "common": {
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "loading": "Loading",
+    "errorTitle": "Unable to load data",
+    "timeRange": "Time range",
+    "date": {
+      "start": "Start date",
+      "end": "End date"
+    },
+    "limit": "Limit",
+    "sort": "Sort"
+  },
+  "dashboard": {
+    "title": "RustCost Overview",
+    "subtitle": "Unified visibility into cost and efficiency signals.",
+    "overview": {
+      "title": "Key Signals"
+    },
+    "metrics": {
+      "nodes": "Node Cost & Usage",
+      "pods": "Pod Efficiency",
+      "trends": "Usage Trends",
+      "efficiency": "Efficiency Breakdown"
+    },
+    "cards": {
+      "nodeCpu": {
+        "title": "Node CPU Usage",
+        "description": "Cluster-wide milli-core consumption"
+      },
+      "nodeMemory": {
+        "title": "Node Memory Usage",
+        "description": "Aggregated pod memory footprint"
+      },
+      "podEfficiency": {
+        "title": "Pod Efficiency",
+        "description": "Average workload efficiency score"
+      },
+      "podCost": {
+        "title": "Pod Cost",
+        "description": "Reported spend for filtered pods"
+      }
+    }
+  },
+  "trends": {
+    "title": "Trends",
+    "subtitle": "Explore historical performance and cost trends.",
+    "chart": {
+      "cluster": "Cluster Utilization Trend",
+      "namespace": "Namespace CPU Trend"
+    }
+  },
+  "efficiency": {
+    "title": "Efficiency",
+    "subtitle": "Compare efficiency across namespaces and workloads.",
+    "table": {
+      "namespace": "Namespace Efficiency",
+      "deployment": "Deployment Efficiency"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Tune preferences and synchronize data sources."
+  },
+  "system": {
+    "status": {
+      "title": "System Status",
+      "refresh": "Refresh status",
+      "healthy": "All systems operational",
+      "degraded": "Service degradation detected",
+      "backup": "Backup",
+      "backingUp": "Backing up...",
+      "resync": "Resync",
+      "resyncing": "Resyncing..."
+    }
+  }
+}

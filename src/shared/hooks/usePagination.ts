@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "../api/constants";
+import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants/api";
 
 export interface PaginationState {
   limit: number;

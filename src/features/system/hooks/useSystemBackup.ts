@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { systemApi } from "../../../shared/api";
-import type { ApiResponse } from "../../../shared/api/base";
-import type { BackupResponse } from "../../../shared/api/system";
+import { systemApi } from "@/shared/api";
+import type { ApiResponse } from "@/types/api";
+import type { BackupResponse } from "@/types/system";
 
 export const useSystemBackup = () => {
   const [data, setData] = useState<ApiResponse<BackupResponse> | undefined>();

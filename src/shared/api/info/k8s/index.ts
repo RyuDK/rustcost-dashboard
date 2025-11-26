@@ -1,4 +1,4 @@
-export * from "./types";
+export * from "@/types/k8s";
 export * from "./container";
 export * from "./deployment";
 export * from "./hpa";

@@ -1,4 +1,4 @@
-import type { IsoDateTimeString } from "../../base";
+import type { IsoDateTimeString } from "@/types/api";
 
 export interface InfoVersion {
   date: string;

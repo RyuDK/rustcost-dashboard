@@ -1,5 +1,5 @@
-import type { IsoDateTimeString } from "../../base";
-import type { RuntimeType } from "../types";
+import type { IsoDateTimeString } from "@/types/api";
+import type { RuntimeType } from "@/types/info";
 
 export interface InfoSetting {
   is_dark_mode: boolean;

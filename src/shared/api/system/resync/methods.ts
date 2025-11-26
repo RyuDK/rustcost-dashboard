@@ -1,5 +1,6 @@
-import { SYSTEM_BASE, type ApiResponse } from "../../base";
-import { request } from "../../http";
+import { SYSTEM_BASE } from "@/shared/api/base";
+import { request } from "@/shared/api/http";
+import type { ApiResponse } from "@/types/api";
 import type { ResyncResponse } from "./dto";
 
 const RESYNC_URL = `${SYSTEM_BASE}/resync`;

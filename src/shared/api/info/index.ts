@@ -1,4 +1,5 @@
-export * from "./types";
+export * from "@/types/info";
+export * from "@/types/k8s";
 export * from "./setting";
 export * from "./unitPrice";
 export * from "./version";
