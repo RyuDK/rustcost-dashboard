@@ -4,7 +4,7 @@ import type { ApiResponse } from "@/types/api";
 import type { LogFileListResponse } from "./dto";
 import type { LogLineResponse } from "./dto";
 
-const LOGS_URL = `${SYSTEM_BASE}/log-files`;
+const LOGS_URL = `${SYSTEM_BASE}/logs`;
 
 export const getSystemLogFileList = () =>
   request<ApiResponse<LogFileListResponse>>({
