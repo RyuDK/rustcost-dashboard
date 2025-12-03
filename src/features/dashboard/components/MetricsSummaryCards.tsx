@@ -1,5 +1,5 @@
 import { Card } from "@/shared/components/Card";
-import { formatCurrency, formatPercent } from "@/shared/utils/format";
+import { formatCurrency } from "@/shared/utils/format";
 import type { DashboardSummary } from "@/features/dashboard/hooks/useDashboardMetrics";
 
 interface MetricsSummaryCardsProps {
@@ -7,34 +7,37 @@ interface MetricsSummaryCardsProps {
   isLoading?: boolean;
 }
 
-const formatCores = (cores?: number) =>
-  `${(cores ?? 0).toFixed(1)} cores`;
+const summaryCards = (summary: DashboardSummary) => {
+  const cost = summary.cost?.summary;
 
-const formatGigabytes = (gigabytes?: number) =>
-  `${(gigabytes ?? 0).toFixed(1)} GB`;
-
-const summaryCards = (summary: DashboardSummary) => [
-  {
-    label: "CPU Usage",
-    value: formatCores(summary.nodes.usage?.avg_cpu_cores),
-    description: "Average CPU cores utilized",
-  },
-  {
-    label: "Memory Usage",
-    value: formatGigabytes(summary.nodes.usage?.avg_memory_gb),
-    description: "Average memory consumption",
-  },
-  {
-    label: "Node Efficiency",
-    value: formatPercent(summary.nodes.efficiency?.overall_efficiency ?? 0),
-    description: "Overall cluster efficiency",
-  },
-  {
-    label: "Node Cost",
-    value: formatCurrency(summary.nodes.totalCost ?? 0, "USD"),
-    description: "Latest total node spend",
-  },
-];
+  return [
+    {
+      label: "Total Cost",
+      value: formatCurrency(cost?.total_cost_usd ?? 0, "USD"),
+      description: "All cluster costs",
+    },
+    {
+      label: "CPU Cost",
+      value: formatCurrency(cost?.cpu_cost_usd ?? 0, "USD"),
+      description: "Compute spend",
+    },
+    {
+      label: "Memory Cost",
+      value: formatCurrency(cost?.memory_cost_usd ?? 0, "USD"),
+      description: "RAM spend",
+    },
+    {
+      label: "Storage + Network",
+      value: formatCurrency(
+        (cost?.ephemeral_storage_cost_usd ?? 0) +
+          (cost?.persistent_storage_cost_usd ?? 0) +
+          (cost?.network_cost_usd ?? 0),
+        "USD"
+      ),
+      description: "Ephemeral, persistent, network",
+    },
+  ];
+};
 
 export const MetricsSummaryCards = ({ summary, isLoading }: MetricsSummaryCardsProps) => (
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">

@@ -7,9 +7,11 @@ import type {
   EfficiencyMetric,
   MetricsQueryOptions,
   SummaryMetric,
-  MetricGetResponse,
   MetricRawEfficiencyResponse,
   MetricRawSummaryResponse,
+  MetricCostSummaryResponse,
+  MetricCostTrendResponse,
+  MetricCostSummary,
 } from "@/types/metrics";
 import { useNodesMetrics, usePodsEfficiency } from "./useMetrics";
 
@@ -26,9 +28,16 @@ interface DashboardPodsSummary {
   cost: number;
 }
 
+interface DashboardCostSummary {
+  summary: MetricCostSummary;
+  start?: string;
+  end?: string;
+}
+
 export interface DashboardSummary {
   nodes: DashboardNodesSummary;
   pods: DashboardPodsSummary;
+  cost?: DashboardCostSummary;
 }
 
 export interface UseDashboardMetricsResult {
@@ -56,21 +65,6 @@ const extractPayload = <T,>(response?: {
   data?: T;
 }) => (response?.is_successful ? response.data : undefined);
 
-const calculateTotalCost = (response?: MetricGetResponse): number => {
-  if (!response?.series?.length) {
-    return 0;
-  }
-
-  return response.series.reduce((total, series) => {
-    if (!series.points.length) {
-      return total;
-    }
-
-    const latest = series.points[series.points.length - 1];
-    return total + (latest?.cost?.total_cost_usd ?? 0);
-  }, 0);
-};
-
 export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMetricsResult => {
   const serializedParams = useMemo(() => serializeParams(params), [params]);
 
@@ -89,9 +83,15 @@ export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMe
     { deps: [serializedParams] }
   );
 
-  const nodesCostQuery = useFetch(
-    buildMetricsQueryKey("nodes", "cost", params),
-    () => metricApi.fetchNodesCost(params),
+  const clusterCostSummaryQuery = useFetch(
+    buildMetricsQueryKey("cluster", "cost-summary", params),
+    () => metricApi.fetchClusterCostSummary(params),
+    { deps: [serializedParams] }
+  );
+
+  const clusterCostTrendQuery = useFetch(
+    buildMetricsQueryKey("cluster", "cost-trend", params),
+    () => metricApi.fetchClusterCostTrend(params),
     { deps: [serializedParams] }
   );
 
@@ -100,8 +100,13 @@ export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMe
   const podsSummary = pods.data?.summary ?? EMPTY_PODS_SUMMARY;
   const nodesUsage = extractPayload<MetricRawSummaryResponse>(nodesUsageQuery.data)?.summary;
   const nodeEfficiency = extractPayload<MetricRawEfficiencyResponse>(nodesEfficiencyQuery.data)?.efficiency;
-  const nodeCostPayload = extractPayload<MetricGetResponse>(nodesCostQuery.data);
-  const nodeTotalCost = useMemo(() => calculateTotalCost(nodeCostPayload), [nodeCostPayload]);
+  const clusterCostSummary = extractPayload<MetricCostSummaryResponse>(clusterCostSummaryQuery.data);
+  const clusterCostTrend = extractPayload<MetricCostTrendResponse>(clusterCostTrendQuery.data);
+  const totalClusterCost = clusterCostSummary?.summary.total_cost_usd ?? 0;
+  const costTrendPoints = useMemo(
+    () => (clusterCostTrend?.points ?? []).map((point) => ({ ...point }) as Record<string, unknown>),
+    [clusterCostTrend]
+  );
 
   const summary = useMemo<DashboardSummary>(() => {
     const podEfficiency = efficiency.length ? average(efficiency.map((item) => item.efficiencyScore)) : 0;
@@ -112,22 +117,40 @@ export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMe
         data: nodesSummary,
         usage: nodesUsage,
         efficiency: nodeEfficiency,
-        totalCost: nodeTotalCost,
+        totalCost: totalClusterCost,
       },
       pods: {
         data: podsSummary,
         efficiency: podEfficiency,
         cost: podCost,
       },
+      cost: clusterCostSummary
+        ? {
+            summary: clusterCostSummary.summary,
+            start: clusterCostSummary.start,
+            end: clusterCostSummary.end,
+          }
+        : undefined,
     };
-  }, [efficiency, nodeEfficiency, nodeTotalCost, nodesSummary, nodesUsage, podsSummary]);
+  }, [
+    clusterCostSummary?.end,
+    clusterCostSummary?.start,
+    clusterCostSummary?.summary,
+    efficiency,
+    nodeEfficiency,
+    nodesSummary,
+    nodesUsage,
+    podsSummary,
+    totalClusterCost,
+  ]);
 
-  const nodesError = nodes.error ?? nodesUsageQuery.error ?? nodesEfficiencyQuery.error ?? nodesCostQuery.error;
+  const nodesError = nodes.error ?? nodesUsageQuery.error ?? nodesEfficiencyQuery.error;
   const podsError = pods.error;
+  const costError = clusterCostSummaryQuery.error ?? clusterCostTrendQuery.error;
 
   return {
     summary,
-    trends: nodes.data?.trends ?? [],
+    trends: costTrendPoints,
     efficiency,
     nodesSummary,
     podsSummary,
@@ -136,16 +159,18 @@ export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMe
       pods.isLoading ||
       nodesUsageQuery.isLoading ||
       nodesEfficiencyQuery.isLoading ||
-      nodesCostQuery.isLoading,
-    error: nodesError ?? podsError,
-    nodesError,
+      clusterCostSummaryQuery.isLoading ||
+      clusterCostTrendQuery.isLoading,
+    error: nodesError ?? podsError ?? costError,
+    nodesError: nodesError ?? costError,
     podsError,
     refetchAll: () => {
       void nodes.refetch();
       void pods.refetch();
       void nodesUsageQuery.refetch();
       void nodesEfficiencyQuery.refetch();
-      void nodesCostQuery.refetch();
+      void clusterCostSummaryQuery.refetch();
+      void clusterCostTrendQuery.refetch();
     },
   };
 };

@@ -12,7 +12,7 @@
     "settings": "Settings"
   },
   "common": {
-    "refresh": "Refresh",
+    "refresh": "search",
     "retry": "Retry",
     "loading": "Loading",
     "errorTitle": "Unable to load data",
