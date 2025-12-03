@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
 import type { InfoSetting, InfoUnitPrice } from "@/shared/api/info";
 import type { ApiResponse } from "@/types/api";
 import type {
@@ -10,6 +12,7 @@ import type {
 import { infoApi, systemApi } from "@/shared/api";
 
 export function SystemPage() {
+  const { t } = useI18n();
   const [status, setStatus] =
     useState<ApiResponse<SystemStatusResponse> | null>(null);
   const [health, setHealth] = useState<ApiResponse<SystemResponse> | null>(
@@ -171,19 +174,12 @@ export function SystemPage() {
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      {/* HEADER */}
-      <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
-          System
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Control Plane
-        </h1>
-        <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Monitor status, health, settings, unit prices, and administrative
-          actions.
-        </p>
-      </header>
+      <DashboardHeader
+        eyebrow={t("common.system")}
+        title="Control Plane"
+        subtitle="Monitor status, health, settings, unit prices, and administrative actions."
+        onRefresh={() => void loadSystemData()}
+      />
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
