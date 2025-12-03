@@ -2,13 +2,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface SystemState {
-  /** ISO string of last backend resync time in UTC */
   last_resync_time_utc: string | null;
 }
 
-const initialState: SystemState = {
-  last_resync_time_utc: null,
-};
+const persisted = localStorage.getItem("systemSlice");
+
+const initialState: SystemState = persisted
+  ? JSON.parse(persisted)
+  : {
+      last_resync_time_utc: null,
+    };
 
 const systemSlice = createSlice({
   name: "system",
@@ -24,5 +27,4 @@ const systemSlice = createSlice({
 });
 
 export const { setLastResyncTimeUtc, clearLastResync } = systemSlice.actions;
-
 export default systemSlice.reducer;

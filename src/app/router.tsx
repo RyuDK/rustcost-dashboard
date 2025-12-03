@@ -14,6 +14,7 @@ import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { LoadingPage } from "@/features/loading/pages/LoadingPage";
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import { isLessThan3Hours } from "@/shared/utils/time";
 
 const router = createBrowserRouter([
   {
@@ -42,11 +43,16 @@ export const AppWithLoading = () => {
     (state: RootState) => state.system.last_resync_time_utc
   );
 
-  // If no resync done → show loading screen
-  if (!lastResync) {
+  const needsResync = !lastResync || !isLessThan3Hours(lastResync);
+
+  // If no resync done or stale — show loading screen
+  if (needsResync) {
+    console.log("hello");
+
+    console.log(lastResync);
     return <LoadingPage />;
   }
 
-  // If resynced → show main app
+  // If resynced — show main app
   return <AppRouter />;
 };
