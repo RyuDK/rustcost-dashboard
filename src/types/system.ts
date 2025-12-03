@@ -8,10 +8,10 @@ export interface SystemComponentStatus {
 }
 
 export interface SystemStatusResponse {
-  status: "healthy" | "degraded" | "maintenance" | "unknown";
-  components: SystemComponentStatus[];
-  version: string;
-  lastUpdated: IsoDateTimeString;
+  last_discovered_at: string | null; // ISO datetime or null
+  last_error_at: string | null; // ISO datetime or null
+  last_error_message: string | null; // backend error or null
+  resync_running: boolean; // true → resync still in progress
 }
 
 export type SystemResponse = Record<string, unknown>;
@@ -28,7 +28,7 @@ export interface BackupResponse extends SystemActionResponse {
 }
 
 export interface ResyncResponse extends SystemActionResponse {
-  resyncId: string;
+  resync: string;
 }
 
 export interface LogFileListResponse {

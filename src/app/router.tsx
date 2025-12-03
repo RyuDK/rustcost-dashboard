@@ -11,6 +11,9 @@ import { MetricsPage } from "@/features/metrics/MetricsPage";
 import { AlertsPage } from "@/features/alerts/AlertsPage";
 import { SystemPage } from "@/features/system/SystemPage";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import { LoadingPage } from "@/features/loading/pages/LoadingPage";
+import type { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 const router = createBrowserRouter([
   {
@@ -32,4 +35,18 @@ const router = createBrowserRouter([
   },
 ]);
 
-export const AppRouter = () => <RouterProvider router={router} />;
+const AppRouter = () => <RouterProvider router={router} />;
+
+export const AppWithLoading = () => {
+  const lastResync = useSelector(
+    (state: RootState) => state.system.last_resync_time_utc
+  );
+
+  // If no resync done → show loading screen
+  if (!lastResync) {
+    return <LoadingPage />;
+  }
+
+  // If resynced → show main app
+  return <AppRouter />;
+};
