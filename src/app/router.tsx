@@ -47,9 +47,6 @@ export const AppWithLoading = () => {
 
   // If no resync done or stale — show loading screen
   if (needsResync) {
-    console.log("hello");
-
-    console.log(lastResync);
     return <LoadingPage />;
   }
 

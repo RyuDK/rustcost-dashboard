@@ -111,7 +111,6 @@ export function SystemPage() {
           infoApi.fetchInfoSettings(),
           infoApi.fetchInfoUnitPrices(),
         ]);
-      console.log(logFileListRes.data?.fileNames);
       setLogFileNames(logFileListRes.data?.fileNames ?? null);
       setStatus(statusRes);
       setHealth(healthRes);
