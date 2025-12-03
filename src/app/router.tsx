@@ -43,7 +43,12 @@ export const AppWithLoading = () => {
     (state: RootState) => state.system.last_resync_time_utc
   );
 
-  const needsResync = !lastResync || !isLessThan3Hours(lastResync);
+  // Read env variable (string)
+  const isDebug = import.meta.env.VITE_IS_DEBUG === "1";
+
+  // Normal resync logic unless debug mode is active
+  const needsResync =
+    !isDebug && (!lastResync || !isLessThan3Hours(lastResync));
 
   // If no resync done or stale — show loading screen
   if (needsResync) {
