@@ -1,13 +1,12 @@
 import { SYSTEM_BASE } from "@/shared/api/base";
 import { request } from "@/shared/api/http";
 import type { ApiResponse } from "@/types/api";
-import type { LogFileListResponse } from "./dto";
 import type { LogLineResponse } from "./dto";
 
 const LOGS_URL = `${SYSTEM_BASE}/logs`;
 
 export const getSystemLogFileList = () =>
-  request<ApiResponse<LogFileListResponse>>({
+  request<ApiResponse<string[]>>({
     method: "GET",
     url: LOGS_URL,
   });

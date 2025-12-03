@@ -1,9 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type {
-  InfoSetting,
-  InfoUnitPrice,
-  MutationResponse,
-} from "@/shared/api/info";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { InfoSetting, InfoUnitPrice } from "@/shared/api/info";
 import type { ApiResponse } from "@/types/api";
 import type {
   SystemStatusResponse,
@@ -12,16 +9,7 @@ import type {
 } from "@/types/system";
 import { infoApi, systemApi } from "@/shared/api";
 
-type SystemTab =
-  | "status"
-  | "health"
-  | "settings"
-  | "unitPrices"
-  | "backup"
-  | "resync";
-
 export function SystemPage() {
-  const [activeTab] = useState<SystemTab>("status");
   const [status, setStatus] =
     useState<ApiResponse<SystemStatusResponse> | null>(null);
   const [health, setHealth] = useState<ApiResponse<SystemResponse> | null>(
@@ -32,10 +20,9 @@ export function SystemPage() {
   );
   const [unitPrices, setUnitPrices] =
     useState<ApiResponse<InfoUnitPrice> | null>(null);
-  const [backupResult, setBackupResult] =
-    useState<ApiResponse<MutationResponse> | null>(null);
-  const [resyncResult, setResyncResult] =
-    useState<ApiResponse<MutationResponse> | null>(null);
+  const [backupResult, setBackupResult] = useState<string | null>(null);
+  const [resyncResult, setResyncResult] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,15 +31,19 @@ export function SystemPage() {
     useState<LogLineResponse | null>(null);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
 
+  const logContainerRef = useRef<HTMLPreElement | null>(null);
+
+  /** -------------------------------------------
+   * LOAD LINES WITH CURSOR
+   * ------------------------------------------ */
   const loadLogLines = useCallback(
     async (date: string, cursor: number = 0, limit: number = 200) => {
       if (isLoadingLogs) return;
-      setIsLoadingLogs(true);
 
+      setIsLoadingLogs(true);
       try {
         const res = await systemApi.getSystemLogLines(date, cursor, limit);
         const data = res.data;
-
         if (!data) {
           setLogLineResponse(null);
           return;
@@ -67,7 +58,7 @@ export function SystemPage() {
             };
           }
           return {
-            date: data.date,
+            date,
             lines: data.lines,
             next_cursor: data.next_cursor ?? null,
           };
@@ -82,22 +73,33 @@ export function SystemPage() {
     [isLoadingLogs]
   );
 
-  const onScrollLogs = useCallback(
-    (el: HTMLPreElement | null) => {
-      if (!el || isLoadingLogs) return;
-      if (!logLineResponse?.next_cursor) return;
+  /** -------------------------------------------
+   * INFINITE SCROLL HANDLER
+   * ------------------------------------------ */
+  const handleScroll = useCallback(() => {
+    const el = logContainerRef.current;
+    if (!el || isLoadingLogs || !logLineResponse?.next_cursor) return;
 
-      const threshold = 150;
-      const reachedBottom =
-        el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    const reachedBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 150;
 
-      if (reachedBottom) {
-        loadLogLines(logLineResponse.date, logLineResponse.next_cursor);
-      }
-    },
-    [logLineResponse, isLoadingLogs, loadLogLines]
-  );
+    if (reachedBottom) {
+      loadLogLines(logLineResponse.date, logLineResponse.next_cursor);
+    }
+  }, [logLineResponse, isLoadingLogs, loadLogLines]);
 
+  /** Attach scroll listener properly */
+  useEffect(() => {
+    const el = logContainerRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  /** -------------------------------------------
+   * LOAD SYSTEM DATA
+   * ------------------------------------------ */
   const loadSystemData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -111,7 +113,10 @@ export function SystemPage() {
           infoApi.fetchInfoSettings(),
           infoApi.fetchInfoUnitPrices(),
         ]);
-      setLogFileNames(logFileListRes.data?.fileNames ?? null);
+
+      console.log(logFileListRes);
+
+      setLogFileNames(logFileListRes.data ?? null);
       setStatus(statusRes);
       setHealth(healthRes);
       setSettings(settingsRes);
@@ -129,59 +134,44 @@ export function SystemPage() {
     void loadSystemData();
   }, [loadSystemData]);
 
-  const triggerBackup = useCallback(async () => {
-    const res = await systemApi.triggerSystemBackup();
-    setBackupResult(res);
-  }, []);
+  /** -------------------------------------------
+   * LOG FILE CLICK → RESET + LOAD
+   * ------------------------------------------ */
+  const selectLogFile = (fileName: string) => {
+    setLogLineResponse(null); // clear old
+    if (logContainerRef.current) logContainerRef.current.scrollTop = 0;
+    void loadLogLines(fileName, 0);
+  };
 
-  const triggerResync = useCallback(async () => {
-    const res = await systemApi.triggerSystemResync();
-    setResyncResult(res);
-  }, []);
+  /** -------------------------------------------
+   * BACKUP + RESYNC
+   * ------------------------------------------ */
+  const triggerBackup = async () => {
+    await systemApi.triggerSystemBackup();
+    setBackupResult("Backup triggered");
+  };
 
-  const systemActions = useMemo(
-    () => ({
-      triggerBackup,
-      triggerResync,
-    }),
-    [triggerBackup, triggerResync]
-  );
+  const triggerResync = async () => {
+    await systemApi.triggerSystemResync();
+    setResyncResult("Resync triggered");
+  };
 
-  useEffect(() => {
-    // Placeholder effect tying actions to future UI handlers
-  }, [systemActions]);
+  /** -------------------------------------------
+   * SAFE DERIVED VALUES (avoid TS property errors)
+   * ------------------------------------------ */
+  const overallStatus =
+    (status?.data as any)?.status !== undefined
+      ? (status?.data as any).status
+      : undefined;
 
-  const systemState = useMemo(
-    () => ({
-      activeTab,
-      status,
-      health,
-      settings,
-      unitPrices,
-      backupResult,
-      resyncResult,
-      isLoading,
-      error,
-    }),
-    [
-      activeTab,
-      backupResult,
-      error,
-      health,
-      isLoading,
-      resyncResult,
-      settings,
-      status,
-      unitPrices,
-    ]
-  );
-
-  useEffect(() => {
-    // Placeholder effect for system state consumers
-  }, [systemState]);
+  const components =
+    ((status?.data as any)?.components as
+      | { component: string; status: string }[]
+      | undefined) ?? [];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+      {/* HEADER */}
       <header className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
           System
@@ -191,7 +181,7 @@ export function SystemPage() {
         </h1>
         <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
           Monitor status, health, settings, unit prices, and administrative
-          actions such as backup and resync.
+          actions.
         </p>
       </header>
 
@@ -207,7 +197,7 @@ export function SystemPage() {
             Status
           </p>
           <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {status?.data?.status ?? "unknown"}
+            {overallStatus ?? "unknown"}
           </p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -223,7 +213,7 @@ export function SystemPage() {
             Settings
           </p>
           <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {settings?.data?.version ?? "—"}
+            {(settings?.data as any)?.version ?? "—"}
           </p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -244,25 +234,27 @@ export function SystemPage() {
             System Status
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            {status?.data?.components?.length ?? 0} component(s) reported.
+            {components.length} component(s) reported.
           </p>
           <div className="mt-4 space-y-3">
-            {status?.data?.components?.map((component) => (
-              <div
-                key={component.component}
-                className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {component.component}
-                  </p>
-                  <span className="text-xs uppercase tracking-wide text-slate-400">
-                    {component.status}
-                  </span>
+            {components.map(
+              (component: { component: string; status: string }) => (
+                <div
+                  key={component.component}
+                  className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      {component.component}
+                    </p>
+                    <span className="text-xs uppercase tracking-wide text-slate-400">
+                      {component.status}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {!status?.data?.components?.length && (
+              )
+            )}
+            {!components.length && (
               <p className="text-sm text-slate-500">
                 No detailed status available.
               </p>
@@ -314,14 +306,16 @@ export function SystemPage() {
           </p>
           <button
             type="button"
-            onClick={() => systemActions.triggerBackup()}
+            onClick={() => {
+              void triggerBackup();
+            }}
             className="mt-4 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-300"
           >
             Start Backup
           </button>
           {backupResult && (
             <p className="mt-2 text-xs text-slate-500">
-              Last response: {backupResult.data?.message}
+              Last response: {backupResult}
             </p>
           )}
         </div>
@@ -335,14 +329,16 @@ export function SystemPage() {
           </p>
           <button
             type="button"
-            onClick={() => systemActions.triggerResync()}
+            onClick={() => {
+              void triggerResync();
+            }}
             className="mt-4 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-red-500 hover:text-red-600 dark:border-slate-700 dark:text-slate-300"
           >
             Start Resync
           </button>
           {resyncResult && (
             <p className="mt-2 text-xs text-slate-500">
-              Last response: {resyncResult.data?.message}
+              Last response: {resyncResult}
             </p>
           )}
         </div>
@@ -370,14 +366,14 @@ export function SystemPage() {
                   <li key={fileName}>
                     <button
                       className={`
-                  w-full text-left rounded-xl px-3 py-2 text-sm font-medium transition
-                  ${
-                    isActive
-                      ? "bg-blue-600 text-white dark:bg-blue-500"
-                      : "text-blue-700 underline dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  }
-                `}
-                      onClick={() => loadLogLines(fileName, 0)}
+                        w-full text-left rounded-xl px-3 py-2 text-sm font-medium transition
+                        ${
+                          isActive
+                            ? "bg-blue-600 text-white dark:bg-blue-500"
+                            : "text-blue-700 underline dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                        }
+                      `}
+                      onClick={() => selectLogFile(fileName)}
                     >
                       {fileName}
                     </button>
@@ -399,40 +395,17 @@ export function SystemPage() {
             </p>
 
             <pre
+              ref={logContainerRef}
               className="
-    mt-3 h-96 overflow-x-auto overflow-y-auto whitespace-pre-wrap text-xs p-4 rounded-xl
-    bg-slate-950 text-slate-200 font-mono leading-relaxed
-    border border-slate-800 shadow-inner
-  "
+                mt-3 h-96 overflow-x-auto overflow-y-auto whitespace-pre-wrap text-xs p-4 rounded-xl
+                bg-slate-950 text-slate-200 font-mono leading-relaxed
+                border border-slate-800 shadow-inner
+              "
               style={{
-                scrollbarWidth: "thin", // Firefox
-                scrollbarColor: "#475569 #1e293b", // Firefox color
-              }}
-              ref={(el) => {
-                if (el) el.onscroll = () => onScrollLogs(el);
+                scrollbarWidth: "thin",
+                scrollbarColor: "#475569 #1e293b",
               }}
             >
-              <style>
-                {`
-      /* Chrome, Edge, Safari scrollbar styling */
-      pre::-webkit-scrollbar {
-        height: 7px;
-        width: 7px;
-      }
-      pre::-webkit-scrollbar-track {
-        background: #1e293b; /* dark slate */
-      }
-      pre::-webkit-scrollbar-thumb {
-        background-color: #475569;
-        border-radius: 9999px;
-        border: 2px solid #1e293b;
-      }
-      pre::-webkit-scrollbar-thumb:hover {
-        background-color: #64748b;
-      }
-    `}
-              </style>
-
               {logLineResponse.lines.join("\n")}
               {isLoadingLogs && (
                 <div className="mt-2 text-slate-400 animate-pulse">

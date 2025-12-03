@@ -31,10 +31,6 @@ export interface ResyncResponse extends SystemActionResponse {
   resync: string;
 }
 
-export interface LogFileListResponse {
-  fileNames: string[];
-}
-
 export interface LogFileInfo {
   date: string; // yyyyMMdd
 }
