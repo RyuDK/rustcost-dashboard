@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import { Card } from "./Card";
 import { LoadingSpinner } from "./LoadingSpinner";
 
@@ -36,6 +36,33 @@ interface SortState {
   direction: SortDirection;
 }
 
+const BASE_TABLE_STYLES = {
+  wrapper: "overflow-x-auto",
+  table: "min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-800",
+  thead: "bg-gray-50 dark:bg-gray-950/30",
+  headerRow: "",
+  headerCell:
+    "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400",
+  headerLabel: "inline-flex items-center gap-1",
+  sortIcon: "text-[10px] text-gray-400",
+  tbody: "divide-y divide-gray-100 dark:divide-gray-800",
+  row: "odd:bg-white even:bg-gray-50/60 hover:bg-amber-50/60 dark:odd:bg-gray-900 dark:even:bg-gray-900/70 dark:hover:bg-amber-500/10",
+  cell: "px-4 py-3 text-sm text-gray-700 dark:text-gray-200",
+  emptyRow: "",
+  emptyCell: "px-4 py-10 text-center text-gray-500 dark:text-gray-400",
+  loadingWrapper: "py-10",
+  errorWrapper: "flex h-40 items-center justify-center text-sm text-red-500",
+};
+
+const ALIGNMENT_CLASSNAME: Record<Alignment, string> = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+};
+
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
+
 const getEfficiencyTone = (value?: number) => {
   if (!Number.isFinite(value ?? NaN)) {
     return "";
@@ -51,7 +78,8 @@ const getEfficiencyTone = (value?: number) => {
 
   return "text-emerald-500 dark:text-emerald-400";
 };
-export const Table = <T extends Record<string, any>>({
+
+export const Table = <T extends Record<string, unknown>>({
   title,
   subtitle,
   actions,
@@ -119,37 +147,56 @@ export const Table = <T extends Record<string, any>>({
       className={className}
     >
       {isLoading ? (
-        <LoadingSpinner label="Loading table" className="py-10" />
+        <LoadingSpinner
+          label="Loading table"
+          className={BASE_TABLE_STYLES.loadingWrapper}
+        />
       ) : error ? (
-        <div className="flex h-40 items-center justify-center text-sm text-red-500">
-          {error}
-        </div>
+        <div className={BASE_TABLE_STYLES.errorWrapper}>{error}</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-800">
-            <thead className="bg-gray-50 dark:bg-gray-950/30">
-              <tr>
+        <div className={BASE_TABLE_STYLES.wrapper}>
+          <table className={BASE_TABLE_STYLES.table}>
+            <thead className={BASE_TABLE_STYLES.thead}>
+              <tr className={BASE_TABLE_STYLES.headerRow}>
                 {columns.map((column) => {
                   const isSorted = sortState?.key === column.key;
+                  const alignClass =
+                    ALIGNMENT_CLASSNAME[column.align ?? "left"];
+
                   return (
                     <th
                       key={column.key}
                       scope="col"
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 ${
-                        column.align === "right"
-                          ? "text-right"
-                          : column.align === "center"
-                          ? "text-center"
-                          : "text-left"
-                      } ${
-                        column.sortAccessor ? "cursor-pointer select-none" : ""
-                      } ${column.className ?? ""}`}
+                      tabIndex={column.sortAccessor ? 0 : undefined}
+                      aria-sort={
+                        column.sortAccessor
+                          ? isSorted
+                            ? sortState?.direction === "asc"
+                              ? "ascending"
+                              : "descending"
+                            : "none"
+                          : undefined
+                      }
+                      className={twMerge(
+                        BASE_TABLE_STYLES.headerCell,
+                        alignClass,
+                        column.sortAccessor && "cursor-pointer select-none",
+                        column.sortAccessor && FOCUS_RING,
+                        column.className
+                      )}
                       onClick={() => toggleSort(column)}
+                      onKeyDown={(event) => {
+                        if (!column.sortAccessor) return;
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          toggleSort(column);
+                        }
+                      }}
                     >
-                      <span className="inline-flex items-center gap-1">
+                      <span className={BASE_TABLE_STYLES.headerLabel}>
                         {column.label}
                         {column.sortAccessor && (
-                          <span className="text-[10px] text-gray-400">
+                          <span className={BASE_TABLE_STYLES.sortIcon}>
                             {isSorted
                               ? sortState?.direction === "asc"
                                 ? "\u2191"
@@ -163,11 +210,11 @@ export const Table = <T extends Record<string, any>>({
                 })}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className={BASE_TABLE_STYLES.tbody}>
               {sortedData.length === 0 ? (
-                <tr>
+                <tr className={BASE_TABLE_STYLES.emptyRow}>
                   <td
-                    className="px-4 py-10 text-center text-gray-500 dark:text-gray-400"
+                    className={BASE_TABLE_STYLES.emptyCell}
                     colSpan={columns.length}
                   >
                     {emptyMessage}
@@ -177,28 +224,29 @@ export const Table = <T extends Record<string, any>>({
                 sortedData.map((row, index) => (
                   <tr
                     key={String(rowKey ? rowKey(row, index) : index)}
-                    className="odd:bg-white even:bg-gray-50/60 hover:bg-amber-50/60 dark:odd:bg-gray-900 dark:even:bg-gray-900/70 dark:hover:bg-amber-500/10"
+                    className={BASE_TABLE_STYLES.row}
                   >
                     {columns.map((column) => {
                       const alignment =
-                        column.align === "right"
-                          ? "text-right"
-                          : column.align === "center"
-                          ? "text-center"
-                          : "text-left";
+                        ALIGNMENT_CLASSNAME[column.align ?? "left"];
                       const efficiencyClass = column.efficiencyAccessor
                         ? getEfficiencyTone(column.efficiencyAccessor(row))
                         : "";
+                      const cellContent = column.render
+                        ? column.render(row)
+                        : (row[column.key as keyof T] as ReactNode);
+
                       return (
                         <td
                           key={column.key}
-                          className={`px-4 py-3 text-sm text-gray-700 dark:text-gray-200 ${alignment} ${
-                            column.className ?? ""
-                          } ${efficiencyClass}`}
+                          className={twMerge(
+                            BASE_TABLE_STYLES.cell,
+                            alignment,
+                            column.className,
+                            efficiencyClass
+                          )}
                         >
-                          {column.render
-                            ? column.render(row)
-                            : (row[column.key] as ReactNode)}
+                          {cellContent}
                         </td>
                       );
                     })}

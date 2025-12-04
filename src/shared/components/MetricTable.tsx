@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface Column<T> {
@@ -15,53 +16,86 @@ interface MetricTableProps<T> {
   isLoading?: boolean;
   error?: string;
   emptyMessage?: string;
+  className?: string;
 }
+
+const BASE_METRIC_TABLE_STYLES = {
+  container:
+    "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900",
+  header: "flex items-center justify-between px-4 py-3",
+  title: "text-base font-semibold text-gray-800 dark:text-gray-100",
+  tableWrapper: "overflow-x-auto",
+  loading: "py-12",
+  error: "px-4 py-12 text-center text-sm text-red-500",
+  table: "min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-800",
+  thead: "bg-gray-50 dark:bg-gray-950",
+  headerCell:
+    "px-4 py-2 font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400",
+  tbody: "divide-y divide-gray-100 dark:divide-gray-800",
+  row: "hover:bg-amber-50/40 dark:hover:bg-amber-500/10",
+  cell: "px-4 py-3 text-gray-700 dark:text-gray-200",
+  emptyCell: "px-4 py-12 text-center text-gray-500 dark:text-gray-400",
+};
+
+const ALIGNMENT_CLASSNAME: Record<
+  NonNullable<Column<unknown>["align"]>,
+  string
+> = {
+  left: "text-left",
+  right: "text-right",
+};
 
 export const MetricTable = <T extends { id: string | number }>({
   title,
-  data,
+  data = [],
   columns,
-  isLoading,
+  isLoading = false,
   error,
   emptyMessage = "No data available",
+  className = "",
 }: MetricTableProps<T>) => (
-  <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-    <div className="flex items-center justify-between px-4 py-3">
-      <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">
-        {title}
-      </h3>
+  <div className={twMerge(BASE_METRIC_TABLE_STYLES.container, className)}>
+    <div className={BASE_METRIC_TABLE_STYLES.header}>
+      <h3 className={BASE_METRIC_TABLE_STYLES.title}>{title}</h3>
     </div>
-    <div className="overflow-x-auto">
-      {isLoading && <LoadingSpinner label="Loading table" className="py-12" />}
-      {error && (
-        <div className="px-4 py-12 text-center text-sm text-red-500">{error}</div>
+
+    <div className={BASE_METRIC_TABLE_STYLES.tableWrapper}>
+      {isLoading && (
+        <LoadingSpinner
+          label="Loading table"
+          className={BASE_METRIC_TABLE_STYLES.loading}
+        />
       )}
+      {error && <div className={BASE_METRIC_TABLE_STYLES.error}>{error}</div>}
+
       {!isLoading && !error && (
-        <table className="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-800">
-          <thead className="bg-gray-50 dark:bg-gray-950">
+        <table className={BASE_METRIC_TABLE_STYLES.table}>
+          <thead className={BASE_METRIC_TABLE_STYLES.thead}>
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-4 py-2 font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 ${
-                    column.align === "right" ? "text-right" : "text-left"
-                  }`}
+                  className={twMerge(
+                    BASE_METRIC_TABLE_STYLES.headerCell,
+                    ALIGNMENT_CLASSNAME[column.align ?? "left"]
+                  )}
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {data && data.length > 0 ? (
+          <tbody className={BASE_METRIC_TABLE_STYLES.tbody}>
+            {data.length > 0 ? (
               data.map((row) => (
-                <tr key={row.id} className="hover:bg-amber-50/40 dark:hover:bg-amber-500/10">
+                <tr key={row.id} className={BASE_METRIC_TABLE_STYLES.row}>
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={`px-4 py-3 text-gray-700 dark:text-gray-200 ${
-                        column.align === "right" ? "text-right" : "text-left"
-                      }`}
+                      className={twMerge(
+                        BASE_METRIC_TABLE_STYLES.cell,
+                        ALIGNMENT_CLASSNAME[column.align ?? "left"]
+                      )}
                     >
                       {column.render(row)}
                     </td>
@@ -71,7 +105,7 @@ export const MetricTable = <T extends { id: string | number }>({
             ) : (
               <tr>
                 <td
-                  className="px-4 py-12 text-center text-gray-500 dark:text-gray-400"
+                  className={BASE_METRIC_TABLE_STYLES.emptyCell}
                   colSpan={columns.length}
                 >
                   {emptyMessage}
@@ -84,4 +118,3 @@ export const MetricTable = <T extends { id: string | number }>({
     </div>
   </div>
 );
-

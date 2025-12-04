@@ -1,20 +1,16 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { DefaultFallback } from "./ErrorBoundaryFallback";
 
 interface ErrorBoundaryProps {
   fallback?: ReactNode;
   children: ReactNode;
+  className?: string;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
 }
-
-const defaultFallback = (
-  <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/30 dark:text-red-200">
-    Something went wrong. Please try again.
-  </div>
-);
 
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
@@ -34,10 +30,15 @@ export class ErrorBoundary extends Component<
   }
 
   render(): ReactNode {
-    if (this.state.hasError) {
-      return this.props.fallback ?? defaultFallback;
+    const { fallback, children, className } = this.props;
+    const content = this.state.hasError
+      ? fallback ?? <DefaultFallback />
+      : children;
+
+    if (!className) {
+      return content;
     }
 
-    return this.props.children;
+    return <div className={className}>{content}</div>;
   }
 }

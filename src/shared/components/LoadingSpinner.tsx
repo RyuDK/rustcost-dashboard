@@ -8,18 +8,24 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
+const BASE_LOADING_SPINNER_STYLES = {
+  container:
+    "flex flex-col items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-300",
+  icon: "animate-spin",
+  hiddenLabel: "sr-only",
+};
+
 const LoadingSpinnerComponent = ({
-  label = "Loading…",
+  label = "Loading",
   size = 28,
   color = "text-amber-500",
   className = "",
 }: LoadingSpinnerProps) => {
   const mergedContainerClasses = twMerge(
-    "flex flex-col items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-300",
+    BASE_LOADING_SPINNER_STYLES.container,
     className
   );
-
-  const mergedSvgClasses = twMerge("animate-spin", color);
+  const mergedSvgClasses = twMerge(BASE_LOADING_SPINNER_STYLES.icon, color);
 
   return (
     <div role="status" aria-live="polite" className={mergedContainerClasses}>
@@ -42,7 +48,11 @@ const LoadingSpinnerComponent = ({
         />
       </svg>
 
-      <span className={!label ? "sr-only" : undefined}>{label}</span>
+      <span
+        className={label ? undefined : BASE_LOADING_SPINNER_STYLES.hiddenLabel}
+      >
+        {label}
+      </span>
     </div>
   );
 };
