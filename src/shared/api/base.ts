@@ -1,6 +1,7 @@
 import { API_BASE_PATH } from "@/constants/api";
 import { request } from "./http";
 import type {
+  ApiResponse,
   K8sListQueryParams,
   MetricRangeQueryParams,
   QueryDict,
@@ -26,10 +27,7 @@ export const buildK8sListQuery = (
   };
 };
 
-export const metricGet = <T>(
-  url: string,
-  params?: MetricRangeQueryParams
-) =>
+export const metricGet = <T>(url: string, params?: MetricRangeQueryParams) =>
   request<ApiResponse<T>>({
     method: "GET",
     url,

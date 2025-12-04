@@ -2,6 +2,7 @@
 import { ThemeToggle } from "@/shared/components/ThemeToggle";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import LangSelect from "@/app/layouts/components/LangSelect";
+import { NotificationBell } from "@/shared/components/NotificationBell";
 
 type HeaderProps = {
   onToggleSidebar: () => void;
@@ -40,7 +41,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
 
       <div className="flex items-center gap-3">
         <LangSelect value={language} onChange={setLanguage} />
-
+        <NotificationBell />
         <ThemeToggle />
       </div>
     </header>
