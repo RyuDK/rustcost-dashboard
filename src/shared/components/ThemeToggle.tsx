@@ -8,7 +8,7 @@ interface ThemeToggleProps {
 
 const BASE_THEME_TOGGLE_STYLES = {
   button:
-    "p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors",
+    "p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-[var(--surface-dark)]/70 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors",
   icon: "h-6 w-6",
 };
 

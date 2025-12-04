@@ -43,7 +43,7 @@ export const SystemStatus = () => {
   }, [resync, status]);
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-[var(--surface-dark)]/40">
       <header className="flex items-center justify-between pb-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -73,7 +73,9 @@ export const SystemStatus = () => {
             disabled={backup.isLoading}
             className="rounded-md border border-sky-500 px-3 py-1.5 text-sm font-medium text-sky-600 transition hover:bg-sky-500/10 disabled:opacity-60 dark:text-sky-300"
           >
-            {backup.isLoading ? t("system.status.backingUp") : t("system.status.backup")}
+            {backup.isLoading
+              ? t("system.status.backingUp")
+              : t("system.status.backup")}
           </button>
           <button
             type="button"
@@ -81,21 +83,29 @@ export const SystemStatus = () => {
             disabled={resync.isLoading}
             className="rounded-md border border-emerald-500 px-3 py-1.5 text-sm font-medium text-emerald-600 transition hover:bg-emerald-500/10 disabled:opacity-60 dark:text-emerald-300"
           >
-            {resync.isLoading ? t("system.status.resyncing") : t("system.status.resync")}
+            {resync.isLoading
+              ? t("system.status.resyncing")
+              : t("system.status.resync")}
           </button>
         </div>
       </header>
-      {status.isLoading && <LoadingSpinner label="Checking status" className="py-8" />}
+      {status.isLoading && (
+        <LoadingSpinner label="Checking status" className="py-8" />
+      )}
       {status.error && (
         <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-600 dark:bg-red-900/20 dark:text-red-200">
-          {status.error instanceof Error ? status.error.message : String(status.error)}
+          {status.error instanceof Error
+            ? status.error.message
+            : String(status.error)}
         </div>
       )}
-      {!status.isLoading && !status.error && (!status.data?.is_successful || !status.data?.data) && (
-        <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-600 dark:bg-red-900/20 dark:text-red-200">
-          {status.data?.error_msg ?? "Failed to load status"}
-        </div>
-      )}
+      {!status.isLoading &&
+        !status.error &&
+        (!status.data?.is_successful || !status.data?.data) && (
+          <div className="rounded-md border border-red-400 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-600 dark:bg-red-900/20 dark:text-red-200">
+            {status.data?.error_msg ?? "Failed to load status"}
+          </div>
+        )}
       {status.data?.is_successful &&
         status.data?.data &&
         Array.isArray(status.data.data.components) && (
@@ -110,7 +120,9 @@ export const SystemStatus = () => {
                     {component.component}
                   </span>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeColor(component.status)}`}
+                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeColor(
+                      component.status
+                    )}`}
                   >
                     {component.status.toUpperCase()}
                   </span>
@@ -127,4 +139,3 @@ export const SystemStatus = () => {
     </section>
   );
 };
-

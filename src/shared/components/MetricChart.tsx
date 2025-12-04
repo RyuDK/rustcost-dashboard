@@ -21,7 +21,7 @@ interface MetricChartProps {
 
 const BASE_METRIC_CHART_STYLES = {
   container:
-    "rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900",
+    "rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/40",
   header: "flex items-center justify-between pb-4",
   title: "text-base font-semibold text-gray-800 dark:text-gray-100",
   body: "h-64",

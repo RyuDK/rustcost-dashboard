@@ -1,20 +1,35 @@
-import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { LANGUAGE_OPTIONS } from "@/constants/language";
-import { I18nContext } from "./I18nContext";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  LANGUAGE_OPTIONS,
+  normalizeLanguageCode,
+  replaceLanguageInPath,
+} from "@/constants/language";
+import type { LanguageCode } from "@/types/i18n";
 import type { UseI18nResult } from "./I18nContext";
 
 export const useI18n = (): UseI18nResult => {
-  const ctx = useContext(I18nContext);
-  if (!ctx) {
-    throw new Error("useI18n must be used within I18nProvider");
-  }
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const { t } = useTranslation();
+  const language = normalizeLanguageCode(
+    i18n.language ?? i18n.resolvedLanguage
+  );
+
+  const setLanguage = (next: LanguageCode) => {
+    const normalized = normalizeLanguageCode(next);
+    const nextPath = replaceLanguageInPath(location.pathname, normalized);
+    const fullPath = `${nextPath}${location.search ?? ""}${
+      location.hash ?? ""
+    }`;
+    navigate(fullPath, { replace: true });
+  };
+
   return {
     t,
-    language: ctx.language,
-    setLanguage: ctx.setLanguage,
+    language,
+    setLanguage,
     languageOptions: LANGUAGE_OPTIONS,
   };
 };

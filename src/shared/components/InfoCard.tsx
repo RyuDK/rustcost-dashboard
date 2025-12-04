@@ -19,7 +19,7 @@ interface InfoCardProps {
 
 const BASE_INFO_CARD_STYLES = {
   container:
-    "flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900",
+    "flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/40",
   title: "text-base font-semibold text-gray-800 dark:text-gray-100",
   description: "text-sm text-gray-500 dark:text-gray-400",
   loading: "py-8",
@@ -29,7 +29,7 @@ const BASE_INFO_CARD_STYLES = {
   row: "space-y-1",
   label: "text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400",
   value: "text-sm font-medium text-gray-800 dark:text-gray-100",
-  footer: "border-t border-gray-100 pt-3 dark:border-gray-800",
+  footer: "border-t border-[var(--border)] pt-3",
 };
 
 export const InfoCard = ({

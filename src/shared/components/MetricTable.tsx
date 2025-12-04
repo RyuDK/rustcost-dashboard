@@ -21,7 +21,7 @@ interface MetricTableProps<T> {
 
 const BASE_METRIC_TABLE_STYLES = {
   container:
-    "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900",
+    "rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/40",
   header: "flex items-center justify-between px-4 py-3",
   title: "text-base font-semibold text-gray-800 dark:text-gray-100",
   tableWrapper: "overflow-x-auto",

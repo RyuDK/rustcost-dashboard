@@ -1,7 +1,12 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import i18n from "@/i18n/i18n";
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import { useTheme } from "@/app/providers/ThemeProvider";
-import { useState } from "react";
+import {
+  buildLanguagePrefix,
+  normalizeLanguageCode,
+} from "@/constants/language";
+import type { LanguageCode } from "@/types/i18n";
 import { Header } from "./Header";
 
 import {
@@ -47,9 +52,24 @@ const navItems = [
 ];
 
 export const RootLayout = () => {
+  type LanguageParams = { ["lng"]?: LanguageCode };
+  const params = useParams<LanguageParams>();
+  const activeLanguage = normalizeLanguageCode(params["lng"]);
   const { t } = useI18n();
-  const { theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const prefix = useMemo(
+    () => buildLanguagePrefix(activeLanguage),
+    [activeLanguage]
+  );
+
+  useEffect(() => {
+    if (i18n.language !== activeLanguage) {
+      void i18n.changeLanguage(activeLanguage);
+    }
+  }, [activeLanguage]);
+
+  const buildLinkPath = (to: string) =>
+    to === "/" ? `${prefix}/` : `${prefix}${to}`;
 
   return (
     <div
@@ -74,7 +94,7 @@ export const RootLayout = () => {
             bg-[var(--bg-muted)]/50 backdrop-blur
 
             dark:border-[var(--border)]
-            dark:bg-[var(--bg-muted)]/40
+            dark:bg-[var(--surface-dark)]/40
             flex flex-col h-full
           `}
         >
@@ -87,7 +107,7 @@ export const RootLayout = () => {
               {navItems.map(({ to, translationKey, icon: Icon }) => (
                 <li key={to}>
                   <NavLink
-                    to={to}
+                    to={buildLinkPath(to)}
                     end={to === "/"}
                     className={({ isActive }) =>
                       `
@@ -123,7 +143,7 @@ export const RootLayout = () => {
           </nav>
 
           <div className="p-3 text-center text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
-            {sidebarOpen ? `Theme: ${theme}` : null}
+            {__APP_VERSION__}
           </div>
         </aside>
 
