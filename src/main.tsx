@@ -6,7 +6,6 @@ import { AppWithLoading } from "./app/router";
 import { AppProviders } from "./app/providers";
 import { store } from "./store/store";
 
-// persist redux → localStorage
 store.subscribe(() => {
   const state = store.getState();
   localStorage.setItem("globalFilters", JSON.stringify(state.filters));

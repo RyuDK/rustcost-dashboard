@@ -15,9 +15,7 @@ export const DashboardHeader = ({
   eyebrow,
   title,
   subtitle,
-  onRefresh,
   onExport,
-  refreshLabel,
   exportLabel,
   actions,
 }: DashboardHeaderProps) => {
@@ -26,7 +24,6 @@ export const DashboardHeader = ({
   const displayEyebrow = eyebrow ?? "RustCost";
   const displayTitle = title ?? t("dashboard.title");
   const displaySubtitle = subtitle ?? t("dashboard.subtitle");
-  const displayRefreshLabel = refreshLabel ?? t("common.refresh");
   const displayExportLabel = exportLabel ?? "Export CSV";
   const displayExportPdfLabel = "Export PDF";
 
@@ -55,6 +52,7 @@ export const DashboardHeader = ({
             type="button"
             onClick={onExport}
             className="
+            hidden
               rounded-lg px-4 py-2 text-sm font-medium
               border border-var-border bg-var-surface-raised text-var-text
               hover:border-var-border-strong transition
@@ -75,20 +73,6 @@ export const DashboardHeader = ({
             "
           >
             {displayExportPdfLabel}
-          </button>
-        )}
-
-        {onRefresh && (
-          <button
-            type="button"
-            onClick={onRefresh}
-            className="
-              rounded-lg px-4 py-2 text-sm font-semibold
-              bg-var-primary hover:bg-var-primary-hover
-              text-var-accent-contrast transition
-            "
-          >
-            {displayRefreshLabel}
           </button>
         )}
       </div>

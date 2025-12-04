@@ -49,17 +49,30 @@ export const DashboardPage = () => {
     const cost = summary.cost?.summary;
     if (!cost) return [];
     return [
-      { label: "Total Cost", value: formatCurrency(cost.total_cost_usd ?? 0, "USD") },
-      { label: "CPU Cost", value: formatCurrency(cost.cpu_cost_usd ?? 0, "USD") },
-      { label: "Memory Cost", value: formatCurrency(cost.memory_cost_usd ?? 0, "USD") },
+      {
+        label: "Total Cost",
+        value: formatCurrency(cost.total_cost_usd ?? 0, "USD"),
+      },
+      {
+        label: "CPU Cost",
+        value: formatCurrency(cost.cpu_cost_usd ?? 0, "USD"),
+      },
+      {
+        label: "Memory Cost",
+        value: formatCurrency(cost.memory_cost_usd ?? 0, "USD"),
+      },
       {
         label: "Storage Cost",
         value: formatCurrency(
-          (cost.ephemeral_storage_cost_usd ?? 0) + (cost.persistent_storage_cost_usd ?? 0),
+          (cost.ephemeral_storage_cost_usd ?? 0) +
+            (cost.persistent_storage_cost_usd ?? 0),
           "USD"
         ),
       },
-      { label: "Network Cost", value: formatCurrency(cost.network_cost_usd ?? 0, "USD") },
+      {
+        label: "Network Cost",
+        value: formatCurrency(cost.network_cost_usd ?? 0, "USD"),
+      },
     ];
   }, [summary.cost]);
 
@@ -78,7 +91,6 @@ export const DashboardPage = () => {
         eyebrow="RustCost"
         title={t("dashboard.title")}
         subtitle={t("dashboard.subtitle")}
-        onRefresh={refetchAll}
         onExport={() => setShowPrint(true)}
       />
 

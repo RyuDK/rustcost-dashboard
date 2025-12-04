@@ -25,7 +25,7 @@ export const LoadingPage = () => {
   const hasTriggeredResync = useRef(false);
 
   const needsResync = !lastResyncTime || !isLessThan3Hours(lastResyncTime);
-  const POLL_INTERVAL = 2000;
+  const POLL_INTERVAL = 5000;
 
   const ALERT_TITLE = "Alert";
   const ALERT_MESSAGE = "are you ready to change PopUp?";
@@ -45,8 +45,7 @@ export const LoadingPage = () => {
           setPopup({
             title: ALERT_TITLE,
             message: ALERT_MESSAGE,
-            detail:
-              body.error_msg ?? "Backend unreachable. Retrying shortly.",
+            detail: body.error_msg ?? "Backend unreachable. Retrying shortly.",
             tone: "error",
           });
           timer = setTimeout(poll, POLL_INTERVAL);
