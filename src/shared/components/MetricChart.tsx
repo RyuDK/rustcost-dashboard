@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { twMerge } from "tailwind-merge";
 import ReactECharts from "echarts-for-react";
 import { LoadingSpinner } from "./LoadingSpinner";
 import type { TrendMetricPoint } from "@/types/metrics";
@@ -18,11 +19,20 @@ interface MetricChartProps {
   className?: string;
 }
 
+const BASE_METRIC_CHART_STYLES = {
+  container:
+    "rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/40",
+  header: "flex items-center justify-between pb-4",
+  title: "text-base font-semibold text-gray-800 dark:text-gray-100",
+  body: "h-64",
+  error: "flex h-full items-center justify-center text-sm text-red-500",
+};
+
 export const MetricChart = ({
   title,
   metrics,
   series,
-  isLoading,
+  isLoading = false,
   error,
   className = "",
 }: MetricChartProps) => {
@@ -33,14 +43,10 @@ export const MetricChart = ({
     [safeMetrics]
   );
 
-  const echartsOption = useMemo(() => {
-    return {
-      tooltip: {
-        trigger: "axis",
-      },
-      legend: {
-        textStyle: { color: "#fcd34d" },
-      },
+  const echartsOption = useMemo(
+    () => ({
+      tooltip: { trigger: "axis" },
+      legend: { textStyle: { color: "#fcd34d" } },
       grid: {
         left: "3%",
         right: "3%",
@@ -59,9 +65,7 @@ export const MetricChart = ({
         type: "value",
         axisLabel: { color: "#9ca3af" },
         axisLine: { show: false },
-        splitLine: {
-          lineStyle: { color: "rgba(148, 163, 184, 0.15)" },
-        },
+        splitLine: { lineStyle: { color: "rgba(148, 163, 184, 0.15)" } },
       },
       series: series.map((item) => ({
         name: item.label,
@@ -69,37 +73,25 @@ export const MetricChart = ({
         data: safeMetrics.map((m) => m[item.key] ?? 0),
         smooth: true,
         symbol: "none",
-        lineStyle: {
-          width: 2,
-          color: item.color,
-        },
-        areaStyle: {
-          color: `${item.color}33`, // same transparency style you had
-        },
+        lineStyle: { width: 2, color: item.color },
+        areaStyle: { color: `${item.color}33` },
       })),
-    };
-  }, [labels, safeMetrics, series]);
+    }),
+    [labels, safeMetrics, series]
+  );
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 ${className}`}
-    >
-      <div className="flex items-center justify-between pb-4">
-        <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">
-          {title}
-        </h3>
+    <div className={twMerge(BASE_METRIC_CHART_STYLES.container, className)}>
+      <div className={BASE_METRIC_CHART_STYLES.header}>
+        <h3 className={BASE_METRIC_CHART_STYLES.title}>{title}</h3>
       </div>
 
-      <div className="h-64">
+      <div className={BASE_METRIC_CHART_STYLES.body}>
         {isLoading && (
           <LoadingSpinner label="Loading metrics" className="h-full" />
         )}
 
-        {error && (
-          <div className="flex h-full items-center justify-center text-sm text-red-500">
-            {error}
-          </div>
-        )}
+        {error && <div className={BASE_METRIC_CHART_STYLES.error}>{error}</div>}
 
         {!isLoading && !error && (
           <ReactECharts

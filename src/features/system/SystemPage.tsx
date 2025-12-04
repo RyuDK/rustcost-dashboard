@@ -188,7 +188,7 @@ export function SystemPage() {
       )}
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Status
           </p>
@@ -196,7 +196,7 @@ export function SystemPage() {
             {overallStatus ?? "unknown"}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Health
           </p>
@@ -204,7 +204,7 @@ export function SystemPage() {
             {health?.data ? "Available" : "Unknown"}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Settings
           </p>
@@ -212,7 +212,7 @@ export function SystemPage() {
             {(settings?.data as any)?.version ?? "—"}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Unit Price Updated
           </p>
@@ -225,7 +225,7 @@ export function SystemPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             System Status
           </h2>
@@ -258,7 +258,7 @@ export function SystemPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Unit Prices
           </h2>
@@ -293,7 +293,7 @@ export function SystemPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Backup
           </h2>
@@ -316,7 +316,7 @@ export function SystemPage() {
           )}
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Resync
           </h2>
@@ -342,7 +342,7 @@ export function SystemPage() {
 
       <section className="grid gap-4 lg:grid-cols-3">
         {/* File List - 1 column */}
-        <div className="lg:col-span-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+        <div className="lg:col-span-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Log Files
           </h2>
@@ -382,7 +382,7 @@ export function SystemPage() {
 
         {/* Log Content — 2 Columns */}
         {logLineResponse && (
-          <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+          <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               Log: {logLineResponse.date}
             </h2>

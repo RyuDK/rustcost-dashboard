@@ -1,5 +1,8 @@
 import ReactECharts from "echarts-for-react";
-import { useMetricChartOptions, type ChartSeries } from "@/shared/hooks/useMetricChartOptions";
+import {
+  useMetricChartOptions,
+  type ChartSeries,
+} from "@/shared/hooks/useMetricChartOptions";
 import { Card } from "./Card";
 
 export type { ChartSeries };
@@ -16,6 +19,11 @@ interface ChartProps<T extends Record<string, unknown>> {
   getXAxisLabel?: (point: T, index: number) => string;
 }
 
+const BASE_CHART_STYLES = {
+  chart: "h-64",
+  error: "flex h-64 items-center justify-center text-sm text-red-500",
+};
+
 export const Chart = <T extends Record<string, unknown>>({
   title,
   subtitle,
@@ -30,12 +38,21 @@ export const Chart = <T extends Record<string, unknown>>({
   const options = useMetricChartOptions(metrics, series, getXAxisLabel);
 
   return (
-    <Card title={title} subtitle={subtitle} className={className} isLoading={isLoading}>
+    <Card
+      title={title}
+      subtitle={subtitle}
+      className={className}
+      isLoading={isLoading}
+    >
       {error ? (
-        <div className="flex h-64 items-center justify-center text-sm text-red-500">{error}</div>
+        <div className={BASE_CHART_STYLES.error}>{error}</div>
       ) : (
-        <div className="h-64" style={{ height }}>
-          <ReactECharts option={options} style={{ width: "100%", height: "100%" }} opts={{ renderer: "svg" }} />
+        <div className={BASE_CHART_STYLES.chart} style={{ height }}>
+          <ReactECharts
+            option={options}
+            style={{ width: "100%", height: "100%" }}
+            opts={{ renderer: "svg" }}
+          />
         </div>
       )}
     </Card>

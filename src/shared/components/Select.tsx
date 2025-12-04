@@ -18,7 +18,7 @@ type SelectProps = {
 const BASE_SELECT_STYLES = {
   container: "relative inline-flex items-center",
   trigger:
-    "inline-flex items-center gap-1 pl-7 pr-6 py-1 text-sm rounded-md border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200",
+    "inline-flex items-center gap-1 pl-7 pr-6 py-1 text-sm rounded-md border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-[var(--surface-dark)]/70 text-gray-700 dark:text-gray-200",
   panel:
     "absolute left-0 top-full mt-1 w-full min-w-[7rem] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg z-50",
   option:

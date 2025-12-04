@@ -1,5 +1,4 @@
 import { ThemeProvider } from "./ThemeProvider";
-import { I18nProvider } from "./i18n/I18nProvider";
 import { QueryProvider } from "./QueryProvider";
 import { Provider as ReduxProvider } from "react-redux";
 import { store as appStore } from "@/store/store";
@@ -16,11 +15,9 @@ export function AppProviders({
 }: AppProvidersProps) {
   return (
     <ThemeProvider>
-      <I18nProvider>
-        <QueryProvider>
-          <ReduxProvider store={store}>{children}</ReduxProvider>
-        </QueryProvider>
-      </I18nProvider>
+      <QueryProvider>
+        <ReduxProvider store={store}>{children}</ReduxProvider>
+      </QueryProvider>
     </ThemeProvider>
   );
 }

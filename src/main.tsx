@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "@/i18n/i18n";
 import { AppWithLoading } from "./app/router";
 import { AppProviders } from "./app/providers";
 import { store } from "./store/store";

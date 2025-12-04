@@ -19,7 +19,25 @@ interface ResourceItem {
   metrics?: MetricRawSummaryResponse["summary"];
 }
 
-const normalizeResource = (item: Record<string, unknown>, fallback: string): ResourceItem => ({
+type PodInfo = Record<string, unknown> & {
+  podName?: string;
+  podUid?: string;
+  namespace?: string;
+};
+
+type ContainerInfo = Record<string, unknown> & {
+  containerName?: string;
+  namespace?: string;
+};
+
+type NodeInfo = Record<string, unknown> & {
+  node_name?: string;
+};
+
+const normalizeResource = (
+  item: Record<string, unknown>,
+  fallback: string
+): ResourceItem => ({
   name:
     (item.name as string | undefined) ??
     (item.metadata as { name?: string } | undefined)?.name ??
@@ -56,7 +74,9 @@ const TABS: ResourceTab[] = [
 
 export function ResourcesPage() {
   const [activeTab, setActiveTab] = useState<ResourceTab>("namespaces");
-  const [resources, setResources] = useState<Record<ResourceTab, ResourceItem[]>>({
+  const [resources, setResources] = useState<
+    Record<ResourceTab, ResourceItem[]>
+  >({
     namespaces: [],
     deployments: [],
     pods: [],
@@ -87,125 +107,135 @@ export function ResourcesPage() {
     quotas: null,
   });
 
-  const fetchTabData = useCallback(
-    async (tab: ResourceTab) => {
-      setLoadingTabs((prev) => ({ ...prev, [tab]: true }));
-      setErrors((prev) => ({ ...prev, [tab]: null }));
+  const fetchTabData = useCallback(async (tab: ResourceTab) => {
+    setLoadingTabs((prev) => ({ ...prev, [tab]: true }));
+    setErrors((prev) => ({ ...prev, [tab]: null }));
 
-      try {
-        let resourceItems: ResourceItem[] = [];
-        let metricSummary: MetricRawSummaryResponse["summary"] | undefined;
+    try {
+      let resourceItems: ResourceItem[] = [];
+      let metricSummary: MetricRawSummaryResponse["summary"] | undefined;
 
-        switch (tab) {
-          case "namespaces": {
-            const [infoRes, metricsRes] = await Promise.all([
-              infoApi.fetchK8sNamespaces(),
-              metricApi.fetchNamespacesRawSummary(),
-            ]);
-            resourceItems = listToResourceItems(infoRes.data);
-            metricSummary = metricsRes.data?.summary;
-            break;
-          }
-          case "deployments": {
-            const [infoRes, metricsRes] = await Promise.all([
-              infoApi.fetchK8sDeployments(),
-              metricApi.fetchDeploymentsRawSummary(),
-            ]);
-            resourceItems = (infoRes.data ?? []).map((item, index) =>
-              normalizeResource(item as Record<string, unknown>, `deployment-${index}`)
-            );
-            metricSummary = metricsRes.data?.summary;
-            break;
-          }
-          case "pods": {
-            const [infoRes, metricsRes] = await Promise.all([
-              infoApi.fetchInfoK8sPods(),
-              metricApi.fetchPodsRawSummary(),
-            ]);
-            resourceItems = (infoRes.data ?? []).map((item, index) =>
-              normalizeResource(
-                {
-                  ...item,
-                  name: item.podName ?? item.podUid ?? `pod-${index}`,
-                  namespace: item.namespace,
-                },
-                `pod-${index}`
-              )
-            );
-            metricSummary = metricsRes.data?.summary;
-            break;
-          }
-          case "containers": {
-            const [infoRes, metricsRes] = await Promise.all([
-              infoApi.fetchInfoK8sContainers(),
-              metricApi.fetchContainersRawSummary(),
-            ]);
-            resourceItems = (infoRes.data ?? []).map((item, index) =>
-              normalizeResource(
-                {
-                  ...item,
-                  name: item.containerName ?? `container-${index}`,
-                  namespace: item.namespace,
-                },
-                `container-${index}`
-              )
-            );
-            metricSummary = metricsRes.data?.summary;
-            break;
-          }
-          case "nodes": {
-            const [infoRes, metricsRes] = await Promise.all([
-              infoApi.fetchInfoK8sNodes(),
-              metricApi.fetchNodesRawSummary(),
-            ]);
-            resourceItems = (infoRes.data ?? []).map((item, index) =>
-              normalizeResource(
-                {
-                  ...item,
-                  name: item.node_name ?? `node-${index}`,
-                },
-                `node-${index}`
-              )
-            );
-            metricSummary = metricsRes.data?.summary;
-            break;
-          }
-          case "volumes": {
-            const res = await infoApi.fetchK8sPersistentVolumes();
-            resourceItems = listToResourceItems(res.data);
-            break;
-          }
-          case "hpas": {
-            const res = await infoApi.fetchK8sHorizontalPodAutoscalers();
-            resourceItems = listToResourceItems(res.data);
-            break;
-          }
-          case "quotas": {
-            const res = await infoApi.fetchK8sResourceQuotas();
-            resourceItems = listToResourceItems(res.data);
-            break;
-          }
-          default:
-            resourceItems = [];
+      switch (tab) {
+        case "namespaces": {
+          const [infoRes, metricsRes] = await Promise.all([
+            infoApi.fetchK8sNamespaces(),
+            metricApi.fetchNamespacesRawSummary(),
+          ]);
+          resourceItems = listToResourceItems(infoRes.data);
+          metricSummary = metricsRes.data?.summary;
+          break;
         }
+        case "deployments": {
+          const [infoRes, metricsRes] = await Promise.all([
+            infoApi.fetchK8sDeployments(),
+            metricApi.fetchDeploymentsRawSummary(),
+          ]);
+          const items = (infoRes.data ?? []) as Record<string, unknown>[];
+          resourceItems = items.map((item, index) =>
+            normalizeResource(item, `deployment-${index}`)
+          );
+          metricSummary = metricsRes.data?.summary;
+          break;
+        }
+        case "pods": {
+          const [infoRes, metricsRes] = await Promise.all([
+            infoApi.fetchInfoK8sPods(),
+            metricApi.fetchPodsRawSummary(),
+          ]);
 
-        const mapped = resourceItems.map((item) => ({
-          ...item,
-          metrics: metricSummary,
-        }));
+          const items = (infoRes.data ?? []) as PodInfo[];
 
-        setResources((prev) => ({ ...prev, [tab]: mapped }));
-      } catch (err) {
-        setErrors((prev) => ({
-          ...prev,
-          [tab]: err instanceof Error ? err.message : "Failed to load resources",
-        }));
-      } finally {
-        setLoadingTabs((prev) => ({ ...prev, [tab]: false }));
+          resourceItems = items.map((item, index) =>
+            normalizeResource(
+              {
+                ...item,
+                name: item.podName ?? item.podUid ?? `pod-${index}`,
+                namespace: item.namespace,
+              },
+              `pod-${index}`
+            )
+          );
+
+          metricSummary = metricsRes.data?.summary;
+          break;
+        }
+        case "containers": {
+          const [infoRes, metricsRes] = await Promise.all([
+            infoApi.fetchInfoK8sContainers(),
+            metricApi.fetchContainersRawSummary(),
+          ]);
+
+          const items = (infoRes.data ?? []) as ContainerInfo[];
+
+          resourceItems = items.map((item, index) =>
+            normalizeResource(
+              {
+                ...item,
+                name: item.containerName ?? `container-${index}`,
+                namespace: item.namespace,
+              },
+              `container-${index}`
+            )
+          );
+
+          metricSummary = metricsRes.data?.summary;
+          break;
+        }
+        case "nodes": {
+          const [infoRes, metricsRes] = await Promise.all([
+            infoApi.fetchInfoK8sNodes(),
+            metricApi.fetchNodesRawSummary(),
+          ]);
+
+          const items = (infoRes.data ?? []) as NodeInfo[];
+
+          resourceItems = items.map((item, index) =>
+            normalizeResource(
+              {
+                ...item,
+                name: item.node_name ?? `node-${index}`,
+              },
+              `node-${index}`
+            )
+          );
+
+          metricSummary = metricsRes.data?.summary;
+          break;
+        }
+        case "volumes": {
+          const res = await infoApi.fetchK8sPersistentVolumes();
+          resourceItems = listToResourceItems(res.data);
+          break;
+        }
+        case "hpas": {
+          const res = await infoApi.fetchK8sHorizontalPodAutoscalers();
+          resourceItems = listToResourceItems(res.data);
+          break;
+        }
+        case "quotas": {
+          const res = await infoApi.fetchK8sResourceQuotas();
+          resourceItems = listToResourceItems(res.data);
+          break;
+        }
+        default:
+          resourceItems = [];
       }
-    },
-    []
-  );
+
+      const mapped = resourceItems.map((item) => ({
+        ...item,
+        metrics: metricSummary,
+      }));
+
+      setResources((prev) => ({ ...prev, [tab]: mapped }));
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        [tab]: err instanceof Error ? err.message : "Failed to load resources",
+      }));
+    } finally {
+      setLoadingTabs((prev) => ({ ...prev, [tab]: false }));
+    }
+  }, []);
 
   useEffect(() => {
     void fetchTabData(activeTab);
@@ -235,8 +265,8 @@ export function ResourcesPage() {
           Cluster Inventories
         </h1>
         <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Browse Kubernetes objects and their latest metrics. Select a tab to view namespaces,
-          workloads, core infra, or quota resources.
+          Browse Kubernetes objects and their latest metrics. Select a tab to
+          view namespaces, workloads, core infra, or quota resources.
         </p>
       </header>
 
@@ -246,7 +276,7 @@ export function ResourcesPage() {
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition ${
+            className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition dark:bg-[var(--surface-dark)]/40 ${
               tab === activeTab
                 ? "border-amber-500 bg-amber-500/10 text-amber-600"
                 : "border-slate-200 text-slate-500 hover:border-amber-200 hover:text-amber-500 dark:border-slate-700 dark:text-slate-300"
@@ -257,7 +287,7 @@ export function ResourcesPage() {
         ))}
       </div>
 
-      <section className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+      <section className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
           <div>
             <h2 className="text-lg font-semibold capitalize text-slate-900 dark:text-white">
@@ -274,7 +304,9 @@ export function ResourcesPage() {
 
         <div className="space-y-4 p-6">
           {tabData.loading && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">Loading {activeTab}…</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Loading {activeTab}…
+            </p>
           )}
           {tabData.error && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
@@ -282,7 +314,9 @@ export function ResourcesPage() {
             </div>
           )}
           {!tabData.loading && tabData.entries.length === 0 && (
-            <p className="text-sm text-slate-500">No resources available for {activeTab}.</p>
+            <p className="text-sm text-slate-500">
+              No resources available for {activeTab}.
+            </p>
           )}
           <div className="grid gap-3 lg:grid-cols-2">
             {tabData.entries.map((item) => (

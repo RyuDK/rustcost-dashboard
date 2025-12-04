@@ -1,5 +1,8 @@
-import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
-
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+} from "axios";
 
 export interface ApiErrorPayload {
   message: string;
@@ -23,9 +26,7 @@ export class ApiError extends Error {
 }
 
 const baseURL =
-  import.meta.env.VITE_API_BASE_URL ??
-  import.meta.env.VITE_BACKEND_URL ??
-  "/api/v1/";
+  import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_BACKEND_URL ?? "";
 
 export const httpClient: AxiosInstance = axios.create({
   baseURL,
@@ -50,9 +51,7 @@ httpClient.interceptors.response.use(
 /**
  * Thin wrapper around Axios that unwraps the data payload and preserves typings.
  */
-export const request = <T>(
-  config: AxiosRequestConfig
-): Promise<T> =>
+export const request = <T>(config: AxiosRequestConfig): Promise<T> =>
   httpClient.request<T>(config).then((response) => response.data);
 
 export type PaginationParams = {
@@ -67,9 +66,7 @@ export type DateFilterParams = {
 
 export type SortingParam = `${string}:${"asc" | "desc"}`;
 
-export interface MetricsQueryParams
-  extends PaginationParams,
-    DateFilterParams {
+export interface MetricsQueryParams extends PaginationParams, DateFilterParams {
   sort?: SortingParam;
   metric?: string | string[];
 }

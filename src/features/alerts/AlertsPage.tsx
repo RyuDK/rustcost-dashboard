@@ -10,8 +10,11 @@ interface GeneratedAlert {
 }
 
 export function AlertsPage() {
-  const [clusterMetrics, setClusterMetrics] = useState<MetricGetResponse | null>(null);
-  const [nodeMetrics, setNodeMetrics] = useState<MetricGetResponse | null>(null);
+  const [clusterMetrics, setClusterMetrics] =
+    useState<MetricGetResponse | null>(null);
+  const [nodeMetrics, setNodeMetrics] = useState<MetricGetResponse | null>(
+    null
+  );
   const [podMetrics, setPodMetrics] = useState<MetricGetResponse | null>(null);
   const [alerts, setAlerts] = useState<GeneratedAlert[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +33,9 @@ export function AlertsPage() {
       setNodeMetrics(nodeRes.data ?? null);
       setPodMetrics(podRes.data ?? null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load alert metrics");
+      setError(
+        err instanceof Error ? err.message : "Failed to load alert metrics"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +72,9 @@ export function AlertsPage() {
         if (value > prevValue * 1.5 && value > 100_000_000) {
           result.push({
             id: `${source}-${entry.key}-${type}`,
-            message: `${source} ${entry.name ?? entry.key} shows a spike in ${type}.`,
+            message: `${source} ${
+              entry.name ?? entry.key
+            } shows a spike in ${type}.`,
             severity: "warning",
             source,
           });
@@ -75,7 +82,9 @@ export function AlertsPage() {
         if (value === 0 && prevValue > 0) {
           result.push({
             id: `${source}-${entry.key}-${type}-drop`,
-            message: `${source} ${entry.name ?? entry.key} dropped to zero ${type}, possible failure.`,
+            message: `${source} ${
+              entry.name ?? entry.key
+            } dropped to zero ${type}, possible failure.`,
             severity: "critical",
             source,
           });
@@ -90,7 +99,8 @@ export function AlertsPage() {
     if (!result.length) {
       result.push({
         id: "no-alerts",
-        message: "No anomalies detected. System is operating within expected ranges.",
+        message:
+          "No anomalies detected. System is operating within expected ranges.",
         severity: "info",
         source: "system",
       });
@@ -119,11 +129,15 @@ export function AlertsPage() {
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
       <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">Alerts</p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Anomaly Center</h1>
+        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
+          Alerts
+        </p>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          Anomaly Center
+        </h1>
         <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Synthetic alerts derived from workload metrics. Highlight spikes, waste, or potential
-          failures even before backend alerting is wired up.
+          Synthetic alerts derived from workload metrics. Highlight spikes,
+          waste, or potential failures even before backend alerting is wired up.
         </p>
       </header>
 
@@ -133,10 +147,12 @@ export function AlertsPage() {
         </div>
       )}
 
-      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Current Alerts</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              Current Alerts
+            </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {alerts.length} generated insight(s)
             </p>
@@ -150,7 +166,9 @@ export function AlertsPage() {
           </button>
         </div>
         <div className="space-y-4 p-6">
-          {isLoading && <p className="text-sm text-slate-500">Scanning metrics…</p>}
+          {isLoading && (
+            <p className="text-sm text-slate-500">Scanning metrics…</p>
+          )}
           {!isLoading &&
             alerts.map((alert) => (
               <div
@@ -166,8 +184,8 @@ export function AlertsPage() {
                       alert.severity === "critical"
                         ? "bg-red-500/10 text-red-600"
                         : alert.severity === "warning"
-                          ? "bg-amber-500/10 text-amber-600"
-                          : "bg-slate-200 text-slate-600"
+                        ? "bg-amber-500/10 text-amber-600"
+                        : "bg-slate-200 text-slate-600"
                     }`}
                   >
                     {alert.severity.toUpperCase()}

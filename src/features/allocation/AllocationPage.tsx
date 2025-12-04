@@ -25,7 +25,9 @@ interface OwnershipRecord {
 
 export function AllocationPage() {
   const [resources, setResources] = useState<ResourceRef[]>([]);
-  const [ownership, setOwnership] = useState<Record<string, OwnershipRecord>>({});
+  const [ownership, setOwnership] = useState<Record<string, OwnershipRecord>>(
+    {}
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,7 +90,9 @@ export function AllocationPage() {
         }, {})
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load allocation data");
+      setError(
+        err instanceof Error ? err.message : "Failed to load allocation data"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -104,7 +108,10 @@ export function AllocationPage() {
       const team = resource.team ?? resource.labels?.team ?? "unassigned";
       teams.set(team, (teams.get(team) ?? 0) + 1);
     });
-    return Array.from(teams.entries()).map(([team, count]) => ({ team, count }));
+    return Array.from(teams.entries()).map(([team, count]) => ({
+      team,
+      count,
+    }));
   }, [resources]);
 
   const allocationState = useMemo(
@@ -132,8 +139,8 @@ export function AllocationPage() {
           Resource Assignment Center
         </h1>
         <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Review which workloads own pods, deployments, and containers. Reassign ownership to keep
-          governance metadata current.
+          Review which workloads own pods, deployments, and containers. Reassign
+          ownership to keep governance metadata current.
         </p>
       </header>
 
@@ -159,7 +166,7 @@ export function AllocationPage() {
         ))}
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+      <section className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -178,13 +185,17 @@ export function AllocationPage() {
           </button>
         </div>
         <div className="space-y-3 p-6">
-          {isLoading && <p className="text-sm text-slate-500">Loading resources…</p>}
+          {isLoading && (
+            <p className="text-sm text-slate-500">Loading resources…</p>
+          )}
           {!isLoading && resources.length === 0 && (
             <p className="text-sm text-slate-500">No resources discovered.</p>
           )}
           {resources.slice(0, 20).map((resource) => (
             <div
-              key={`${resource.kind}-${resource.namespace ?? "default"}-${resource.name}`}
+              key={`${resource.kind}-${resource.namespace ?? "default"}-${
+                resource.name
+              }`}
               className="flex flex-wrap items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/40"
             >
               <div>
@@ -215,8 +226,13 @@ export function AllocationPage() {
 }
 
 export function AllocationOverview() {
-  const [nodeAllocations, setNodeAllocations] = useState<Array<{ node: string; workloadCount: number }>>([]);
-  const [allocationHealth, setAllocationHealth] = useState<{ overAllocated: number; underAllocated: number }>({
+  const [nodeAllocations, setNodeAllocations] = useState<
+    Array<{ node: string; workloadCount: number }>
+  >([]);
+  const [allocationHealth, setAllocationHealth] = useState<{
+    overAllocated: number;
+    underAllocated: number;
+  }>({
     overAllocated: 0,
     underAllocated: 0,
   });
@@ -240,8 +256,12 @@ export function AllocationOverview() {
       }))
     );
 
-    const overAllocated = Array.from(nodeUsage.values()).filter((count) => count > 50).length;
-    const underAllocated = Array.from(nodeUsage.values()).filter((count) => count < 5).length;
+    const overAllocated = Array.from(nodeUsage.values()).filter(
+      (count) => count > 50
+    ).length;
+    const underAllocated = Array.from(nodeUsage.values()).filter(
+      (count) => count < 5
+    ).length;
     setAllocationHealth({ overAllocated, underAllocated });
   }, []);
 
@@ -262,17 +282,19 @@ export function AllocationOverview() {
   }, [overviewState]);
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
           Node Allocation Overview
         </h2>
         <p className="text-xs uppercase tracking-wide text-slate-400">
-          Over: {allocationHealth.overAllocated} · Under: {allocationHealth.underAllocated}
+          Over: {allocationHealth.overAllocated} · Under:{" "}
+          {allocationHealth.underAllocated}
         </p>
       </div>
       <p className="text-sm text-slate-500 dark:text-slate-400">
-        Distribution of workloads per node to identify hot spots or underutilized nodes.
+        Distribution of workloads per node to identify hot spots or
+        underutilized nodes.
       </p>
       <div className="mt-5 grid gap-3 md:grid-cols-2">
         {nodeAllocations.slice(0, 6).map((allocation) => (
@@ -303,7 +325,9 @@ export function AllocationOverview() {
 
 export function AssignResourceModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [availableResources, setAvailableResources] = useState<ResourceRef[]>([]);
+  const [availableResources, setAvailableResources] = useState<ResourceRef[]>(
+    []
+  );
   const [workloads, setWorkloads] = useState<string[]>([]);
   const [selectedResource, setSelectedResource] = useState<string | null>(null);
   const [selectedWorkload, setSelectedWorkload] = useState<string | null>(null);
@@ -378,7 +402,7 @@ export function AssignResourceModal() {
   }, [assignState]);
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -466,14 +490,20 @@ export function AssignResourceModal() {
 
 export function DeallocateResourceModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [assignedResources, setAssignedResources] = useState<Array<{ id: string; workload: string }>>([]);
-  const [selectedAllocation, setSelectedAllocation] = useState<string | null>(null);
+  const [assignedResources, setAssignedResources] = useState<
+    Array<{ id: string; workload: string }>
+  >([]);
+  const [selectedAllocation, setSelectedAllocation] = useState<string | null>(
+    null
+  );
 
   const loadAssignments = useCallback(async () => {
     if (!isOpen) {
       return;
     }
-    const res = await request<ApiResponse<Array<{ resource_id: string; workload: string }>>>({
+    const res = await request<
+      ApiResponse<Array<{ resource_id: string; workload: string }>>
+    >({
       method: "GET",
       url: "/allocation/list",
     });
@@ -521,7 +551,7 @@ export function DeallocateResourceModal() {
   }, [modalState]);
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/80">
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
