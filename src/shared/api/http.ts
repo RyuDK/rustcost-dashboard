@@ -22,10 +22,7 @@ export class ApiError extends Error {
   }
 }
 
-const baseURL =
-  import.meta.env.VITE_API_BASE_URL ??
-  import.meta.env.VITE_BACKEND_URL ??
-  "/api/v1/";
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 export const httpClient: AxiosInstance = axios.create({
   baseURL,
