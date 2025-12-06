@@ -3,6 +3,8 @@ import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
 } from "axios";
+import { store } from "@/store/store";
+import { clearLastResync } from "@/store/slices/systemSlice";
 
 export interface ApiErrorPayload {
   message: string;
@@ -33,9 +35,22 @@ export const httpClient: AxiosInstance = axios.create({
   timeout: 20000,
 });
 
+const handleResyncRedirect = (payload: unknown) => {
+  const errorCode =
+    (payload as { error_code?: string } | undefined)?.error_code ?? null;
+  if (errorCode === "NotResynced") {
+    store.dispatch(clearLastResync());
+  }
+};
+
 httpClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    handleResyncRedirect(response.data);
+    return response;
+  },
   (error: AxiosError) => {
+    handleResyncRedirect(error.response?.data);
+
     const payload: ApiErrorPayload = {
       message:
         (error.response?.data as { message?: string })?.message ??
