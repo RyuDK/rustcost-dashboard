@@ -9,7 +9,8 @@
     "metrics": "메트릭",
     "alerts": "알림",
     "system": "시스템",
-    "settings": "설정"
+    "settings": "설정",
+    "unitPrices": "단가"
   },
   "common": {
     "refresh": "검색",

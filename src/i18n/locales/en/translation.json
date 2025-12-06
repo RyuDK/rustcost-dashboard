@@ -9,7 +9,8 @@
     "metrics": "Metrics",
     "alerts": "Alerts",
     "system": "System",
-    "settings": "Settings"
+    "settings": "Settings",
+    "unitPrices": "Unit Prices"
   },
   "common": {
     "refresh": "search",
