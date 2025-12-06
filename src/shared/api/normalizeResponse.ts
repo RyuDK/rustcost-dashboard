@@ -1,4 +1,4 @@
-import { fromUTC } from "@/shared/utils/timeConverter";
+import { fromUTC } from "@/shared/utils/timezone";
 import { isTimeField } from "@/shared/utils/time"; // keep separate
 
 export function normalizeResponse<T>(input: T, timezone: string): T {

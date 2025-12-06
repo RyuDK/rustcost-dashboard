@@ -1,8 +1,5 @@
 import { useAppSelector } from "@/store/hook";
-import {
-  toUTC as toUTCBase,
-  fromUTC as fromUTCBase,
-} from "@/shared/utils/timeConverter";
+import { toUTC as toUTCBase, fromUTC as fromUTCBase } from "@/shared/utils/timezone";
 
 export function useTimeConverter() {
   const timezone = useAppSelector((s) => s.preferences.timezone);

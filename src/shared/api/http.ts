@@ -5,6 +5,8 @@ import axios, {
 } from "axios";
 import { store } from "@/store/store";
 import { clearLastResync } from "@/store/slices/systemSlice";
+import { normalizeRequest } from "./normalizeRequest";
+import { normalizeResponse } from "./normalizeResponse";
 
 export interface ApiErrorPayload {
   message: string;
@@ -35,6 +37,21 @@ export const httpClient: AxiosInstance = axios.create({
   timeout: 20000,
 });
 
+httpClient.interceptors.request.use((config) => {
+  const timezone = store.getState().preferences.timezone;
+
+  if (timezone) {
+    if (config.data) {
+      config.data = normalizeRequest(config.data, timezone);
+    }
+    if (config.params) {
+      config.params = normalizeRequest(config.params, timezone);
+    }
+  }
+
+  return config;
+});
+
 const handleResyncRedirect = (payload: unknown) => {
   const errorCode =
     (payload as { error_code?: string } | undefined)?.error_code ?? null;
@@ -45,6 +62,11 @@ const handleResyncRedirect = (payload: unknown) => {
 
 httpClient.interceptors.response.use(
   (response) => {
+    const timezone = store.getState().preferences.timezone;
+    if (timezone && response?.data) {
+      response.data = normalizeResponse(response.data, timezone);
+    }
+
     handleResyncRedirect(response.data);
     return response;
   },

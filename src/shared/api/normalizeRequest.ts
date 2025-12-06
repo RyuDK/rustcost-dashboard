@@ -1,5 +1,5 @@
 import { isTimeField } from "../utils/time";
-import { toUTC } from "../utils/timeConverter";
+import { toUTC } from "../utils/timezone";
 
 export function normalizeRequest<T>(input: T, timezone: string): T {
   return normalize(input, timezone) as T;
