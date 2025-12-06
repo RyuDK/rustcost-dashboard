@@ -10,7 +10,16 @@
     "alerts": "알림",
     "system": "시스템",
     "settings": "설정",
-    "unitPrices": "단가"
+    "unitPrices": "단가",
+    "nodes": "노드",
+    "pods": "파드",
+    "containers": "컨테이너",
+    "deployments": "배포",
+    "statefulSets": "스테이트풀셋",
+    "daemonSets": "데몬셋",
+    "jobsCronJobs": "잡 · 크론잡",
+    "services": "서비스",
+    "ingresses": "인그레스"
   },
   "common": {
     "refresh": "검색",

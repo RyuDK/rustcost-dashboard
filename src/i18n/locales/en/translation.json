@@ -10,7 +10,16 @@
     "alerts": "Alerts",
     "system": "System",
     "settings": "Settings",
-    "unitPrices": "Unit Prices"
+    "unitPrices": "Unit Prices",
+    "nodes": "Nodes",
+    "pods": "Pods",
+    "containers": "Containers",
+    "deployments": "Deployments",
+    "statefulSets": "StatefulSets",
+    "daemonSets": "DaemonSets",
+    "jobsCronJobs": "Jobs & CronJobs",
+    "services": "Services",
+    "ingresses": "Ingresses"
   },
   "common": {
     "refresh": "search",

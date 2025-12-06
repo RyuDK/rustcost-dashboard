@@ -22,6 +22,17 @@ import { isLessThan3Hours } from "@/shared/utils/time";
 import { buildLanguagePrefix } from "@/constants/language";
 import { useEffect } from "react";
 import { UnitPricesPage } from "@/features/unitPrices/pages/UnitPricesPage";
+import { MetricsOverviewPage } from "@/features/workloads/metrics/pages/MetricsOverviewPage";
+import { NodesPage } from "@/features/workloads/metrics/pages/NodesPage";
+import { PodsPage } from "@/features/workloads/metrics/pages/PodsPage";
+import { ContainersPage } from "@/features/workloads/metrics/pages/ContainersPage";
+import { ResourcesOverviewPage } from "@/features/workloads/resources/pages/ResourcesOverviewPage";
+import { DeploymentsPage } from "@/features/workloads/resources/pages/DeploymentsPage";
+import { StatefulSetsPage } from "@/features/workloads/resources/pages/StatefulSetsPage";
+import { DaemonSetsPage } from "@/features/workloads/resources/pages/DaemonSetsPage";
+import { JobsCronJobsPage } from "@/features/workloads/resources/pages/JobsCronJobsPage";
+import { ServicesPage } from "@/features/workloads/resources/pages/ServicesPage";
+import { IngressesPage } from "@/features/workloads/resources/pages/IngressesPage";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +49,17 @@ const router = createBrowserRouter([
       { path: "settings", element: <SettingsPage /> },
       { path: "workloads", element: <WorkloadsPage /> },
       { path: "workloads/:workloadId", element: <WorkloadDetailPage /> },
+      { path: "workloads/metrics", element: <MetricsOverviewPage /> },
+      { path: "workloads/metrics/nodes", element: <NodesPage /> },
+      { path: "workloads/metrics/pods", element: <PodsPage /> },
+      { path: "workloads/metrics/containers", element: <ContainersPage /> },
+      { path: "workloads/resources", element: <ResourcesOverviewPage /> },
+      { path: "workloads/resources/deployments", element: <DeploymentsPage /> },
+      { path: "workloads/resources/statefulsets", element: <StatefulSetsPage /> },
+      { path: "workloads/resources/daemonsets", element: <DaemonSetsPage /> },
+      { path: "workloads/resources/jobs", element: <JobsCronJobsPage /> },
+      { path: "workloads/resources/services", element: <ServicesPage /> },
+      { path: "workloads/resources/ingresses", element: <IngressesPage /> },
       { path: "resources", element: <ResourcesPage /> },
       { path: "allocation", element: <AllocationPage /> },
       { path: "metrics", element: <MetricsPage /> },
