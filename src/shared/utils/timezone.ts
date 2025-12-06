@@ -13,6 +13,7 @@ interface ParsedIso {
 const DATE_PARTS: DatePart[] = ["year", "month", "day", "hour", "minute", "second"];
 const isoPattern =
   /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|([+-])(\d{2}):?(\d{2}))?$/;
+const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
 
@@ -169,4 +170,18 @@ export function fromUTC(utcIso: string, timeZone: string): string {
       : baseUtc;
 
   return formatInTimeZone(timestamp, timeZone);
+}
+
+export function toUTCDateBoundary(
+  localDate: string,
+  timeZone: string,
+  boundary: "start" | "end" = "start"
+): string {
+  if (!dateOnlyPattern.test(localDate)) return localDate;
+
+  const time =
+    boundary === "end"
+      ? "T23:59:59"
+      : "T00:00:00";
+  return toUTC(`${localDate}${time}`, timeZone);
 }

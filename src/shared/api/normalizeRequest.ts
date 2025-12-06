@@ -1,5 +1,7 @@
 import { isTimeField } from "../utils/time";
-import { toUTC } from "../utils/timezone";
+import { toUTC, toUTCDateBoundary } from "../utils/timezone";
+
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
 
 export function normalizeRequest<T>(input: T, timezone: string): T {
   return normalize(input, timezone) as T;
@@ -24,9 +26,17 @@ function normalize(value: unknown, timezone: string): unknown {
       continue;
     }
 
-    // convert string timestamps → UTC
+    // convert string timestamps -> UTC
     if (typeof v === "string" && isTimeField(key)) {
-      result[key] = toUTC(v, timezone);
+      if (dateOnlyPattern.test(v)) {
+        const boundary =
+          key.toLowerCase().includes("end") && !key.toLowerCase().includes("start")
+            ? "end"
+            : "start";
+        result[key] = toUTCDateBoundary(v, timezone, boundary);
+      } else {
+        result[key] = toUTC(v, timezone);
+      }
       continue;
     }
 

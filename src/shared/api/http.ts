@@ -41,6 +41,13 @@ httpClient.interceptors.request.use((config) => {
   const timezone = store.getState().preferences.timezone;
 
   if (timezone) {
+    const headers =
+      config.headers instanceof axios.AxiosHeaders
+        ? config.headers
+        : new axios.AxiosHeaders(config.headers);
+    headers["X-Timezone"] = timezone;
+    config.headers = headers;
+
     if (config.data) {
       config.data = normalizeRequest(config.data, timezone);
     }
