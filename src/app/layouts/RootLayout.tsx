@@ -20,17 +20,18 @@ import {
   IoFileTrayFullOutline,
   IoAlertCircleOutline,
   IoHardwareChipOutline,
+  IoPricetagOutline,
 } from "react-icons/io5";
 
 const navItems = [
   { to: "/", translationKey: "nav.dashboard", icon: IoSpeedometerOutline },
+  { to: "/workloads", translationKey: "nav.workloads", icon: IoLayersOutline },
   { to: "/trends", translationKey: "nav.trends", icon: IoTrendingUpOutline },
   {
     to: "/efficiency",
     translationKey: "nav.efficiency",
     icon: IoConstructOutline,
   },
-  { to: "/workloads", translationKey: "nav.workloads", icon: IoLayersOutline },
   {
     to: "/resources",
     translationKey: "nav.resources",
@@ -49,6 +50,11 @@ const navItems = [
   { to: "/alerts", translationKey: "nav.alerts", icon: IoAlertCircleOutline },
   { to: "/system", translationKey: "nav.system", icon: IoHardwareChipOutline },
   { to: "/settings", translationKey: "nav.settings", icon: IoSettingsOutline },
+  {
+    to: "/unit-prices",
+    translationKey: "nav.unitPrices",
+    icon: IoPricetagOutline, // recommended icon
+  },
 ];
 
 export const RootLayout = () => {

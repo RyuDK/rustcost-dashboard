@@ -12,6 +12,7 @@ export interface InfoUnitPrice {
   network_regional_gb: number;
   network_external_gb: number;
   updated_at: IsoDateTimeString;
+  currency: string;
 }
 
 export interface InfoUnitPriceUpsertRequest {
@@ -26,4 +27,3 @@ export interface InfoUnitPriceUpsertRequest {
   network_regional_gb?: number;
   network_external_gb?: number;
 }
-

@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
-import type { InfoSetting, InfoUnitPrice } from "@/shared/api/info";
+import type { InfoSetting } from "@/shared/api/info";
 import type { ApiResponse } from "@/types/api";
 import type {
   SystemStatusResponse,
@@ -21,8 +21,6 @@ export function SystemPage() {
   const [settings, setSettings] = useState<ApiResponse<InfoSetting> | null>(
     null
   );
-  const [unitPrices, setUnitPrices] =
-    useState<ApiResponse<InfoUnitPrice> | null>(null);
   const [backupResult, setBackupResult] = useState<string | null>(null);
   const [resyncResult, setResyncResult] = useState<string | null>(null);
 
@@ -108,20 +106,18 @@ export function SystemPage() {
     setError(null);
 
     try {
-      const [logFileListRes, statusRes, healthRes, settingsRes, pricesRes] =
+      const [logFileListRes, statusRes, healthRes, settingsRes] =
         await Promise.all([
           systemApi.getSystemLogFileList(),
           systemApi.fetchSystemStatus(),
           systemApi.fetchSystemHealth(),
           infoApi.fetchInfoSettings(),
-          infoApi.fetchInfoUnitPrices(),
         ]);
 
       setLogFileNames(logFileListRes.data ?? null);
       setStatus(statusRes);
       setHealth(healthRes);
       setSettings(settingsRes);
-      setUnitPrices(pricesRes);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to load system data"
@@ -210,16 +206,6 @@ export function SystemPage() {
             {(settings?.data as any)?.version ?? "—"}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-          <p className="text-xs uppercase tracking-wide text-slate-500">
-            Unit Price Updated
-          </p>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {unitPrices?.data?.updated_at
-              ? new Date(unitPrices.data.updated_at).toLocaleDateString()
-              : "—"}
-          </p>
-        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
@@ -254,39 +240,6 @@ export function SystemPage() {
               </p>
             )}
           </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-            Unit Prices
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Raw rates used for cost allocation.
-          </p>
-          {unitPrices?.data ? (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
-                  CPU
-                </p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">
-                  ${unitPrices.data.cpu_core_hour}/core hr
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
-                  Memory
-                </p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">
-                  ${unitPrices.data.memory_gb_hour}/GB hr
-                </p>
-              </div>
-            </div>
-          ) : (
-            <p className="mt-4 text-sm text-slate-500">
-              Unit prices unavailable.
-            </p>
-          )}
         </div>
       </section>
 

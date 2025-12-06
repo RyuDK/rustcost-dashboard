@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import { isLessThan3Hours } from "@/shared/utils/time";
 import { buildLanguagePrefix } from "@/constants/language";
 import { useEffect } from "react";
+import { UnitPricesPage } from "@/features/unitPrices/pages/UnitPricesPage";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "metrics", element: <MetricsPage /> },
       { path: "alerts", element: <AlertsPage /> },
       { path: "system", element: <SystemPage /> },
+      { path: "unit-prices", element: <UnitPricesPage /> },
     ],
   },
 ]);
