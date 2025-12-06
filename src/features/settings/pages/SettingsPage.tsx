@@ -1,6 +1,7 @@
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { InfoCard } from "@/shared/components/InfoCard";
 import { useSettings } from "@/features/settings/hooks/useSettings";
+import { TimezoneSelector } from "@/shared/components/selector/TimezoneSelector";
 
 export const SettingsPage = () => {
   const { t } = useI18n();
@@ -72,6 +73,7 @@ export const SettingsPage = () => {
           }
         />
       </div>
+      <TimezoneSelector />
     </div>
   );
 };

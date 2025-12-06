@@ -67,4 +67,3 @@ export interface InfoSettingUpsertRequest {
   container_exporter_urls?: string[];
   k8s_api_url?: string;
 }
-
