@@ -24,6 +24,7 @@ import {
   IoPricetagOutline,
   IoChevronDown,
 } from "react-icons/io5";
+import type { JSX } from "react/jsx-runtime";
 
 type NavItem = {
   to?: string;
@@ -164,8 +165,9 @@ export const RootLayout = () => {
   };
 
   const hasActiveChild = (item: NavItem): boolean =>
-    item.children?.some((child) => isPathActive(child.to) || hasActiveChild(child)) ??
-    false;
+    item.children?.some(
+      (child) => isPathActive(child.to) || hasActiveChild(child)
+    ) ?? false;
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -200,10 +202,7 @@ export const RootLayout = () => {
 
       return (
         <li key={itemKey}>
-          <div
-            className={rowClasses}
-            style={{ paddingLeft }}
-          >
+          <div className={rowClasses} style={{ paddingLeft }}>
             {item.to ? (
               <NavLink
                 to={buildLinkPath(item.to)}
