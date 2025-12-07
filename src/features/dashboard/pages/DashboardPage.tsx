@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Chart, type ChartSeries } from "@/shared/components/Chart";
+import {
+  SharedMetricChart,
+  type ChartSeries,
+} from "@/shared/components/chart/SharedMetricChart";
 import { SystemStatus } from "@/features/system/components/SystemStatus";
 import { formatCurrency } from "@/shared/utils/format";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
@@ -141,7 +144,7 @@ export const DashboardPage = () => {
 
       <div className="grid grid-cols-1 gap-6">
         <div className="lg:col-span-12">
-          <Chart
+          <SharedMetricChart
             title="Cluster Cost Trend"
             subtitle="Cost components over the selected window"
             metrics={chartData}

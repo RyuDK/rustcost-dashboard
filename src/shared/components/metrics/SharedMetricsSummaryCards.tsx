@@ -1,4 +1,4 @@
-import { Card } from "@/shared/components/Card";
+import { SharedCard } from "@/shared/components/metrics/SharedCard";
 
 interface SummaryCard {
   label: string;
@@ -17,7 +17,7 @@ export const SharedMetricsSummaryCards = ({
 }: MetricsSummaryCardsProps) => (
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
     {cards.map((card) => (
-      <Card
+      <SharedCard
         key={card.label}
         title={card.label}
         isLoading={isLoading}
@@ -31,7 +31,7 @@ export const SharedMetricsSummaryCards = ({
             {card.description}
           </p>
         </div>
-      </Card>
+      </SharedCard>
     ))}
   </div>
 );

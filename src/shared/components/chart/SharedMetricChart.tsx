@@ -3,7 +3,7 @@ import {
   useMetricChartOptions,
   type ChartSeries,
 } from "@/shared/hooks/useMetricChartOptions";
-import { Card } from "./Card";
+import { SharedCard } from "../metrics/SharedCard";
 
 export type { ChartSeries };
 
@@ -24,7 +24,7 @@ const BASE_CHART_STYLES = {
   error: "flex h-64 items-center justify-center text-sm text-red-500",
 };
 
-export const Chart = <T extends Record<string, unknown>>({
+export const SharedMetricChart = <T extends Record<string, unknown>>({
   title,
   subtitle,
   metrics = [],
@@ -38,7 +38,7 @@ export const Chart = <T extends Record<string, unknown>>({
   const options = useMetricChartOptions(metrics, series, getXAxisLabel);
 
   return (
-    <Card
+    <SharedCard
       title={title}
       subtitle={subtitle}
       className={className}
@@ -55,6 +55,6 @@ export const Chart = <T extends Record<string, unknown>>({
           />
         </div>
       )}
-    </Card>
+    </SharedCard>
   );
 };

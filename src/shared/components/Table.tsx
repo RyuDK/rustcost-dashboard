@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { Card } from "./Card";
+import { SharedCard } from "./metrics/SharedCard";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 type Alignment = "left" | "center" | "right";
@@ -140,7 +140,7 @@ export const Table = <T extends Record<string, unknown>>({
   };
 
   return (
-    <Card
+    <SharedCard
       title={title}
       subtitle={subtitle}
       actions={actions}
@@ -257,6 +257,6 @@ export const Table = <T extends Record<string, unknown>>({
           </table>
         </div>
       )}
-    </Card>
+    </SharedCard>
   );
 };

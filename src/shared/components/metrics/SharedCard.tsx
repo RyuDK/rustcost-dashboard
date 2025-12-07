@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "../LoadingSpinner";
 
 type CardPadding = "sm" | "md" | "lg";
 
@@ -35,7 +35,7 @@ export interface CardProps {
   footer?: ReactNode;
 }
 
-export const Card = ({
+export const SharedCard = ({
   title,
   subtitle,
   actions,
