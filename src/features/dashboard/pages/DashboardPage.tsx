@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Chart, type ChartSeries } from "@/shared/components/Chart";
 import { SystemStatus } from "@/features/system/components/SystemStatus";
 import { formatCurrency } from "@/shared/utils/format";
-import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
-import { MetricsFilterBar } from "@/features/dashboard/components/MetricsFilterBar";
-import { MetricsSummaryCards } from "@/features/dashboard/components/MetricsSummaryCards";
+import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
+import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
 import { PdfPrintOverlay } from "@/shared/components/PdfPrintOverlay";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/useDashboardMetrics";
 import { useDashboardParams } from "@/features/dashboard/hooks/useDashboardParams";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { useMemo } from "react";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 
 const COST_SERIES: ChartSeries<Record<string, unknown>>[] = [
   {
@@ -44,6 +44,39 @@ export const DashboardPage = () => {
     useDashboardMetrics(params);
   const { t } = useI18n();
   const [showPrint, setShowPrint] = useState(false);
+
+  const breadcrumbItems = useMemo(() => [{ label: t("nav.dashboard") }], [t]);
+
+  const summaryCards = useMemo(() => {
+    const cost = summary.cost?.summary;
+    return [
+      {
+        label: "Total Cost",
+        value: formatCurrency(cost?.total_cost_usd ?? 0, "USD"),
+        description: "All cluster costs",
+      },
+      {
+        label: "CPU Cost",
+        value: formatCurrency(cost?.cpu_cost_usd ?? 0, "USD"),
+        description: "Compute spend",
+      },
+      {
+        label: "Memory Cost",
+        value: formatCurrency(cost?.memory_cost_usd ?? 0, "USD"),
+        description: "RAM spend",
+      },
+      {
+        label: "Storage + Network",
+        value: formatCurrency(
+          (cost?.ephemeral_storage_cost_usd ?? 0) +
+            (cost?.persistent_storage_cost_usd ?? 0) +
+            (cost?.network_cost_usd ?? 0),
+          "USD"
+        ),
+        description: "Ephemeral, persistent, network",
+      },
+    ];
+  }, [summary.cost]);
 
   const costFields = useMemo(() => {
     const cost = summary.cost?.summary;
@@ -87,20 +120,24 @@ export const DashboardPage = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <DashboardHeader
-        eyebrow="RustCost"
+      <SharedPageHeader
+        eyebrow=""
         title={t("dashboard.title")}
-        subtitle={t("dashboard.subtitle")}
-        onExport={() => setShowPrint(true)}
+        description={t("dashboard.subtitle")}
+        breadcrumbItems={breadcrumbItems}
+        primaryAction={{
+          label: "Export PDF",
+          onClick: () => setShowPrint(true),
+        }}
       />
 
-      <MetricsFilterBar
+      <SharedMetricsFilterBar
         params={params}
         onChange={updateParam}
         onRefresh={refetchAll}
       />
 
-      <MetricsSummaryCards summary={summary} isLoading={isLoading} />
+      <SharedMetricsSummaryCards cards={summaryCards} isLoading={isLoading} />
 
       <div className="grid grid-cols-1 gap-6">
         <div className="lg:col-span-12">

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export const ConfirmModal = ({
+export const SharedConfirmModal = ({
   open,
   title,
   message,

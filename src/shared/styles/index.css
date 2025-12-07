@@ -63,6 +63,22 @@
 
     --accent: var(--color-amber-300);
     --accent-contrast: #1d1d1f;
+
+    --button-bg1: var(--primary);
+    --button-bg1-hover: var(--primary-hover);
+    --button-bg1-active: var(--primary-active);
+
+    --button-bg2: color-mix(in srgb, var(--surface) 80%, var(--primary) 20%);
+    --button-bg2-hover: color-mix(
+      in srgb,
+      var(--surface) 70%,
+      var(--primary) 30%
+    );
+    --button-bg2-active: color-mix(
+      in srgb,
+      var(--surface) 60%,
+      var(--primary) 40%
+    );
   }
 
   /* -------------------------------------------------------
@@ -92,5 +108,25 @@
 
     --accent: var(--color-amber-300);
     --accent-contrast: #1e1f22;
+
+    --button-bg1: rgb(255, 170, 25); /* darker amber */
+    --button-bg1-hover: rgb(240, 158, 22);
+    --button-bg1-active: rgb(220, 145, 18);
+
+    --button-bg2: color-mix(
+      in srgb,
+      var(--surface-raised) 75%,
+      var(--primary) 25%
+    );
+    --button-bg2-hover: color-mix(
+      in srgb,
+      var(--surface-raised) 65%,
+      var(--primary) 35%
+    );
+    --button-bg2-active: color-mix(
+      in srgb,
+      var(--surface-raised) 55%,
+      var(--primary) 45%
+    );
   }
 }

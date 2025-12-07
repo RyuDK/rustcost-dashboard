@@ -1,7 +1,7 @@
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { InfoCard } from "@/shared/components/InfoCard";
 import { useSettings } from "@/features/settings/hooks/useSettings";
-import { TimezoneSelector } from "@/shared/components/selector/TimezoneSelector";
+import { SharedTimezoneSelector } from "@/shared/components/selector/SharedTimezoneSelector";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { normalizeLanguageCode } from "@/constants/language";
@@ -110,7 +110,7 @@ export const SettingsPage = () => {
         />
       </div>
 
-      <TimezoneSelector />
+      <SharedTimezoneSelector />
     </div>
   );
 };

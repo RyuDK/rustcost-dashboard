@@ -1,7 +1,7 @@
 import { setTimezone } from "@/store/slices/preferenceSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 
-export function TimezoneSelector() {
+export function SharedTimezoneSelector() {
   const dispatch = useAppDispatch();
   const timezone = useAppSelector((state) => state.preferences.timezone);
 

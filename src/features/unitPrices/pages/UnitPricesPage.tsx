@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
 import { infoApi } from "@/shared/api";
 import { useFetch } from "@/shared/hooks/useFetch";
@@ -13,7 +13,7 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
-import { ConfirmModal } from "@/shared/components/modal/ConfirmModal";
+import { SharedConfirmModal } from "@/shared/components/modal/SharedConfirmModal";
 
 export const UnitPricesPage = () => {
   const { t } = useI18n();
@@ -161,11 +161,18 @@ export const UnitPricesPage = () => {
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <DashboardHeader
+      <SharedPageHeader
         eyebrow={t("common.system")}
         title="Unit Prices"
-        subtitle="Modify raw pricing used for workload cost allocation."
-        onRefresh={handleRefresh}
+        description="Modify raw pricing used for workload cost allocation."
+        breadcrumbItems={[
+          { label: t("nav.system"), to: `${prefix}/system` },
+          { label: t("nav.unitPrices") },
+        ]}
+        primaryAction={{
+          label: t("common.refresh"),
+          onClick: handleRefresh,
+        }}
       />
 
       {/* --- Errors --- */}
@@ -281,7 +288,7 @@ export const UnitPricesPage = () => {
       {/* ---------------------- MODALS ---------------------- */}
 
       {/* No changes modal */}
-      <ConfirmModal
+      <SharedConfirmModal
         open={showNoChanges}
         title="No Changes Detected"
         message="There are no modifications to save."
@@ -292,7 +299,7 @@ export const UnitPricesPage = () => {
       />
 
       {/* Save confirmation */}
-      <ConfirmModal
+      <SharedConfirmModal
         open={showConfirmSave}
         title="Confirm Save"
         message="Are you sure you want to update the unit prices?"
@@ -306,7 +313,7 @@ export const UnitPricesPage = () => {
       />
 
       {/* Cancel confirmation */}
-      <ConfirmModal
+      <SharedConfirmModal
         open={showConfirmCancel}
         title="Discard Changes?"
         message="Your unsaved changes will be lost. Continue?"

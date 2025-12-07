@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import type { InfoSetting } from "@/shared/api/info";
 import type { ApiResponse } from "@/types/api";
 import type {
@@ -168,11 +168,15 @@ export function SystemPage() {
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <DashboardHeader
+      <SharedPageHeader
         eyebrow={t("common.system")}
         title="Control Plane"
-        subtitle="Monitor status, health, settings, unit prices, and administrative actions."
-        onRefresh={() => void loadSystemData()}
+        description="Monitor status, health, settings, unit prices, and administrative actions."
+        breadcrumbItems={[{ label: t("nav.system") }]}
+        primaryAction={{
+          label: t("common.refresh"),
+          onClick: () => void loadSystemData(),
+        }}
       />
 
       {error && (

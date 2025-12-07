@@ -7,7 +7,6 @@ import { RootLayout } from "./layouts/RootLayout";
 import { TrendsPage } from "@/features/trends/pages/TrendsPage";
 import { EfficiencyPage } from "@/features/efficiency/pages/EfficiencyPage";
 import { SettingsPage } from "@/features/settings/pages/SettingsPage";
-import { WorkloadsPage } from "@/features/workloads/WorkloadsPage";
 import { WorkloadDetailPage } from "@/features/workloadDetail/WorkloadDetailPage";
 import { ResourcesPage } from "@/features/resources/ResourcesPage";
 import { AllocationPage } from "@/features/allocation/AllocationPage";
@@ -33,6 +32,7 @@ import { DaemonSetsPage } from "@/features/workloads/resources/pages/DaemonSetsP
 import { JobsCronJobsPage } from "@/features/workloads/resources/pages/JobsCronJobsPage";
 import { ServicesPage } from "@/features/workloads/resources/pages/ServicesPage";
 import { IngressesPage } from "@/features/workloads/resources/pages/IngressesPage";
+import WorkloadsPage from "@/features/workloads/pages/WorkloadsPage";
 
 const router = createBrowserRouter([
   {
@@ -55,7 +55,10 @@ const router = createBrowserRouter([
       { path: "workloads/metrics/containers", element: <ContainersPage /> },
       { path: "workloads/resources", element: <ResourcesOverviewPage /> },
       { path: "workloads/resources/deployments", element: <DeploymentsPage /> },
-      { path: "workloads/resources/statefulsets", element: <StatefulSetsPage /> },
+      {
+        path: "workloads/resources/statefulsets",
+        element: <StatefulSetsPage />,
+      },
       { path: "workloads/resources/daemonsets", element: <DaemonSetsPage /> },
       { path: "workloads/resources/jobs", element: <JobsCronJobsPage /> },
       { path: "workloads/resources/services", element: <ServicesPage /> },

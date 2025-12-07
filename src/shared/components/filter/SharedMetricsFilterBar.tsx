@@ -12,10 +12,9 @@ interface MetricsFilterBarProps {
 }
 
 const toDateInputValue = (value?: string) => (value ? value.slice(0, 10) : "");
-
 const toIsoDateTime = (value: string) => `${value}T00:00:00`;
 
-export const MetricsFilterBar = ({
+export const SharedMetricsFilterBar = ({
   params,
   onChange,
   onRefresh,
