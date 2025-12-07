@@ -67,11 +67,7 @@ export const useDashboardMetrics = (params: MetricsQueryOptions): UseDashboardMe
           }
         : undefined,
     };
-  }, [
-    clusterCostSummary?.end,
-    clusterCostSummary?.start,
-    clusterCostSummary?.summary,
-  ]);
+  }, [clusterCostSummary]);
 
   const costError = clusterCostSummaryQuery.error ?? clusterCostTrendQuery.error;
 

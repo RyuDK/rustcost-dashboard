@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "@/app/providers/QueryProvider";
+import { useQueryClient } from "@/app/providers/queryContext";
 import type { UseFetchOptions, UseFetchResult } from "@/types/fetch";
 
 const serializeKey = (key: string | readonly unknown[]): string =>

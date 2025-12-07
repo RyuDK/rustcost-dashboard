@@ -36,7 +36,10 @@ export const MetricChart = ({
   error,
   className = "",
 }: MetricChartProps) => {
-  const safeMetrics = Array.isArray(metrics) ? metrics : [];
+  const safeMetrics = useMemo(
+    () => (Array.isArray(metrics) ? metrics : []),
+    [metrics]
+  );
 
   const labels = useMemo(
     () => safeMetrics.map((p) => new Date(p.time).toLocaleDateString()),

@@ -1,21 +1,5 @@
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-
-type Theme = "light" | "dark";
-
-interface ThemeContextValue {
-  theme: Theme;
-  toggleTheme: () => void;
-  setTheme: (theme: Theme) => void;
-}
-
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { ThemeContext, type Theme, type ThemeContextValue } from "./themeContext";
 
 const THEME_STORAGE_KEY = "rustcost_theme";
 
@@ -52,12 +36,4 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
-};
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
-  }
-  return context;
 };

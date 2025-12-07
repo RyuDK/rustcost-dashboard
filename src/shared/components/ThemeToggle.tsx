@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { useTheme } from "@/app/providers/ThemeProvider";
+import { useTheme } from "@/app/providers/themeContext";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 interface ThemeToggleProps {
