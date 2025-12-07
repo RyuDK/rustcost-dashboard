@@ -1,7 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { NavLink } from "react-router-dom";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
+import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
 import type { MetricsQueryOptions } from "@/types/metrics";
 import { metricApi } from "@/shared/api";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { formatCurrency } from "@/shared/utils/format";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+
+/* --------------------------- Types --------------------------- */
 
 interface ClusterRawSummary {
   avg_cpu_cores: number;
@@ -24,6 +31,8 @@ interface ClusterCostSummary {
   total_cost_usd: number;
 }
 
+/* --------------------------- Utils --------------------------- */
+
 const getDefaultDateRange = (): MetricsQueryOptions => {
   const now = new Date();
   const past = new Date();
@@ -35,7 +44,11 @@ const getDefaultDateRange = (): MetricsQueryOptions => {
   };
 };
 
+/* -------------------------- Component ------------------------- */
+
 export default function WorkloadsPage() {
+  const { t } = useI18n();
+
   const [params, setParams] =
     useState<MetricsQueryOptions>(getDefaultDateRange);
   const [rawMetrics, setRawMetrics] = useState<ClusterRawSummary | null>(null);
@@ -84,125 +97,215 @@ export default function WorkloadsPage() {
     loadMetrics();
   }, [loadMetrics]);
 
+  /* ----------------------- Summary Cards ----------------------- */
+
+  const rawSummaryCards = useMemo(() => {
+    if (!rawMetrics) return [];
+
+    return [
+      {
+        label: "Avg CPU",
+        value: `${rawMetrics.avg_cpu_cores.toFixed(3)} cores`,
+        description: "Average CPU cores used",
+      },
+      {
+        label: "Avg Memory",
+        value: `${rawMetrics.avg_memory_gb.toFixed(2)} GB`,
+        description: "Average memory usage",
+      },
+      {
+        label: "Avg Network",
+        value: `${rawMetrics.avg_network_gb.toFixed(4)} GB`,
+        description: "Average network throughput",
+      },
+      {
+        label: "Avg Storage",
+        value: `${rawMetrics.avg_storage_gb.toFixed(2)} GB`,
+        description: "Average storage consumption",
+      },
+      {
+        label: "Max CPU",
+        value: `${rawMetrics.max_cpu_cores.toFixed(3)} cores`,
+        description: "Peak CPU usage",
+      },
+      {
+        label: "Max Memory",
+        value: `${rawMetrics.max_memory_gb.toFixed(2)} GB`,
+        description: "Peak memory usage",
+      },
+      {
+        label: "Max Network",
+        value: `${rawMetrics.max_network_gb.toFixed(4)} GB`,
+        description: "Peak network throughput",
+      },
+      {
+        label: "Nodes",
+        value: rawMetrics.node_count.toString(),
+        description: "Total nodes in the cluster",
+      },
+    ];
+  }, [rawMetrics]);
+
+  const costSummaryCards = useMemo(() => {
+    if (!costMetrics) return [];
+
+    return [
+      {
+        label: "CPU Cost",
+        value: formatCurrency(costMetrics.cpu_cost_usd, "USD"),
+        description: "Compute CPU cost",
+      },
+      {
+        label: "Memory Cost",
+        value: formatCurrency(costMetrics.memory_cost_usd, "USD"),
+        description: "Memory/RAM cost",
+      },
+      {
+        label: "Network Cost",
+        value: formatCurrency(costMetrics.network_cost_usd, "USD"),
+        description: "Cluster network transfer cost",
+      },
+      {
+        label: "Ephemeral Storage",
+        value: formatCurrency(costMetrics.ephemeral_storage_cost_usd, "USD"),
+        description: "Ephemeral disk usage cost",
+      },
+      {
+        label: "Persistent Storage",
+        value: formatCurrency(costMetrics.persistent_storage_cost_usd, "USD"),
+        description: "Persistent volume cost",
+      },
+      {
+        label: "Total Cost",
+        value: formatCurrency(costMetrics.total_cost_usd, "USD"),
+        description: "Total cost across all resources",
+        highlight: true,
+      },
+    ];
+  }, [costMetrics]);
+
+  /* ---------------------------- UI ---------------------------- */
+
   return (
-    <div className="space-y-10 px-6 py-6">
-      {/* Filter Bar */}
+    <div className="flex flex-col gap-10 px-6 py-6">
+      <SharedPageHeader
+        eyebrow=""
+        title="Workload Metrics"
+        description="Cluster resource usage & cost overview"
+        breadcrumbItems={[{ label: t("nav.workloads") }]}
+      />
+
       <SharedMetricsFilterBar
         params={params}
         onChange={handleChange}
         onRefresh={loadMetrics}
       />
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+          Sub Pages
+        </h2>
 
-      <header>
-        <h1 className="text-3xl font-bold">Cluster Overview</h1>
-        <p className="text-slate-500 max-w-xl">
-          Resource usage & cost summary for the selected time period.
-        </p>
-      </header>
-
-      {loading && (
-        <p className="text-center text-slate-500">Loading metrics...</p>
-      )}
-
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <LinkCard title="Nodes" subtitle="Metrics" to="metrics/nodes" />
+          <LinkCard title="Pods" subtitle="Metrics" to="metrics/pods" />
+          <LinkCard
+            title="Containers"
+            subtitle="Metrics"
+            to="metrics/containers"
+          />
+          <LinkCard
+            title="Deployments"
+            subtitle="Resources"
+            to="resources/deployments"
+          />
+          <LinkCard
+            title="StatefulSets"
+            subtitle="Resources"
+            to="resources/statefulsets"
+          />
+          <LinkCard
+            title="DaemonSets"
+            subtitle="Resources"
+            to="resources/daemonsets"
+          />
+          <LinkCard
+            title="Jobs & CronJobs"
+            subtitle="Resources"
+            to="resources/jobs"
+          />
+          <LinkCard
+            title="Services"
+            subtitle="Resources"
+            to="resources/services"
+          />
+          <LinkCard
+            title="Ingresses"
+            subtitle="Resources"
+            to="resources/ingresses"
+          />
+        </div>
+      </div>
       {error && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">
           {error}
         </div>
       )}
 
-      {/* ========= RAW METRICS ========= */}
-      {!loading && rawMetrics && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Resource Usage Summary</h2>
+      {/* RAW METRICS */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+          Resource Usage Summary
+        </h2>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard
-              title="Avg CPU"
-              value={`${rawMetrics.avg_cpu_cores.toFixed(3)} cores`}
-            />
-            <MetricCard
-              title="Avg Memory"
-              value={`${rawMetrics.avg_memory_gb.toFixed(2)} GB`}
-            />
-            <MetricCard
-              title="Avg Network"
-              value={`${rawMetrics.avg_network_gb.toFixed(4)} GB`}
-            />
-            <MetricCard
-              title="Avg Storage"
-              value={`${rawMetrics.avg_storage_gb.toFixed(2)} GB`}
-            />
-            <MetricCard
-              title="Max CPU"
-              value={`${rawMetrics.max_cpu_cores.toFixed(3)} cores`}
-            />
-            <MetricCard
-              title="Max Memory"
-              value={`${rawMetrics.max_memory_gb.toFixed(2)} GB`}
-            />
-            <MetricCard
-              title="Nodes"
-              value={rawMetrics.node_count.toString()}
-            />
-          </div>
-        </section>
-      )}
+        <SharedMetricsSummaryCards
+          cards={rawSummaryCards}
+          isLoading={loading}
+        />
+      </div>
 
-      {/* ========= COST METRICS ========= */}
-      {!loading && costMetrics && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Cost Summary</h2>
+      {/* COST METRICS */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+          Cost Summary
+        </h2>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <MetricCard
-              title="CPU Cost"
-              value={`$${costMetrics.cpu_cost_usd.toFixed(2)}`}
-            />
-            <MetricCard
-              title="Memory Cost"
-              value={`$${costMetrics.memory_cost_usd.toFixed(2)}`}
-            />
-            <MetricCard
-              title="Network Cost"
-              value={`$${costMetrics.network_cost_usd.toFixed(2)}`}
-            />
-            <MetricCard
-              title="Ephemeral Storage"
-              value={`$${costMetrics.ephemeral_storage_cost_usd.toFixed(2)}`}
-            />
-            <MetricCard
-              title="Persistent Storage"
-              value={`$${costMetrics.persistent_storage_cost_usd.toFixed(2)}`}
-            />
-            <MetricCard
-              title="Total Cost"
-              value={`$${costMetrics.total_cost_usd.toFixed(2)}`}
-              highlight
-            />
-          </div>
-        </section>
-      )}
+        <SharedMetricsSummaryCards
+          cards={costSummaryCards}
+          isLoading={loading}
+        />
+      </div>
     </div>
   );
 }
 
-function MetricCard({
+const LinkCard = ({
   title,
-  value,
-  highlight,
+  subtitle,
+  to,
 }: {
   title: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-xl border p-5 shadow-sm ${
-        highlight ? "border-amber-500 bg-amber-50" : "border-gray-200 bg-white"
-      }`}
-    >
-      <p className="text-xs uppercase tracking-wide text-gray-500">{title}</p>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
+  subtitle: string;
+  to: string;
+}) => (
+  <NavLink
+    to={to}
+    className="
+      group flex items-center justify-between rounded-2xl border border-slate-200
+      bg-white px-4 py-3 text-left shadow-sm transition
+      hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-lg
+      dark:border-slate-800 dark:bg-[var(--surface-dark)]/60 dark:hover:border-amber-400
+    "
+  >
+    <div className="space-y-1">
+      <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {subtitle}
+      </p>
+      <p className="text-lg font-semibold text-slate-900 dark:text-white">
+        {title}
+      </p>
     </div>
-  );
-}
+    <span className="text-amber-500 transition-transform duration-200 group-hover:translate-x-1">
+      →
+    </span>
+  </NavLink>
+);
