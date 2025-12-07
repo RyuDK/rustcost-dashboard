@@ -19,6 +19,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         bg-[var(--surface)]/70 backdrop-blur
         dark:border-[var(--border)]
         dark:bg-[var(--surface-dark)]/40
+        h-16
       "
     >
       <div className="flex items-center gap-3">
@@ -29,14 +30,18 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             hover:bg-[var(--overlay)] 
             dark:hover:bg-[var(--overlay)]
             transition
+            flex items-center justify-center
           "
         >
-          <img src="/logo-square.webp" alt="Logo" className="h-6 w-6" />
+          {/* Larger logo */}
+          <img
+            src="/logo-square.webp"
+            alt="Logo"
+            className="h-10 w-10 object-contain"
+          />
         </button>
 
-        <h1 className="text-lg font-semibold text-[var(--text)] dark:text-[var(--text)]">
-          RustCost
-        </h1>
+        <h1 className="text-xl font-semibold text-[var(--text)]">RustCost</h1>
       </div>
 
       <div className="flex items-center gap-3">

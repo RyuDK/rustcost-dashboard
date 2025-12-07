@@ -183,20 +183,33 @@ export const RootLayout = () => {
       const isOpen = childActive || openSections[itemKey];
       const paddingLeft = sidebarOpen ? 12 + depth * 12 : 0;
       const rowClasses = `
-        flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors
+        flex items-center rounded-md py-1 text-sm transition-colors
+        ${sidebarOpen ? "gap-2 px-2" : "justify-center px-0"}
         ${
           isActive
             ? `bg-[var(--primary)]/20 text-[var(--primary)] dark:bg-[var(--primary)]/25 dark:text-[var(--primary)]`
             : `text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary-hover)]/15 dark:text-[var(--text-muted)] dark:hover:text-[var(--primary)] dark:hover:bg-[var(--primary-hover)]/20`
         }
       `;
+      const linkClasses = `
+        flex flex-1 items-center
+        ${sidebarOpen ? "gap-3 px-1 py-1" : "justify-center px-0 py-2"}
+        text-inherit no-underline
+      `;
+      const toggleClasses = `
+        flex flex-1 items-center
+        ${sidebarOpen ? "gap-3 px-1 py-1" : "justify-center px-0 py-2"}
+        text-left
+      `;
 
-      const label = (
+      const label = sidebarOpen ? (
         <div className="flex w-full items-center gap-3">
           <Icon className="text-xl min-w-[20px]" />
-          {sidebarOpen && (
-            <span className="truncate">{t(item.translationKey)}</span>
-          )}
+          <span className="truncate">{t(item.translationKey)}</span>
+        </div>
+      ) : (
+        <div className="flex h-10 w-10 items-center justify-center">
+          <Icon className="text-2xl" />
         </div>
       );
 
@@ -207,7 +220,7 @@ export const RootLayout = () => {
               <NavLink
                 to={buildLinkPath(item.to)}
                 end={item.to === "/"}
-                className="flex flex-1 items-center gap-3 px-1 py-1 text-inherit no-underline"
+                className={linkClasses}
               >
                 {label}
               </NavLink>
@@ -215,7 +228,7 @@ export const RootLayout = () => {
               <button
                 type="button"
                 onClick={() => toggleSection(itemKey)}
-                className="flex flex-1 items-center gap-3 px-1 py-1 text-left"
+                className={toggleClasses}
               >
                 {label}
               </button>
@@ -263,7 +276,7 @@ export const RootLayout = () => {
         {/* ---------------- SIDEBAR ---------------- */}
         <aside
           className={`
-            ${sidebarOpen ? "w-64" : "w-16"}
+            ${sidebarOpen ? "w-64" : "w-[68px]"}
             transition-all duration-300
             border-r border-[var(--border)]
             bg-[var(--bg-muted)]/50 backdrop-blur
