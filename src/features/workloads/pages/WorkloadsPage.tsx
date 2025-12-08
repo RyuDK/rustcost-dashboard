@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { NavLink } from "react-router-dom";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
+import { LinkCard } from "@/shared/components/cards/SharedLinkCards";
 import type { MetricsQueryOptions } from "@/types/metrics";
 import { metricApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
@@ -277,35 +277,3 @@ export default function WorkloadsPage() {
     </div>
   );
 }
-
-const LinkCard = ({
-  title,
-  subtitle,
-  to,
-}: {
-  title: string;
-  subtitle: string;
-  to: string;
-}) => (
-  <NavLink
-    to={to}
-    className="
-      group flex items-center justify-between rounded-2xl border border-slate-200
-      bg-white px-4 py-3 text-left shadow-sm transition
-      hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-lg
-      dark:border-slate-800 dark:bg-[var(--surface-dark)]/60 dark:hover:border-amber-400
-    "
-  >
-    <div className="space-y-1">
-      <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        {subtitle}
-      </p>
-      <p className="text-lg font-semibold text-slate-900 dark:text-white">
-        {title}
-      </p>
-    </div>
-    <span className="text-amber-500 transition-transform duration-200 group-hover:translate-x-1">
-      →
-    </span>
-  </NavLink>
-);

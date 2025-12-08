@@ -21,7 +21,7 @@ import { isLessThan3Hours } from "@/shared/utils/time";
 import { buildLanguagePrefix } from "@/constants/language";
 import { useEffect } from "react";
 import { UnitPricesPage } from "@/features/unitPrices/pages/UnitPricesPage";
-import { MetricsOverviewPage } from "@/features/workloads/metrics/pages/MetricsOverviewPage";
+import MetricOverviewPage from "@/features/workloads/metrics/pages/MetricsOverviewPage";
 import { NodesPage } from "@/features/workloads/metrics/pages/NodesPage";
 import { PodsPage } from "@/features/workloads/metrics/pages/PodsPage";
 import { ContainersPage } from "@/features/workloads/metrics/pages/ContainersPage";
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       { path: "settings", element: <SettingsPage /> },
       { path: "workloads", element: <WorkloadsPage /> },
       { path: "workloads/:workloadId", element: <WorkloadDetailPage /> },
-      { path: "workloads/metrics", element: <MetricsOverviewPage /> },
+      { path: "workloads/metrics", element: <MetricOverviewPage /> },
       { path: "workloads/metrics/nodes", element: <NodesPage /> },
       { path: "workloads/metrics/pods", element: <PodsPage /> },
       { path: "workloads/metrics/containers", element: <ContainersPage /> },
