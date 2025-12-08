@@ -76,7 +76,12 @@ export function MetricsPage() {
             confidence: 0.72,
           });
         }
-        if (efficiencyRes.data.data?.efficiency.overall_efficiency ?? 0 < 0.5) {
+        if (
+          (efficiencyRes &&
+            efficiencyRes.data &&
+            efficiencyRes.data?.efficiency.overall_efficiency) ??
+          0 < 0.5
+        ) {
           insights.push({
             id: "low-efficiency",
             summary:
