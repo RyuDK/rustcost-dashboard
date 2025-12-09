@@ -69,7 +69,7 @@ export const LoadingPage = () => {
           setPopup(null);
         }
 
-        if (!hasTriggeredResync.current && !last_discovered_at) {
+        if (!hasTriggeredResync.current) {
           hasTriggeredResync.current = true;
           await postSystemResync();
           timer = setTimeout(poll, POLL_INTERVAL);
