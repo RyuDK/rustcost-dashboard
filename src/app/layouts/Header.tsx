@@ -3,6 +3,8 @@ import { ThemeToggle } from "@/shared/components/ThemeToggle";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import LangSelect from "@/app/layouts/components/LangSelect";
 import { NotificationBell } from "@/shared/components/NotificationBell";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { setShowExplain } from "@/store/slices/preferenceSlice";
 
 type HeaderProps = {
   onToggleSidebar: () => void;
@@ -10,6 +12,9 @@ type HeaderProps = {
 
 export const Header = ({ onToggleSidebar }: HeaderProps) => {
   const { language, setLanguage } = useI18n();
+  const dispatch = useAppDispatch();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
+  const explainLabel = showExplain ? "Hide Explain" : "Explain";
 
   return (
     <header
@@ -45,6 +50,23 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          type="button"
+          aria-pressed={showExplain}
+          onClick={() => dispatch(setShowExplain(!showExplain))}
+          className={`
+            inline-flex h-10 items-center rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-500
+            ${
+              showExplain
+                ? "border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]"
+                : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
+            }
+            dark:border-[var(--border)] dark:bg-[var(--surface-dark)]
+            dark:hover:border-[var(--primary)] dark:hover:text-[var(--primary)]
+          `}
+        >
+          {explainLabel}
+        </button>
         <LangSelect value={language} onChange={setLanguage} />
         <NotificationBell />
         <ThemeToggle />

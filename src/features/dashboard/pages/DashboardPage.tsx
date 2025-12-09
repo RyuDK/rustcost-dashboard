@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import { IoInformationCircleOutline } from "react-icons/io5";
 import {
   SharedMetricChart,
   type ChartSeries,
@@ -11,8 +12,8 @@ import { PdfPrintOverlay } from "@/shared/components/PdfPrintOverlay";
 import { useDashboardMetrics } from "@/features/dashboard/hooks/useDashboardMetrics";
 import { useDashboardParams } from "@/features/dashboard/hooks/useDashboardParams";
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import { useMemo } from "react";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { useAppSelector } from "@/store/hook";
 
 const COST_SERIES: ChartSeries<Record<string, unknown>>[] = [
   {
@@ -47,6 +48,7 @@ export const DashboardPage = () => {
     useDashboardMetrics(params);
   const { t } = useI18n();
   const [showPrint, setShowPrint] = useState(false);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const breadcrumbItems = useMemo(() => [{ label: t("nav.dashboard") }], [t]);
 
@@ -140,7 +142,21 @@ export const DashboardPage = () => {
         onRefresh={refetchAll}
       />
 
+      {showExplain && (
+        <ExplainHint>
+          Filters apply to every widget below. Set your date range, then hit
+          refresh to pull aligned data across the dashboard.
+        </ExplainHint>
+      )}
+
       <SharedMetricsSummaryCards cards={summaryCards} isLoading={isLoading} />
+
+      {showExplain && (
+        <ExplainHint>
+          Summary cards show total, CPU, memory, and storage+network costs for
+          the selected window. They refresh with the filter above.
+        </ExplainHint>
+      )}
 
       <div className="grid grid-cols-1 gap-6">
         <div className="lg:col-span-12">
@@ -161,9 +177,23 @@ export const DashboardPage = () => {
         </div>
       </div>
 
+      {showExplain && (
+        <ExplainHint>
+          The cost trend plots each cost component over time. Hover for exact
+          values; the X-axis follows your chosen date range.
+        </ExplainHint>
+      )}
+
       {/* Node table removed per request */}
 
       <SystemStatus />
+
+      {showExplain && (
+        <ExplainHint>
+          System Status summarizes platform health and alerts reported by
+          backend services.
+        </ExplainHint>
+      )}
 
       <PdfPrintOverlay
         open={showPrint}
@@ -174,3 +204,23 @@ export const DashboardPage = () => {
     </div>
   );
 };
+
+const ExplainHint = ({ children }: { children: ReactNode }) => (
+  <div
+    className="
+      flex items-start gap-3 rounded-xl border border-amber-400/40
+      bg-gradient-to-r from-black/80 via-black/70 to-amber-900/20
+      px-4 py-3 text-xs text-white shadow-[0_12px_30px_-16px_rgba(0,0,0,0.6)] backdrop-blur
+    "
+  >
+    <span className="mt-0.5 text-amber-300">
+      <IoInformationCircleOutline className="text-base" />
+    </span>
+    <div className="space-y-1">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-300">
+        Explain
+      </p>
+      <p className="text-white/90 leading-relaxed">{children}</p>
+    </div>
+  </div>
+);
