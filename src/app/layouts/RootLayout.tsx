@@ -97,6 +97,21 @@ const navItems: NavItem[] = [
             translationKey: "nav.ingresses",
             icon: IoPricetagOutline,
           },
+          {
+            to: "/workloads/resources/namespaces",
+            translationKey: "nav.namespaces",
+            icon: IoCubeOutline,
+          },
+          {
+            to: "/workloads/resources/persistent-volumes",
+            translationKey: "nav.persistentVolumes",
+            icon: IoFileTrayFullOutline,
+          },
+          {
+            to: "/workloads/resources/persistent-volume-claims",
+            translationKey: "nav.persistentVolumeClaims",
+            icon: IoLayersOutline,
+          },
         ],
       },
     ],

@@ -19,7 +19,10 @@
     "daemonSets": "DaemonSets",
     "jobsCronJobs": "Jobs & CronJobs",
     "services": "Services",
-    "ingresses": "Ingresses"
+    "ingresses": "Ingresses",
+    "namespaces": "Namespaces",
+    "persistentVolumes": "PV",
+    "persistentVolumeClaims": "PVC"
   },
   "common": {
     "refresh": "search",

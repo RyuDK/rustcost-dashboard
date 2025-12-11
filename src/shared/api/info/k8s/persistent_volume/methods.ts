@@ -1,10 +1,14 @@
-import { makeK8sListFetcher } from "@/shared/api/info/k8s/utils";
+import { INFO_BASE } from "@/shared/api/base";
+import { request, type PaginationParams } from "@/shared/api/http";
 import type { ApiResponse } from "@/types/api";
-import type { K8sPersistentVolumeList } from "./dto";
+import type { K8sPersistentVolumePage } from "./dto";
 
-const fetcher = makeK8sListFetcher("persistentvolumes");
-
-export const fetchK8sPersistentVolumes = (): Promise<
-  ApiResponse<K8sPersistentVolumeList>
-> => fetcher();
+export const fetchK8sPersistentVolumes = (
+  params?: PaginationParams
+): Promise<ApiResponse<K8sPersistentVolumePage>> =>
+  request<ApiResponse<K8sPersistentVolumePage>>({
+    method: "GET",
+    url: `${INFO_BASE}/k8s/persistentvolumes`,
+    params,
+  });
 

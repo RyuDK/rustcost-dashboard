@@ -19,7 +19,10 @@
     "daemonSets": "데몬셋",
     "jobsCronJobs": "잡 · 크론잡",
     "services": "서비스",
-    "ingresses": "인그레스"
+    "ingresses": "인그레스",
+    "namespaces": "네임스페이스",
+    "persistentVolumes": "퍼시스턴트 볼륨",
+    "persistentVolumeClaims": "퍼시스턴트 볼륨 클레임"
   },
   "common": {
     "refresh": "검색",
