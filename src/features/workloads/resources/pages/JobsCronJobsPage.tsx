@@ -14,6 +14,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type JobRow = {
   id: string;
@@ -300,6 +301,88 @@ export const JobsCronJobsPage = () => {
   const selectedCronContainers =
     selectedCronJob?.spec?.jobTemplate?.spec?.template?.spec?.containers ?? [];
   const cronConditions = selectedCronStatus.active ?? [];
+  const jobName = selectedJobMeta.name ?? "job";
+  const jobNs = selectedJobMeta.namespace ?? "default";
+  const cronName = selectedCronMeta.name ?? "cronjob";
+  const cronNs = selectedCronMeta.namespace ?? "default";
+
+  const jobCommands = [
+    {
+      title: "Create",
+      commands: [
+        "kubectl apply -f job.yaml",
+        `kubectl create job ${jobName} --image=<image> -n ${jobNs}`,
+      ],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete job ${jobName} -n ${jobNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl delete job ${jobName} -n ${jobNs} && kubectl apply -f job.yaml`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get job ${jobName} -n ${jobNs}`,
+        `kubectl describe job ${jobName} -n ${jobNs}`,
+        `kubectl get pods -l job-name=${jobName} -n ${jobNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl get events -n ${jobNs}`,
+        `kubectl logs job/${jobName} -n ${jobNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [
+        `kubectl logs job/${jobName} -n ${jobNs}`,
+        `kubectl logs -l job-name=${jobName} --all-containers=true -n ${jobNs}`,
+      ],
+    },
+  ];
+
+  const cronCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f cronjob.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete cronjob ${cronName} -n ${cronNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl patch cronjob ${cronName} -n ${cronNs} -p '<json>'`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get cronjob ${cronName} -n ${cronNs}`,
+        `kubectl describe cronjob ${cronName} -n ${cronNs}`,
+        `kubectl get jobs --selector=cronjob-name=${cronName} -n ${cronNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl get events -n ${cronNs}`,
+        `kubectl logs job/<latest-job> -n ${cronNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [`kubectl logs job/<job-name> -n ${cronNs}`],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -426,11 +509,13 @@ export const JobsCronJobsPage = () => {
                     )}
                     {jobConditions.map((condition) => renderCondition(condition))}
                   </div>
-                </div>
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">
-                Select a job from the table to view details.
+
+              <CommandSection heading="Kubectl Commands" groups={jobCommands} />
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              Select a job from the table to view details.
               </p>
             )}
           </SharedCard>
@@ -556,11 +641,13 @@ export const JobsCronJobsPage = () => {
                       </div>
                     ))}
                   </div>
-                </div>
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">
-                Select a cron job from the table to view details.
+
+              <CommandSection heading="Kubectl Commands" groups={cronCommands} />
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              Select a cron job from the table to view details.
               </p>
             )}
           </SharedCard>

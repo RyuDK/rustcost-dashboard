@@ -13,6 +13,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type StatefulSetRow = {
   id: string;
@@ -182,6 +183,53 @@ export const StatefulSetsPage = () => {
   const containers = detailSpec.template?.spec?.containers ?? [];
   const volumeClaims = detailSpec.volumeClaimTemplates ?? [];
   const conditions = detailStatus.conditions ?? [];
+  const ssName = detailMeta.name ?? "statefulset";
+  const ssNs = detailMeta.namespace ?? "default";
+  const ssContainer = containers[0]?.name ?? containers[0]?.image ?? "container";
+  const ssCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f statefulset.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [
+        `kubectl delete statefulset ${ssName} --cascade=orphan -n ${ssNs}`,
+        `kubectl delete statefulset ${ssName} --cascade=foreground -n ${ssNs}`,
+      ],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl set image statefulset/${ssName} ${ssContainer}=<image> -n ${ssNs}`,
+        `kubectl patch statefulset ${ssName} -n ${ssNs} -p '<json>'`,
+        `kubectl scale statefulset ${ssName} --replicas=<n> -n ${ssNs}`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get statefulset ${ssName} -n ${ssNs}`,
+        `kubectl describe statefulset ${ssName} -n ${ssNs}`,
+        `kubectl get pods -l app=${ssName} -n ${ssNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl rollout status statefulset/${ssName} -n ${ssNs}`,
+        `kubectl rollout history statefulset/${ssName} -n ${ssNs}`,
+        `kubectl get events -n ${ssNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [
+        `kubectl logs <pod-name> --since=1h -n ${ssNs}`,
+        `kubectl logs -l app=${ssName} --all-containers=true -n ${ssNs}`,
+      ],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -380,6 +428,8 @@ export const StatefulSetsPage = () => {
                 {conditions.map((condition) => renderCondition(condition))}
               </div>
             </div>
+
+            <CommandSection heading="Kubectl Commands" groups={ssCommands} />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

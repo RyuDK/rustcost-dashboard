@@ -9,6 +9,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type PersistentVolumeClaimRow = {
   id: string;
@@ -111,6 +112,43 @@ export const PersistentVolumeClaimsPage = () => {
   const detailMeta = selected?.metadata ?? {};
   const detailSpec = selected?.spec ?? {};
   const detailStatus = selected?.status ?? {};
+  const pvcName = detailMeta.name ?? "pvc";
+  const pvcNs = detailMeta.namespace ?? "default";
+  const pvcCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f pvc.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete pvc ${pvcName} -n ${pvcNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl patch pvc ${pvcName} -n ${pvcNs} -p '{"spec":{"resources":{"requests":{"storage":"10Gi"}}}}'`,
+        "Changing storage class typically requires a new PVC with Retain PV.",
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get pvc ${pvcName} -n ${pvcNs}`,
+        `kubectl describe pvc ${pvcName} -n ${pvcNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl get events -n ${pvcNs}`,
+        `kubectl describe pvc ${pvcName} -n ${pvcNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: ["PVCs do not have logs."],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -199,6 +237,8 @@ export const PersistentVolumeClaimsPage = () => {
                 {detailMeta.resourceVersion ?? "n/a"}
               </p>
             </div>
+
+            <CommandSection heading="Kubectl Commands" groups={pvcCommands} />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

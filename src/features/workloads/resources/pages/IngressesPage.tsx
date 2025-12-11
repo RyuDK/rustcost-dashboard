@@ -9,6 +9,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type IngressRow = {
   id: string;
@@ -140,6 +141,44 @@ export const IngressesPage = () => {
   const rules = detailSpec.rules ?? [];
   const tlsEntries = detailSpec.tls ?? [];
   const loadBalancers = detailStatus.loadBalancer?.ingress ?? [];
+  const ingressName = detailMeta.name ?? "ingress";
+  const ingressNs = detailMeta.namespace ?? "default";
+  const ingressCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f ingress.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete ingress ${ingressName} -n ${ingressNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl patch ingress ${ingressName} -n ${ingressNs} -p '<json>'`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get ingress ${ingressName} -n ${ingressNs}`,
+        `kubectl describe ingress ${ingressName} -n ${ingressNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl get events -n ${ingressNs}`,
+        `kubectl describe ingress ${ingressName} -n ${ingressNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [
+        "kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx",
+      ],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -309,6 +348,11 @@ export const IngressesPage = () => {
                 </div>
               </div>
             </div>
+
+            <CommandSection
+              heading="Kubectl Commands"
+              groups={ingressCommands}
+            />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

@@ -9,6 +9,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type NamespaceRow = {
   id: string;
@@ -103,6 +104,45 @@ export const NamespacesPage = () => {
   const detailMeta = selected?.metadata ?? {};
   const detailStatus = selected?.status ?? {};
   const labelEntries = detailMeta.labels ? Object.entries(detailMeta.labels) : [];
+  const nsName = detailMeta.name ?? "namespace";
+  const namespaceCommands = [
+    {
+      title: "Create",
+      commands: [
+        `kubectl create namespace ${nsName}`,
+        "kubectl apply -f namespace.yaml",
+      ],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete namespace ${nsName}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl label ns ${nsName} env=prod`,
+        `kubectl annotate ns ${nsName} owner=<user>`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get ns ${nsName}`,
+        `kubectl describe ns ${nsName}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl get events -n ${nsName}`,
+        `kubectl describe ns ${nsName}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: ["Namespaces do not have logs; check workloads inside."],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -194,6 +234,11 @@ export const NamespacesPage = () => {
                 ))}
               </div>
             </div>
+
+            <CommandSection
+              heading="Kubectl Commands"
+              groups={namespaceCommands}
+            />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

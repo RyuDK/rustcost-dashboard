@@ -4,6 +4,7 @@ import { SharedCard } from "@/shared/components/metrics/SharedCard";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { infoApi } from "@/shared/api";
 import type { K8sCondition, K8sContainerSpec, K8sDeployment } from "@/types/k8s";
+import { CommandSection } from "../components/CommandSection";
 
 type DeploymentRow = {
   id: string;
@@ -283,6 +284,56 @@ export const DeploymentsPage = () => {
   const containers = detailSpec.template?.spec?.containers ?? [];
   const conditions = detailStatus.conditions ?? [];
 
+  const deploymentName = detailMeta.name ?? "deployment";
+  const deploymentNs = detailMeta.namespace ?? "default";
+  const containerName =
+    containers[0]?.name ?? containers[0]?.image ?? "container";
+  const deploymentCommands = [
+    {
+      title: "Create",
+      commands: [
+        `kubectl create deployment ${deploymentName} --image=<image> -n ${deploymentNs}`,
+        "kubectl apply -f deployment.yaml",
+      ],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete deployment ${deploymentName} -n ${deploymentNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl scale deployment ${deploymentName} --replicas=<n> -n ${deploymentNs}`,
+        `kubectl set image deployment/${deploymentName} ${containerName}=<image> -n ${deploymentNs}`,
+        `kubectl patch deployment ${deploymentName} -n ${deploymentNs} -p '<json>'`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get deployment ${deploymentName} -n ${deploymentNs}`,
+        `kubectl describe deployment ${deploymentName} -n ${deploymentNs}`,
+        `kubectl get pods -l app=${deploymentName} -n ${deploymentNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl rollout status deployment/${deploymentName} -n ${deploymentNs}`,
+        `kubectl rollout history deployment/${deploymentName} -n ${deploymentNs}`,
+        `kubectl rollout undo deployment/${deploymentName} -n ${deploymentNs}`,
+        `kubectl get events -n ${deploymentNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [
+        `kubectl logs deployment/${deploymentName} -n ${deploymentNs}`,
+        `kubectl logs -l app=${deploymentName} --all-containers=true -n ${deploymentNs}`,
+      ],
+    },
+  ];
+
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
       <SharedPageHeader
@@ -446,6 +497,11 @@ export const DeploymentsPage = () => {
                 {conditions.map((condition) => renderCondition(condition))}
               </div>
             </div>
+
+            <CommandSection
+              heading="Kubectl Commands"
+              groups={deploymentCommands}
+            />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

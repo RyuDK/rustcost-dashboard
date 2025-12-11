@@ -9,6 +9,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type PersistentVolumeRow = {
   id: string;
@@ -122,6 +123,39 @@ export const PersistentVolumesPage = () => {
   const detailMeta = selected?.metadata ?? {};
   const detailSpec = selected?.spec ?? {};
   const detailStatus = selected?.status ?? {};
+  const pvName = detailMeta.name ?? "pv";
+  const pvCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f pv.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete pv ${pvName}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl patch pv ${pvName} -p '<json>'`,
+        `kubectl patch pv ${pvName} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get pv ${pvName}`,
+        `kubectl describe pv ${pvName}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [`kubectl get events`, `kubectl describe pv ${pvName}`],
+    },
+    {
+      title: "Logs",
+      commands: ["PVs do not generate logs."],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -208,6 +242,8 @@ export const PersistentVolumesPage = () => {
                 {formatAge(detailMeta.creationTimestamp)}
               </p>
             </div>
+
+            <CommandSection heading="Kubectl Commands" groups={pvCommands} />
           </div>
         ) : (
           <p className="text-sm text-slate-500">

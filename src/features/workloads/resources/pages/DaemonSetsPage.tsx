@@ -13,6 +13,7 @@ import {
   usePaginatedResource,
 } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
+import { CommandSection } from "../components/CommandSection";
 
 type DaemonSetRow = {
   id: string;
@@ -192,6 +193,48 @@ export const DaemonSetsPage = () => {
   const detailStatus = selected?.status ?? {};
   const containers = detailSpec.template?.spec?.containers ?? [];
   const conditions = detailStatus.conditions ?? [];
+  const daemonName = detailMeta.name ?? "daemonset";
+  const daemonNs = detailMeta.namespace ?? "default";
+  const daemonContainer =
+    containers[0]?.name ?? containers[0]?.image ?? "container";
+  const daemonCommands = [
+    {
+      title: "Create",
+      commands: ["kubectl apply -f daemonset.yaml"],
+    },
+    {
+      title: "Delete",
+      commands: [`kubectl delete daemonset ${daemonName} -n ${daemonNs}`],
+    },
+    {
+      title: "Modify",
+      commands: [
+        `kubectl set image daemonset/${daemonName} ${daemonContainer}=<image> -n ${daemonNs}`,
+        `kubectl rollout restart daemonset/${daemonName} -n ${daemonNs}`,
+      ],
+    },
+    {
+      title: "View",
+      commands: [
+        `kubectl get daemonset ${daemonName} -n ${daemonNs}`,
+        `kubectl describe daemonset ${daemonName} -n ${daemonNs}`,
+        `kubectl get pods -l name=${daemonName} -n ${daemonNs}`,
+      ],
+    },
+    {
+      title: "Debug",
+      commands: [
+        `kubectl rollout status daemonset/${daemonName} -n ${daemonNs}`,
+        `kubectl get events -n ${daemonNs}`,
+      ],
+    },
+    {
+      title: "Logs",
+      commands: [
+        `kubectl logs -l name=${daemonName} --all-containers=true -n ${daemonNs}`,
+      ],
+    },
+  ];
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
@@ -356,6 +399,8 @@ export const DaemonSetsPage = () => {
                 {conditions.map((condition) => renderCondition(condition))}
               </div>
             </div>
+
+            <CommandSection heading="Kubectl Commands" groups={daemonCommands} />
           </div>
         ) : (
           <p className="text-sm text-slate-500">
