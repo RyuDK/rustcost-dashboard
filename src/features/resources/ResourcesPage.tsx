@@ -127,12 +127,19 @@ export function ResourcesPage() {
         }
         case "deployments": {
           const [infoRes, metricsRes] = await Promise.all([
-            infoApi.fetchK8sDeployments(),
+            infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
             metricApi.fetchDeploymentsRawSummary(),
           ]);
-          const items = (infoRes.data ?? []) as Record<string, unknown>[];
+          const items = infoRes.data?.items ?? [];
           resourceItems = items.map((item, index) =>
-            normalizeResource(item, `deployment-${index}`)
+            normalizeResource(
+              {
+                name: item.metadata?.name,
+                namespace: item.metadata?.namespace,
+                labels: item.metadata?.labels,
+              },
+              `deployment-${index}`
+            )
           );
           metricSummary = metricsRes.data?.summary;
           break;
