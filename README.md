@@ -77,7 +77,7 @@ Run locally for development or testing:
 docker run -d \
   -p 8080:8080 \
   -e RUSTCOST_CORE_URL=http://localhost:9000 \
-  kimc1992/rustcost-dashboard:latest
+  rustcost/dashboard:latest
 ```
 
 Dashboard available at:
@@ -87,7 +87,7 @@ http://localhost:8080
 ```
 
 Docker Hub:
-[https://hub.docker.com/repository/docker/kimc1992/rustcost-dashboard](https://hub.docker.com/repository/docker/kimc1992/rustcost-dashboard)
+[https://hub.docker.com/repository/docker/rustcost/dashboard](https://hub.docker.com/repository/docker/rustcost/dashboard)
 
 ---
 
