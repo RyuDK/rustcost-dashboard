@@ -2,11 +2,18 @@ import { useCallback, useMemo } from "react";
 import type { K8sService } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
 import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type ServiceRow = {
   id: string;
@@ -48,6 +55,11 @@ const mapServiceToRow = (service: K8sService): ServiceRow => {
 };
 
 export const ServicesPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sServices(params),
@@ -175,11 +187,15 @@ export const ServicesPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Services"
         description="Service endpoints, selectors, and load balancer ingress."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.services") },
+        ]}
       />
 
       <Table<ServiceRow>
@@ -341,6 +357,6 @@ export const ServicesPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };

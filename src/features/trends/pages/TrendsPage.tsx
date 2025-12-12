@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { TrendChart } from "@/features/trends/components/TrendChart";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import {
   useClusterTrendMetrics,
   useNamespaceTrendMetrics,
@@ -17,15 +19,13 @@ export const TrendsPage = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          {t("trends.title")}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {t("trends.subtitle")}
-        </p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title={t("trends.title")}
+        description={t("trends.subtitle")}
+        breadcrumbItems={[{ label: t("nav.trends") }]}
+      />
 
       <section className="flex flex-wrap items-end gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-[var(--surface-dark)]/40">
         <div className="flex flex-col">
@@ -89,6 +89,6 @@ export const TrendsPage = () => {
             : undefined
         }
       />
-    </div>
+    </SharedPageLayout>
   );
 };

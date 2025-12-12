@@ -7,14 +7,18 @@ import type {
 } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type JobRow = {
   id: string;
@@ -133,6 +137,11 @@ const renderCondition = (condition: K8sCondition) => (
 );
 
 export const JobsCronJobsPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const jobFetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sJobs(params),
@@ -170,10 +179,7 @@ export const JobsCronJobsPage = () => {
     error: cronError,
   } = usePaginatedResource<K8sCronJob>(cronJobFetcher, getCronJobId);
 
-  const jobRows = useMemo(
-    () => jobs.map((job) => mapJobToRow(job)),
-    [jobs]
-  );
+  const jobRows = useMemo(() => jobs.map((job) => mapJobToRow(job)), [jobs]);
   const cronJobRows = useMemo(
     () => cronJobs.map((job) => mapCronJobToRow(job)),
     [cronJobs]
@@ -359,9 +365,7 @@ export const JobsCronJobsPage = () => {
     },
     {
       title: "Modify",
-      commands: [
-        `kubectl patch cronjob ${cronName} -n ${cronNs} -p '<json>'`,
-      ],
+      commands: [`kubectl patch cronjob ${cronName} -n ${cronNs} -p '<json>'`],
     },
     {
       title: "View",
@@ -385,11 +389,15 @@ export const JobsCronJobsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Jobs & CronJobs"
         description="Batch workloads with completion status and schedules."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.jobsCronJobs") },
+        ]}
       />
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -452,7 +460,8 @@ export const JobsCronJobsPage = () => {
                       Start: {formatDateTime(selectedJobStatus.startTime)}
                     </p>
                     <p className="text-xs text-slate-500">
-                      Completed: {formatDateTime(selectedJobStatus.completionTime)}
+                      Completed:{" "}
+                      {formatDateTime(selectedJobStatus.completionTime)}
                     </p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900/60">
@@ -463,7 +472,8 @@ export const JobsCronJobsPage = () => {
                       {formatAge(selectedJobMeta.creationTimestamp)}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {selectedJobMeta.creationTimestamp ?? "timestamp unavailable"}
+                      {selectedJobMeta.creationTimestamp ??
+                        "timestamp unavailable"}
                     </p>
                   </div>
                 </div>
@@ -485,7 +495,9 @@ export const JobsCronJobsPage = () => {
                     )}
                     {selectedJobContainers.map((container, index) => (
                       <ContainerCard
-                        key={`${container.name ?? container.image ?? "container"}-${index}`}
+                        key={`${
+                          container.name ?? container.image ?? "container"
+                        }-${index}`}
                         container={container}
                       />
                     ))}
@@ -507,15 +519,20 @@ export const JobsCronJobsPage = () => {
                         No conditions reported yet.
                       </p>
                     )}
-                    {jobConditions.map((condition) => renderCondition(condition))}
+                    {jobConditions.map((condition) =>
+                      renderCondition(condition)
+                    )}
                   </div>
-              </div>
+                </div>
 
-              <CommandSection heading="Kubectl Commands" groups={jobCommands} />
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">
-              Select a job from the table to view details.
+                <CommandSection
+                  heading="Kubectl Commands"
+                  groups={jobCommands}
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                Select a job from the table to view details.
               </p>
             )}
           </SharedCard>
@@ -565,7 +582,8 @@ export const JobsCronJobsPage = () => {
                       {selectedCronSpec.schedule ?? "n/a"}
                     </p>
                     <p className="text-xs text-slate-500">
-                      Concurrency: {selectedCronSpec.concurrencyPolicy ?? "Allow"}
+                      Concurrency:{" "}
+                      {selectedCronSpec.concurrencyPolicy ?? "Allow"}
                     </p>
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900/60">
@@ -610,7 +628,9 @@ export const JobsCronJobsPage = () => {
                     )}
                     {selectedCronContainers.map((container, index) => (
                       <ContainerCard
-                        key={`${container.name ?? container.image ?? "container"}-${index}`}
+                        key={`${
+                          container.name ?? container.image ?? "container"
+                        }-${index}`}
                         container={container}
                       />
                     ))}
@@ -634,26 +654,31 @@ export const JobsCronJobsPage = () => {
                     )}
                     {cronConditions.map((jobRef) => (
                       <div
-                        key={`${jobRef.namespace ?? "ns"}-${jobRef.name ?? "job"}`}
+                        key={`${jobRef.namespace ?? "ns"}-${
+                          jobRef.name ?? "job"
+                        }`}
                         className="rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-200"
                       >
                         {jobRef.namespace ?? "default"}/{jobRef.name ?? "job"}
                       </div>
                     ))}
                   </div>
-              </div>
+                </div>
 
-              <CommandSection heading="Kubectl Commands" groups={cronCommands} />
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">
-              Select a cron job from the table to view details.
+                <CommandSection
+                  heading="Kubectl Commands"
+                  groups={cronCommands}
+                />
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                Select a cron job from the table to view details.
               </p>
             )}
           </SharedCard>
         </div>
       </div>
-    </div>
+    </SharedPageLayout>
   );
 };
 

@@ -6,14 +6,18 @@ import type {
 } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type StatefulSetRow = {
   id: string;
@@ -42,8 +46,7 @@ const mapStatefulSetToRow = (statefulSet: K8sStatefulSet): StatefulSetRow => {
   const replicas = spec.replicas ?? status.replicas ?? 0;
   const ready = status.readyReplicas ?? 0;
   const storage =
-    spec.volumeClaimTemplates?.[0]?.spec?.resources?.requests?.storage ??
-    "n/a";
+    spec.volumeClaimTemplates?.[0]?.spec?.resources?.requests?.storage ?? "n/a";
 
   return {
     id: getStatefulSetId(statefulSet),
@@ -92,6 +95,11 @@ const renderCondition = (condition: K8sCondition) => (
 );
 
 export const StatefulSetsPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sStatefulSets(params),
@@ -185,7 +193,8 @@ export const StatefulSetsPage = () => {
   const conditions = detailStatus.conditions ?? [];
   const ssName = detailMeta.name ?? "statefulset";
   const ssNs = detailMeta.namespace ?? "default";
-  const ssContainer = containers[0]?.name ?? containers[0]?.image ?? "container";
+  const ssContainer =
+    containers[0]?.name ?? containers[0]?.image ?? "container";
   const ssCommands = [
     {
       title: "Create",
@@ -232,11 +241,16 @@ export const StatefulSetsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
+        eyebrow=""
         title="StatefulSets"
         description="Inventory of StatefulSets with pod identity and storage footprints."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.statefulSets") },
+        ]}
       />
 
       <Table<StatefulSetRow>
@@ -310,7 +324,8 @@ export const StatefulSetsPage = () => {
                   Labels
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {detailMeta.labels && Object.keys(detailMeta.labels).length ? (
+                  {detailMeta.labels &&
+                  Object.keys(detailMeta.labels).length ? (
                     Object.entries(detailMeta.labels).map(([key, value]) => (
                       <span
                         key={key}
@@ -367,7 +382,9 @@ export const StatefulSetsPage = () => {
                 )}
                 {containers.map((container, index) => (
                   <ContainerCard
-                    key={`${container.name ?? container.image ?? "container"}-${index}`}
+                    key={`${
+                      container.name ?? container.image ?? "container"
+                    }-${index}`}
                     container={container}
                   />
                 ))}
@@ -437,7 +454,7 @@ export const StatefulSetsPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };
 

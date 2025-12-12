@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { MetricGetResponse } from "@/types/metrics";
 import { infoApi, metricApi } from "@/shared/api";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 
 interface WorkloadResource {
   name: string;
@@ -202,7 +203,8 @@ export function WorkloadDetailPage() {
   };
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
+      <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
       <header className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
           Workload Detail
@@ -286,6 +288,7 @@ export function WorkloadDetailPage() {
           {renderMetricsList(deploymentMetrics, "No deployment series available.")}
         </div>
       </section>
-    </div>
+      </div>
+    </SharedPageLayout>
   );
 }

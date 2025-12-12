@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
 import { infoApi } from "@/shared/api";
 import { useFetch } from "@/shared/hooks/useFetch";
@@ -160,15 +161,11 @@ export const UnitPricesPage = () => {
   }, [refetch]);
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow={t("common.system")}
         title="Unit Prices"
         description="Modify raw pricing used for workload cost allocation."
-        breadcrumbItems={[
-          { label: t("nav.system"), to: `${prefix}/system` },
-          { label: t("nav.unitPrices") },
-        ]}
+        breadcrumbItems={[{ label: t("nav.unitPrices") }]}
         primaryAction={{
           label: t("common.refresh"),
           onClick: handleRefresh,
@@ -322,7 +319,7 @@ export const UnitPricesPage = () => {
         onOk={() => handleCancel()}
         onCancel={() => setShowConfirmCancel(false)}
       />
-    </div>
+    </SharedPageLayout>
   );
 };
 

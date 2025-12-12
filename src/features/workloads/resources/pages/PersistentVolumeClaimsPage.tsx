@@ -2,14 +2,18 @@ import { useCallback, useMemo } from "react";
 import type { K8sPersistentVolumeClaim } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type PersistentVolumeClaimRow = {
   id: string;
@@ -27,11 +31,11 @@ type PersistentVolumeClaimRow = {
 
 const getPvcId = (pvc: K8sPersistentVolumeClaim) =>
   pvc.metadata?.uid ??
-  `${pvc.metadata?.namespace ?? "default"}-${
-    pvc.metadata?.name ?? "unknown"
-  }`;
+  `${pvc.metadata?.namespace ?? "default"}-${pvc.metadata?.name ?? "unknown"}`;
 
-const mapPvcToRow = (pvc: K8sPersistentVolumeClaim): PersistentVolumeClaimRow => {
+const mapPvcToRow = (
+  pvc: K8sPersistentVolumeClaim
+): PersistentVolumeClaimRow => {
   const meta = pvc.metadata ?? {};
   const spec = pvc.spec ?? {};
   const status = pvc.status ?? {};
@@ -52,6 +56,11 @@ const mapPvcToRow = (pvc: K8sPersistentVolumeClaim): PersistentVolumeClaimRow =>
 };
 
 export const PersistentVolumeClaimsPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sPersistentVolumeClaims(params),
@@ -151,11 +160,15 @@ export const PersistentVolumeClaimsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Persistent Volume Claims"
         description="Claims with requested storage, class, and binding."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.persistentVolumeClaims") },
+        ]}
       />
 
       <Table<PersistentVolumeClaimRow>
@@ -182,9 +195,7 @@ export const PersistentVolumeClaimsPage = () => {
       <SharedCard
         title={
           selected
-            ? `${detailMeta.namespace ?? "default"}/${
-                detailMeta.name ?? "pvc"
-              }`
+            ? `${detailMeta.namespace ?? "default"}/${detailMeta.name ?? "pvc"}`
             : "Select a claim"
         }
         subtitle="Spec, storage class, and binding details."
@@ -246,6 +257,6 @@ export const PersistentVolumeClaimsPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };

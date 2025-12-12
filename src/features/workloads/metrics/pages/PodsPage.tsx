@@ -16,6 +16,11 @@ import type {
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
 import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type PodRow = {
   id: string;
@@ -55,6 +60,10 @@ const getDefaultRange = (): MetricsQueryOptions => {
 
 export const PodsPage = () => {
   const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
   const [pods, setPods] = useState<PodOption[]>([]);
   const [search, setSearch] = useState("");
@@ -373,7 +382,11 @@ export const PodsPage = () => {
         eyebrow=""
         title="Pod Metrics"
         description="Pod-level cost and usage"
-        breadcrumbItems={[{ label: t("nav.pods") }]}
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.metrics"), to: `${prefix}/workloads/metrics` },
+          { label: t("nav.pods") },
+        ]}
       />
 
       {/* Global filters */}
@@ -488,7 +501,7 @@ export const PodsPage = () => {
           {sparklineCards.map((card) => (
             <div
               key={card.pod.uid}
-              className="rounded-xl border border-[var(--border)] bg-[var(--surface)]/70 p-4 shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/50"
+              className="rounded-xl border border-(--border) bg-(--surface)/70 p-4 shadow-sm dark:border-[var(--border)] dark:bg-[var(--surface-dark)]/50"
             >
               <div className="mb-2 flex items-center justify-between">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">

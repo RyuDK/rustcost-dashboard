@@ -2,9 +2,17 @@ import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { LinkCard } from "@/shared/components/cards/SharedLinkCards";
 import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
-export default function MetricOverviewPage() {
+export const MetricOverviewPage = () => {
   const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
 
   return (
     <SharedPageLayout>
@@ -12,7 +20,10 @@ export default function MetricOverviewPage() {
         eyebrow=""
         title="Metrics Overview"
         description="Explore metrics for nodes, pods, and containers to understand cluster performance."
-        breadcrumbItems={[{ label: t("nav.metrics") }]}
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.metrics") },
+        ]}
       />
 
       {/* LINKS SECTION */}
@@ -78,4 +89,4 @@ export default function MetricOverviewPage() {
       </div>
     </SharedPageLayout>
   );
-}
+};

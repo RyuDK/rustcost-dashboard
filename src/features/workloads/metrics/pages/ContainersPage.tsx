@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
@@ -14,6 +15,12 @@ import type {
   MetricSeries,
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type PodOption = { uid: string; label: string };
 
@@ -52,6 +59,10 @@ const getDefaultRange = (): MetricsQueryOptions => {
 };
 
 export const ContainersPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
   const [pods, setPods] = useState<PodOption[]>([]);
   const [search, setSearch] = useState("");
@@ -114,9 +125,7 @@ export const ContainersPage = () => {
           const points = series.points ?? [];
           const lastPoint = points[points.length - 1];
           const target =
-            (series as { target?: string }).target ??
-            series.name ??
-            "unknown";
+            (series as { target?: string }).target ?? series.name ?? "unknown";
           return {
             id: target,
             label: target,
@@ -265,7 +274,11 @@ export const ContainersPage = () => {
   ];
 
   const tableColumns = [
-    { key: "label", header: "Container", render: (row: ContainerRow) => row.label },
+    {
+      key: "label",
+      header: "Container",
+      render: (row: ContainerRow) => row.label,
+    },
     {
       key: "total_cost_usd",
       header: "Total Cost",
@@ -297,11 +310,16 @@ export const ContainersPage = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
+    <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
         title="Container Metrics"
         description="Container-level cost and usage"
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.metrics"), to: `${prefix}/workloads/metrics` },
+          { label: t("nav.containers") },
+        ]}
       />
 
       <SharedMetricsFilterBar
@@ -401,6 +419,6 @@ export const ContainersPage = () => {
         isLoading={loading}
         emptyMessage="No containers matched your search"
       />
-    </div>
+    </SharedPageLayout>
   );
 };

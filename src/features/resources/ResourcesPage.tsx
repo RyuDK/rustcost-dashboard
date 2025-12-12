@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { MetricRawSummaryResponse } from "@/types/metrics";
 import { infoApi, metricApi } from "@/shared/api";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type ResourceTab =
   | "namespaces"
@@ -72,7 +75,8 @@ const TABS: ResourceTab[] = [
   "quotas",
 ];
 
-export function ResourcesPage() {
+export const ResourcesPage = () => {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<ResourceTab>("namespaces");
   const [resources, setResources] = useState<
     Record<ResourceTab, ResourceItem[]>
@@ -263,19 +267,14 @@ export function ResourcesPage() {
   }, [tabData]);
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
-          Resource Explorer
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Cluster Inventories
-        </h1>
-        <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Browse Kubernetes objects and their latest metrics. Select a tab to
-          view namespaces, workloads, core infra, or quota resources.
-        </p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title="Cluster Inventories"
+        description="Browse Kubernetes objects and their latest metrics. Select a tab to
+          view namespaces, workloads, core infra, or quota resources."
+        breadcrumbItems={[{ label: t("nav.resources") }]}
+      />
 
       <div className="flex flex-wrap gap-2">
         {TABS.map((tab) => (
@@ -351,6 +350,6 @@ export function ResourcesPage() {
           </div>
         </div>
       </section>
-    </div>
+    </SharedPageLayout>
   );
-}
+};

@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { infoApi } from "@/shared/api";
 import { request } from "@/shared/api/http";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface ApiResponse<T> {
   data?: T;
@@ -23,7 +26,9 @@ interface OwnershipRecord {
   owner?: string;
 }
 
-export function AllocationPage() {
+export const AllocationPage = () => {
+  const { t } = useI18n();
+
   const [resources, setResources] = useState<ResourceRef[]>([]);
   const [ownership, setOwnership] = useState<Record<string, OwnershipRecord>>(
     {}
@@ -131,19 +136,14 @@ export function AllocationPage() {
   }, [allocationState]);
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
-          Allocation
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Resource Assignment Center
-        </h1>
-        <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Review which workloads own pods, deployments, and containers. Reassign
-          ownership to keep governance metadata current.
-        </p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title="Resource Assignment Center"
+        description="Review which workloads own pods, deployments, and containers. Reassign
+          ownership to keep governance metadata current."
+        breadcrumbItems={[{ label: t("nav.allocation") }]}
+      />
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
@@ -222,9 +222,9 @@ export function AllocationPage() {
         <AssignResourceModal />
         <DeallocateResourceModal />
       </div>
-    </div>
+    </SharedPageLayout>
   );
-}
+};
 
 export function AllocationOverview() {
   const [nodeAllocations, setNodeAllocations] = useState<

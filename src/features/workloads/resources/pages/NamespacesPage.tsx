@@ -2,14 +2,18 @@ import { useCallback, useMemo } from "react";
 import type { K8sNamespace } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type NamespaceRow = {
   id: string;
@@ -40,6 +44,11 @@ const mapNamespaceToRow = (ns: K8sNamespace): NamespaceRow => {
 };
 
 export const NamespacesPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sNamespaces(params),
@@ -103,7 +112,9 @@ export const NamespacesPage = () => {
 
   const detailMeta = selected?.metadata ?? {};
   const detailStatus = selected?.status ?? {};
-  const labelEntries = detailMeta.labels ? Object.entries(detailMeta.labels) : [];
+  const labelEntries = detailMeta.labels
+    ? Object.entries(detailMeta.labels)
+    : [];
   const nsName = detailMeta.name ?? "namespace";
   const namespaceCommands = [
     {
@@ -126,10 +137,7 @@ export const NamespacesPage = () => {
     },
     {
       title: "View",
-      commands: [
-        `kubectl get ns ${nsName}`,
-        `kubectl describe ns ${nsName}`,
-      ],
+      commands: [`kubectl get ns ${nsName}`, `kubectl describe ns ${nsName}`],
     },
     {
       title: "Debug",
@@ -145,11 +153,15 @@ export const NamespacesPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Namespaces"
         description="Cluster namespaces with lifecycle state and labels."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.namespaces") },
+        ]}
       />
 
       <Table<NamespaceRow>
@@ -246,6 +258,6 @@ export const NamespacesPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };

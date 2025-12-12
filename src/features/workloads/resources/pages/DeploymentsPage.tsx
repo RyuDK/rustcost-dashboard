@@ -1,10 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { infoApi } from "@/shared/api";
-import type { K8sCondition, K8sContainerSpec, K8sDeployment } from "@/types/k8s";
+import type {
+  K8sCondition,
+  K8sContainerSpec,
+  K8sDeployment,
+} from "@/types/k8s";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type DeploymentRow = {
   id: string;
@@ -111,6 +122,10 @@ const renderCondition = (condition: K8sCondition) => (
 );
 
 export const DeploymentsPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
   const [deployments, setDeployments] = useState<K8sDeployment[]>([]);
   const [selectedDeployment, setSelectedDeployment] =
     useState<K8sDeployment | null>(null);
@@ -298,7 +313,9 @@ export const DeploymentsPage = () => {
     },
     {
       title: "Delete",
-      commands: [`kubectl delete deployment ${deploymentName} -n ${deploymentNs}`],
+      commands: [
+        `kubectl delete deployment ${deploymentName} -n ${deploymentNs}`,
+      ],
     },
     {
       title: "Modify",
@@ -335,11 +352,16 @@ export const DeploymentsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
+        eyebrow=""
         title="Deployments"
         description="Paginated inventory of Kubernetes deployments with live readiness and rollout metadata."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.deployments") },
+        ]}
       />
 
       <Table<DeploymentRow>
@@ -415,7 +437,8 @@ export const DeploymentsPage = () => {
                   Labels
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {detailMeta.labels && Object.keys(detailMeta.labels).length ? (
+                  {detailMeta.labels &&
+                  Object.keys(detailMeta.labels).length ? (
                     Object.entries(detailMeta.labels).map(([key, value]) => (
                       <span
                         key={key}
@@ -472,7 +495,9 @@ export const DeploymentsPage = () => {
                 )}
                 {containers.map((container, index) => (
                   <ContainerCard
-                    key={`${container.name ?? container.image ?? "container"}-${index}`}
+                    key={`${
+                      container.name ?? container.image ?? "container"
+                    }-${index}`}
                     container={container}
                   />
                 ))}
@@ -509,7 +534,7 @@ export const DeploymentsPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };
 

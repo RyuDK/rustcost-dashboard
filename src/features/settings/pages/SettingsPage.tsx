@@ -1,5 +1,7 @@
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { InfoCard } from "@/shared/components/InfoCard";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { useSettings } from "@/features/settings/hooks/useSettings";
 import { SharedTimezoneSelector } from "@/shared/components/selector/SharedTimezoneSelector";
 import { Link } from "react-router-dom";
@@ -57,15 +59,13 @@ export const SettingsPage = () => {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          {t("settings.title")}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {t("settings.subtitle")}
-        </p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title={t("settings.title")}
+        description={t("settings.subtitle")}
+        breadcrumbItems={[{ label: t("nav.settings") }]}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* General */}
@@ -111,6 +111,6 @@ export const SettingsPage = () => {
       </div>
 
       <SharedTimezoneSelector />
-    </div>
+    </SharedPageLayout>
   );
 };

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { EfficiencyTable } from "@/features/efficiency/components/EfficiencyTable";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import {
   useNamespaceEfficiencyMetrics,
   useDeploymentEfficiencyMetrics,
@@ -15,13 +17,13 @@ export const EfficiencyPage = () => {
   const deploymentEfficiency = useDeploymentEfficiencyMetrics(params);
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          {t("efficiency.title")}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{t("efficiency.subtitle")}</p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title={t("efficiency.title")}
+        description={t("efficiency.subtitle")}
+        breadcrumbItems={[{ label: t("nav.efficiency") }]}
+      />
 
       <EfficiencyTable
         title={t("efficiency.table.namespace")}
@@ -31,8 +33,8 @@ export const EfficiencyPage = () => {
           namespaceEfficiency.error instanceof Error
             ? namespaceEfficiency.error.message
             : namespaceEfficiency.error
-              ? String(namespaceEfficiency.error)
-              : undefined
+            ? String(namespaceEfficiency.error)
+            : undefined
         }
       />
 
@@ -44,10 +46,10 @@ export const EfficiencyPage = () => {
           deploymentEfficiency.error instanceof Error
             ? deploymentEfficiency.error.message
             : deploymentEfficiency.error
-              ? String(deploymentEfficiency.error)
-              : undefined
+            ? String(deploymentEfficiency.error)
+            : undefined
         }
       />
-    </div>
+    </SharedPageLayout>
   );
 };

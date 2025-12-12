@@ -15,6 +15,11 @@ import type {
   MetricSeries,
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type NodeRow = {
@@ -52,6 +57,9 @@ const getDefaultRange = (): MetricsQueryOptions => {
 
 export const NodesPage = () => {
   const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
 
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
   const [nodes, setNodes] = useState<string[]>([]);
@@ -369,7 +377,11 @@ export const NodesPage = () => {
         eyebrow=""
         title="Node Metrics"
         description="Node-level cost and usage"
-        breadcrumbItems={[{ label: t("nav.nodes") }]}
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.metrics"), to: `${prefix}/workloads/metrics` },
+          { label: t("nav.nodes") },
+        ]}
       />
 
       {/* Global filters */}
