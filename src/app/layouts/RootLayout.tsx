@@ -97,6 +97,21 @@ const navItems: NavItem[] = [
             translationKey: "nav.ingresses",
             icon: IoPricetagOutline,
           },
+          {
+            to: "/workloads/resources/namespaces",
+            translationKey: "nav.namespaces",
+            icon: IoCubeOutline,
+          },
+          {
+            to: "/workloads/resources/persistent-volumes",
+            translationKey: "nav.persistentVolumes",
+            icon: IoFileTrayFullOutline,
+          },
+          {
+            to: "/workloads/resources/persistent-volume-claims",
+            translationKey: "nav.persistentVolumeClaims",
+            icon: IoLayersOutline,
+          },
         ],
       },
     ],
@@ -290,8 +305,8 @@ export const RootLayout = () => {
             {sidebarOpen ? "Navigation" : null}
           </div>
 
-          <nav className="flex-1 overflow-auto">
-            <ul className="flex flex-col gap-1 px-2">
+          <nav className="flex-1 overflow-auto scroll-area pr-1">
+            <ul className="flex flex-col gap-1 px-2 pb-4">
               {renderNavItems(navItems)}
             </ul>
           </nav>

@@ -9,6 +9,13 @@ export interface ApiResponse<T> {
   error_msg?: string;
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  limit?: number;
+  offset?: number;
+}
+
 export type QueryDict = Record<string, string | number | boolean | undefined>;
 
 export type MetricGranularity = "minute" | "hour" | "day";

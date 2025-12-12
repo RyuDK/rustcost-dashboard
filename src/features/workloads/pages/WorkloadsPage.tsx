@@ -243,6 +243,21 @@ export default function WorkloadsPage() {
             subtitle="Resources"
             to="resources/ingresses"
           />
+          <LinkCard
+            title="Namespaces"
+            subtitle="Resources"
+            to="resources/namespaces"
+          />
+          <LinkCard
+            title="Persistent Volumes"
+            subtitle="Resources"
+            to="resources/persistent-volumes"
+          />
+          <LinkCard
+            title="Persistent Volume Claims"
+            subtitle="Resources"
+            to="resources/persistent-volume-claims"
+          />
         </div>
       </div>
       {error && (

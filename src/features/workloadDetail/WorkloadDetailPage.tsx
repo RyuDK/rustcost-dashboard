@@ -55,7 +55,7 @@ export function WorkloadDetailPage() {
         podMetricsRes,
         deploymentMetricsRes,
       ] = await Promise.all([
-        infoApi.fetchK8sDeployments(),
+        infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
         infoApi.fetchInfoK8sPods(),
         infoApi.fetchInfoK8sContainers(),
         metricApi.fetchPodsRaw(),
@@ -65,8 +65,20 @@ export function WorkloadDetailPage() {
       const matchWorkload = (resource: WorkloadResource) =>
         resource.labels?.workload === workloadId || resource.name === workloadId;
 
+      const deployments =
+        deploymentsRes.data?.items?.map((item) => ({
+          name: item.metadata?.name ?? "deployment",
+          namespace: item.metadata?.namespace,
+          labels: item.metadata?.labels,
+          containers:
+            item.spec?.template?.spec?.containers?.map((container) => ({
+              name: container.name ?? "container",
+              image: container.image,
+            })) ?? [],
+        })) ?? [];
+
       setOverview({
-        deployments: (deploymentsRes.data ?? []).filter(matchWorkload),
+        deployments: deployments.filter(matchWorkload),
         pods: (podsRes.data ?? []).filter(matchWorkload),
         containers: (containersRes.data ?? []).filter(matchWorkload),
       });

@@ -37,7 +37,7 @@ export function AllocationPage() {
     try {
       const [podsRes, deploymentsRes, containersRes] = await Promise.all([
         infoApi.fetchInfoK8sPods(),
-        infoApi.fetchK8sDeployments(),
+        infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
         infoApi.fetchInfoK8sContainers(),
       ]);
 
@@ -51,20 +51,21 @@ export function AllocationPage() {
         labels: item.label ? { raw: item.label } : undefined,
       }));
 
-      const deployments = deploymentsRes.data
-        ? Object.entries(deploymentsRes.data).map(([key, value]) => {
-            const record = value as Record<string, unknown>;
-            return {
-              name: key,
-              namespace: (record.namespace as string | undefined) ?? undefined,
-              kind: "Deployment" as const,
-              team: (record.team as string | undefined) ?? undefined,
-              service: (record.service as string | undefined) ?? undefined,
-              env: (record.env as string | undefined) ?? undefined,
-              labels: record.labels as Record<string, string> | undefined,
-            };
-          })
-        : [];
+      const deployments = (deploymentsRes.data?.items ?? []).map(
+        (deployment) => {
+          const meta = deployment.metadata ?? {};
+          const labels = meta.labels ?? {};
+          return {
+            name: meta.name ?? "deployment",
+            namespace: meta.namespace,
+            kind: "Deployment" as const,
+            team: labels.team,
+            service: labels.service,
+            env: labels.env,
+            labels,
+          };
+        }
+      );
 
       const containerItems = (containersRes.data ?? []).map((item, index) => ({
         name: item.containerName ?? `container-${index}`,
@@ -338,20 +339,20 @@ export function AssignResourceModal() {
     }
     const [podsRes, deploymentsRes] = await Promise.all([
       infoApi.fetchInfoK8sPods(),
-      infoApi.fetchK8sDeployments(),
+      infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
     ]);
     const pods = (podsRes.data ?? []).map((item) => ({
       ...item,
       kind: "Pod" as const,
       name: item.podName ?? item.podUid ?? "pod",
     }));
-    const deployments = deploymentsRes.data
-      ? Object.keys(deploymentsRes.data).map((name) => ({
-          name,
-          namespace: undefined,
-          kind: "Deployment" as const,
-        }))
-      : [];
+    const deployments = (deploymentsRes.data?.items ?? []).map(
+      (deployment) => ({
+        name: deployment.metadata?.name ?? "deployment",
+        namespace: deployment.metadata?.namespace,
+        kind: "Deployment" as const,
+      })
+    );
     const combined = [...pods, ...deployments];
     setAvailableResources(combined);
     const workloadCandidates = combined
@@ -586,7 +587,7 @@ export function DeallocateResourceModal() {
               </option>
               {assignedResources.map((record) => (
                 <option key={record.id} value={record.id}>
-                  {record.id} → {record.workload}
+                  {record.id} · {record.workload}
                 </option>
               ))}
             </select>

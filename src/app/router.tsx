@@ -32,6 +32,9 @@ import { DaemonSetsPage } from "@/features/workloads/resources/pages/DaemonSetsP
 import { JobsCronJobsPage } from "@/features/workloads/resources/pages/JobsCronJobsPage";
 import { ServicesPage } from "@/features/workloads/resources/pages/ServicesPage";
 import { IngressesPage } from "@/features/workloads/resources/pages/IngressesPage";
+import { PersistentVolumesPage } from "@/features/workloads/resources/pages/PersistentVolumesPage";
+import { PersistentVolumeClaimsPage } from "@/features/workloads/resources/pages/PersistentVolumeClaimsPage";
+import { NamespacesPage } from "@/features/workloads/resources/pages/NamespacesPage";
 import WorkloadsPage from "@/features/workloads/pages/WorkloadsPage";
 
 const router = createBrowserRouter([
@@ -63,6 +66,18 @@ const router = createBrowserRouter([
       { path: "workloads/resources/jobs", element: <JobsCronJobsPage /> },
       { path: "workloads/resources/services", element: <ServicesPage /> },
       { path: "workloads/resources/ingresses", element: <IngressesPage /> },
+      {
+        path: "workloads/resources/persistent-volumes",
+        element: <PersistentVolumesPage />,
+      },
+      {
+        path: "workloads/resources/persistent-volume-claims",
+        element: <PersistentVolumeClaimsPage />,
+      },
+      {
+        path: "workloads/resources/namespaces",
+        element: <NamespacesPage />,
+      },
       { path: "resources", element: <ResourcesPage /> },
       { path: "allocation", element: <AllocationPage /> },
       { path: "metrics", element: <MetricsPage /> },
