@@ -3,7 +3,7 @@ import { SharedCard } from "@/shared/components/metrics/SharedCard";
 interface SummaryCard {
   label: string;
   value: string;
-  description: string;
+  description?: string;
 }
 
 interface MetricsSummaryCardsProps {

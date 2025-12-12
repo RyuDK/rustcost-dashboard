@@ -187,7 +187,7 @@ export default function WorkloadsPage() {
   /* ---------------------------- UI ---------------------------- */
 
   return (
-    <div className="flex flex-col gap-10 px-6 py-6">
+    <div className="flex flex-col gap-8">
       <SharedPageHeader
         eyebrow=""
         title="Workload Metrics"

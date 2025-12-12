@@ -1,5 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { IoInformationCircleOutline } from "react-icons/io5";
+import { useMemo, useState } from "react";
 import {
   SharedMetricChart,
   type ChartSeries,
@@ -13,7 +12,9 @@ import { useDashboardMetrics } from "@/features/dashboard/hooks/useDashboardMetr
 import { useDashboardParams } from "@/features/dashboard/hooks/useDashboardParams";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { useAppSelector } from "@/store/hook";
+import { ExplainHint } from "@/shared/components/ExplainHint";
 
 const COST_SERIES: ChartSeries<Record<string, unknown>>[] = [
   {
@@ -124,7 +125,7 @@ export const DashboardPage = () => {
       : undefined;
 
   return (
-    <div className="flex flex-col gap-8">
+    <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
         title={t("dashboard.title")}
@@ -201,26 +202,6 @@ export const DashboardPage = () => {
         documentTitle="RustCost Cost Report"
         documentFields={costFields}
       />
-    </div>
+    </SharedPageLayout>
   );
 };
-
-const ExplainHint = ({ children }: { children: ReactNode }) => (
-  <div
-    className="
-      flex items-start gap-3 rounded-xl border border-amber-400/40
-      bg-gradient-to-r from-black/80 via-black/70 to-amber-900/20
-      px-4 py-3 text-xs text-white shadow-[0_12px_30px_-16px_rgba(0,0,0,0.6)] backdrop-blur
-    "
-  >
-    <span className="mt-0.5 text-amber-300">
-      <IoInformationCircleOutline className="text-base" />
-    </span>
-    <div className="space-y-1">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-        Explain
-      </p>
-      <p className="text-white/90 leading-relaxed">{children}</p>
-    </div>
-  </div>
-);

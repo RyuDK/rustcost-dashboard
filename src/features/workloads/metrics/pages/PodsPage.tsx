@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
@@ -14,6 +15,7 @@ import type {
   MetricSeries,
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type PodRow = {
   id: string;
@@ -52,6 +54,7 @@ const getDefaultRange = (): MetricsQueryOptions => {
 };
 
 export const PodsPage = () => {
+  const { t } = useI18n();
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
   const [pods, setPods] = useState<PodOption[]>([]);
   const [search, setSearch] = useState("");
@@ -120,9 +123,7 @@ export const PodsPage = () => {
           const points = series.points ?? [];
           const lastPoint = points[points.length - 1];
           const target =
-            (series as { target?: string }).target ??
-            series.name ??
-            "unknown";
+            (series as { target?: string }).target ?? series.name ?? "unknown";
           return {
             id: target,
             label: target,
@@ -277,8 +278,7 @@ export const PodsPage = () => {
       key: "total_cost_usd",
       header: "Total Cost",
       align: "right" as const,
-      render: (row: PodRow) =>
-        formatCurrency(row.total_cost_usd ?? 0, "USD"),
+      render: (row: PodRow) => formatCurrency(row.total_cost_usd ?? 0, "USD"),
     },
     {
       key: "cpu_cost_usd",
@@ -290,19 +290,20 @@ export const PodsPage = () => {
       key: "memory_cost_usd",
       header: "Memory",
       align: "right" as const,
-      render: (row: PodRow) =>
-        formatCurrency(row.memory_cost_usd ?? 0, "USD"),
+      render: (row: PodRow) => formatCurrency(row.memory_cost_usd ?? 0, "USD"),
     },
     {
       key: "storage_cost_usd",
       header: "Storage",
       align: "right" as const,
-      render: (row: PodRow) =>
-        formatCurrency(row.storage_cost_usd ?? 0, "USD"),
+      render: (row: PodRow) => formatCurrency(row.storage_cost_usd ?? 0, "USD"),
     },
   ];
 
-  const sparklinePods = useMemo(() => filteredPods.slice(0, 10), [filteredPods]);
+  const sparklinePods = useMemo(
+    () => filteredPods.slice(0, 10),
+    [filteredPods]
+  );
 
   const sparklineCards = sparklinePods.map((pod) => {
     const series =
@@ -322,7 +323,7 @@ export const PodsPage = () => {
         network_rx_mb: (pt.network?.rx_bytes ?? 0) / 1_000_000,
       })) ?? [];
 
-    const cpuMemSeries: ChartSeries<typeof metrics[number]>[] = [
+    const cpuMemSeries: ChartSeries<(typeof metrics)[number]>[] = [
       {
         key: "cpu_cores",
         label: "CPU (cores)",
@@ -337,7 +338,7 @@ export const PodsPage = () => {
       },
     ];
 
-    const storageNetSeries: ChartSeries<typeof metrics[number]>[] = [
+    const storageNetSeries: ChartSeries<(typeof metrics)[number]>[] = [
       {
         key: "storage_gb",
         label: "Storage (GB)",
@@ -367,11 +368,12 @@ export const PodsPage = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
+    <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
         title="Pod Metrics"
         description="Pod-level cost and usage"
+        breadcrumbItems={[{ label: t("nav.pods") }]}
       />
 
       {/* Global filters */}
@@ -518,6 +520,6 @@ export const PodsPage = () => {
           ))}
         </div>
       </div>
-    </div>
+    </SharedPageLayout>
   );
 };

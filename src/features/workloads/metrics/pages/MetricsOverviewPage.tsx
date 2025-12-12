@@ -1,3 +1,4 @@
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { LinkCard } from "@/shared/components/cards/SharedLinkCards";
 import { useI18n } from "@/app/providers/i18n/useI18n";
@@ -6,8 +7,7 @@ export default function MetricOverviewPage() {
   const { t } = useI18n();
 
   return (
-    <div className="flex flex-col gap-10 px-6 py-6">
-      {/* HEADER */}
+    <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
         title="Metrics Overview"
@@ -76,6 +76,6 @@ export default function MetricOverviewPage() {
           </section>
         </div>
       </div>
-    </div>
+    </SharedPageLayout>
   );
 }

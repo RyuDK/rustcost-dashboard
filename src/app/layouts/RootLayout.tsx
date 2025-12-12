@@ -296,7 +296,7 @@ export const RootLayout = () => {
             </ul>
           </nav>
 
-          <div className="p-3 text-center text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+          <div className="p-3 text-center text-xs text-(--text-muted) dark:text-(--text-muted)">
             {__APP_VERSION__}
           </div>
         </aside>

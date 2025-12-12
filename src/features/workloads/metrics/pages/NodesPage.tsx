@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
@@ -14,6 +15,7 @@ import type {
   MetricSeries,
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type NodeRow = {
   id: string;
@@ -49,6 +51,8 @@ const getDefaultRange = (): MetricsQueryOptions => {
 };
 
 export const NodesPage = () => {
+  const { t } = useI18n();
+
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
   const [nodes, setNodes] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -269,8 +273,7 @@ export const NodesPage = () => {
       key: "total_cost_usd",
       header: "Total Cost",
       align: "right" as const,
-      render: (row: NodeRow) =>
-        formatCurrency(row.total_cost_usd ?? 0, "USD"),
+      render: (row: NodeRow) => formatCurrency(row.total_cost_usd ?? 0, "USD"),
     },
     {
       key: "cpu_cost_usd",
@@ -282,8 +285,7 @@ export const NodesPage = () => {
       key: "memory_cost_usd",
       header: "Memory",
       align: "right" as const,
-      render: (row: NodeRow) =>
-        formatCurrency(row.memory_cost_usd ?? 0, "USD"),
+      render: (row: NodeRow) => formatCurrency(row.memory_cost_usd ?? 0, "USD"),
     },
     {
       key: "storage_cost_usd",
@@ -294,7 +296,10 @@ export const NodesPage = () => {
     },
   ];
 
-  const sparklineNodes = useMemo(() => filteredNodes.slice(0, 10), [filteredNodes]);
+  const sparklineNodes = useMemo(
+    () => filteredNodes.slice(0, 10),
+    [filteredNodes]
+  );
 
   const sparklineCards = sparklineNodes.map((nodeName) => {
     const series =
@@ -314,7 +319,7 @@ export const NodesPage = () => {
         network_rx_mb: (pt.network?.rx_bytes ?? 0) / 1_000_000,
       })) ?? [];
 
-    const cpuMemSeries: ChartSeries<typeof metrics[number]>[] = [
+    const cpuMemSeries: ChartSeries<(typeof metrics)[number]>[] = [
       {
         key: "cpu_cores",
         label: "CPU (cores)",
@@ -329,7 +334,7 @@ export const NodesPage = () => {
       },
     ];
 
-    const storageNetSeries: ChartSeries<typeof metrics[number]>[] = [
+    const storageNetSeries: ChartSeries<(typeof metrics)[number]>[] = [
       {
         key: "storage_gb",
         label: "Storage (GB)",
@@ -359,11 +364,12 @@ export const NodesPage = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-6">
+    <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
         title="Node Metrics"
         description="Node-level cost and usage"
+        breadcrumbItems={[{ label: t("nav.nodes") }]}
       />
 
       {/* Global filters */}
@@ -509,7 +515,6 @@ export const NodesPage = () => {
           ))}
         </div>
       </div>
-
-    </div>
+    </SharedPageLayout>
   );
 };
