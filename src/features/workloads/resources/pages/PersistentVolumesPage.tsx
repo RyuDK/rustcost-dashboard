@@ -2,14 +2,18 @@ import { useCallback, useMemo } from "react";
 import type { K8sPersistentVolume } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type PersistentVolumeRow = {
   id: string;
@@ -53,6 +57,11 @@ const mapPvToRow = (pv: K8sPersistentVolume): PersistentVolumeRow => {
 };
 
 export const PersistentVolumesPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sPersistentVolumes(params),
@@ -72,10 +81,7 @@ export const PersistentVolumesPage = () => {
     error,
   } = usePaginatedResource<K8sPersistentVolume>(fetcher, getPvId);
 
-  const rows = useMemo(
-    () => volumes.map((pv) => mapPvToRow(pv)),
-    [volumes]
-  );
+  const rows = useMemo(() => volumes.map((pv) => mapPvToRow(pv)), [volumes]);
 
   const totalCount = total || volumes.length;
 
@@ -142,10 +148,7 @@ export const PersistentVolumesPage = () => {
     },
     {
       title: "View",
-      commands: [
-        `kubectl get pv ${pvName}`,
-        `kubectl describe pv ${pvName}`,
-      ],
+      commands: [`kubectl get pv ${pvName}`, `kubectl describe pv ${pvName}`],
     },
     {
       title: "Debug",
@@ -158,11 +161,15 @@ export const PersistentVolumesPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Persistent Volumes"
         description="Cluster persistent volumes with capacity and claim bindings."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.persistentVolumes") },
+        ]}
       />
 
       <Table<PersistentVolumeRow>
@@ -251,6 +258,6 @@ export const PersistentVolumesPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };

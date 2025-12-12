@@ -21,7 +21,7 @@ import { isLessThan3Hours } from "@/shared/utils/time";
 import { buildLanguagePrefix } from "@/constants/language";
 import { useEffect } from "react";
 import { UnitPricesPage } from "@/features/unitPrices/pages/UnitPricesPage";
-import MetricOverviewPage from "@/features/workloads/metrics/pages/MetricsOverviewPage";
+import { MetricOverviewPage } from "@/features/workloads/metrics/pages/MetricsOverviewPage";
 import { NodesPage } from "@/features/workloads/metrics/pages/NodesPage";
 import { PodsPage } from "@/features/workloads/metrics/pages/PodsPage";
 import { ContainersPage } from "@/features/workloads/metrics/pages/ContainersPage";
@@ -35,7 +35,7 @@ import { IngressesPage } from "@/features/workloads/resources/pages/IngressesPag
 import { PersistentVolumesPage } from "@/features/workloads/resources/pages/PersistentVolumesPage";
 import { PersistentVolumeClaimsPage } from "@/features/workloads/resources/pages/PersistentVolumeClaimsPage";
 import { NamespacesPage } from "@/features/workloads/resources/pages/NamespacesPage";
-import WorkloadsPage from "@/features/workloads/pages/WorkloadsPage";
+import { WorkloadsPage } from "@/features/workloads/pages/WorkloadsPage";
 
 const router = createBrowserRouter([
   {

@@ -36,7 +36,11 @@
     background-clip: padding-box;
   }
   .scroll-area:hover::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--border-strong) 80%, transparent 20%);
+    background-color: color-mix(
+      in srgb,
+      var(--border-strong) 80%,
+      transparent 20%
+    );
   }
   @keyframes fadeScale {
     from {

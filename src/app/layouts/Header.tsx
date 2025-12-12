@@ -20,10 +20,10 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
     <header
       className="
         flex items-center justify-between px-4 py-3 
-        border-b border-[var(--border)]
-        bg-[var(--surface)]/70 backdrop-blur
-        dark:border-[var(--border)]
-        dark:bg-[var(--surface-dark)]/40
+        border-b border-(--border)
+        bg-(--surface)/70 backdrop-blur
+        dark:border-(--border)
+        dark:bg-(--surface-dark)/40
         h-16
       "
     >
@@ -32,8 +32,8 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           onClick={onToggleSidebar}
           className="
             p-2 rounded-md 
-            hover:bg-[var(--overlay)] 
-            dark:hover:bg-[var(--overlay)]
+            hover:bg-(--overlay) 
+            dark:hover:bg-(--overlay)
             transition
             flex items-center justify-center
           "
@@ -46,7 +46,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
           />
         </button>
 
-        <h1 className="text-xl font-semibold text-[var(--text)]">RustCost</h1>
+        <h1 className="text-xl font-semibold text-(--text)">RustCost</h1>
       </div>
 
       <div className="flex items-center gap-3">
@@ -58,11 +58,11 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             inline-flex h-10 items-center rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-500
             ${
               showExplain
-                ? "border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]"
-                : "border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
+                ? "border-(--primary) bg-(--primary)/10 text-(--primary)"
+                : "border-(--border) bg-(--surface) text-(--text) hover:border-(--primary) hover:text-(--primary)"
             }
-            dark:border-[var(--border)] dark:bg-[var(--surface-dark)]
-            dark:hover:border-[var(--primary)] dark:hover:text-[var(--primary)]
+            hover:bg-gray-200 dark:hover:bg-gray-600 dark:border-(--border) dark:bg-(--surface-dark)
+            dark:hover:border-(--primary) dark:hover:text-(--primary)
           `}
         >
           {explainLabel}

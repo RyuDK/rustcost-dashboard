@@ -5,6 +5,7 @@ import { LinkCard } from "@/shared/components/cards/SharedLinkCards";
 import type { MetricsQueryOptions } from "@/types/metrics";
 import { metricApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { formatCurrency } from "@/shared/utils/format";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 
@@ -46,7 +47,7 @@ const getDefaultDateRange = (): MetricsQueryOptions => {
 
 /* -------------------------- Component ------------------------- */
 
-export default function WorkloadsPage() {
+export const WorkloadsPage = () => {
   const { t } = useI18n();
 
   const [params, setParams] =
@@ -187,7 +188,8 @@ export default function WorkloadsPage() {
   /* ---------------------------- UI ---------------------------- */
 
   return (
-    <div className="flex flex-col gap-10 px-6 py-6">
+    <SharedPageLayout>
+      <div className="flex flex-col gap-8">
       <SharedPageHeader
         eyebrow=""
         title="Workload Metrics"
@@ -289,6 +291,7 @@ export default function WorkloadsPage() {
           isLoading={loading}
         />
       </div>
-    </div>
+      </div>
+    </SharedPageLayout>
   );
-}
+};

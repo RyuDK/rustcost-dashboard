@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export type BreadcrumbItem = {
   label: string;
@@ -12,8 +12,11 @@ interface CommonBreadcrumbProps {
 }
 
 export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => (
-  <nav className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500">
-    {items.map((item, index) => {
+  <nav
+    aria-label="Breadcrumb"
+    className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500"
+  >
+    {items.map((item) => {
       const content = (
         <span className="flex items-center gap-1">
           {item.icon}
@@ -23,22 +26,10 @@ export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => (
 
       return (
         <span
-          key={`${item.label}-${index}`}
-          className="flex items-center gap-2"
+          key={item.to ?? item.label}
+          className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
         >
-          {item.to ? (
-            <NavLink
-              to={item.to}
-              className="text-amber-500 hover:text-amber-400 transition-colors"
-            >
-              {content}
-            </NavLink>
-          ) : (
-            content
-          )}
-          {index < items.length - 1 && (
-            <span className="text-amber-500/70">/</span>
-          )}
+          {item.to ? <Link to={item.to}>{content}</Link> : content}
         </span>
       );
     })}

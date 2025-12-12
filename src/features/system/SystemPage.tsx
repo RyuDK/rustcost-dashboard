@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import type { InfoSetting } from "@/shared/api/info";
 import type { ApiResponse } from "@/types/api";
@@ -167,9 +168,8 @@ export function SystemPage() {
       | undefined) ?? [];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow={t("common.system")}
         title="Control Plane"
         description="Monitor status, health, settings, unit prices, and administrative actions."
         breadcrumbItems={[{ label: t("nav.system") }]}
@@ -367,6 +367,6 @@ export function SystemPage() {
           </div>
         )}
       </section>
-    </div>
+    </SharedPageLayout>
   );
 }

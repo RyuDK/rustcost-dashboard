@@ -219,7 +219,7 @@ export const RootLayout = () => {
 
       const label = sidebarOpen ? (
         <div className="flex w-full items-center gap-3">
-          <Icon className="text-xl min-w-[20px]" />
+          <Icon className="text-xl min-w-5" />
           <span className="truncate">{t(item.translationKey)}</span>
         </div>
       ) : (
@@ -254,7 +254,7 @@ export const RootLayout = () => {
                 type="button"
                 aria-label={isOpen ? "Collapse" : "Expand"}
                 onClick={() => toggleSection(itemKey)}
-                className="flex h-8 w-8 items-center justify-center text-[var(--text-muted)] transition"
+                className="flex h-8 w-8 items-center justify-center text-(--text-muted) transition"
               >
                 <IoChevronDown
                   className={`text-lg transition-transform ${
@@ -278,8 +278,8 @@ export const RootLayout = () => {
     <div
       className="
         h-screen flex flex-col 
-        bg-[var(--bg)] text-[var(--text)]
-        dark:bg-[var(--bg)] dark:text-[var(--text)]
+        bg-(--bg) text-(--text)
+        dark:bg-(--bg) dark:text-(--text)
         transition-colors
       "
     >
@@ -293,15 +293,15 @@ export const RootLayout = () => {
           className={`
             ${sidebarOpen ? "w-64" : "w-[68px]"}
             transition-all duration-300
-            border-r border-[var(--border)]
-            bg-[var(--bg-muted)]/50 backdrop-blur
+            border-r border-(--border)
+            bg-(--bg-muted)/50 backdrop-blur
 
-            dark:border-[var(--border)]
-            dark:bg-[var(--surface-dark)]/40
+            dark:border-(--border)
+            dark:bg-(--surface-dark)/40
             flex flex-col h-full
           `}
         >
-          <div className="p-4 text-center font-semibold text-[var(--primary)] dark:text-[var(--primary)]">
+          <div className="p-4 text-center font-semibold text-(--primary) dark:text-(--primary)">
             {sidebarOpen ? "Navigation" : null}
           </div>
 
@@ -311,7 +311,7 @@ export const RootLayout = () => {
             </ul>
           </nav>
 
-          <div className="p-3 text-center text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
+          <div className="p-3 text-center text-xs text-(--text-muted) dark:text-(--text-muted)">
             {__APP_VERSION__}
           </div>
         </aside>
@@ -320,8 +320,8 @@ export const RootLayout = () => {
         <main
           className="
             flex-1 overflow-auto p-6 
-            bg-[var(--bg)] text-[var(--text)]
-            dark:bg-[var(--bg)] dark:text-[var(--text)]
+            bg-(--bg) text-(--text)
+            dark:bg-(--bg) dark:text-(--text)
           "
         >
           <Outlet />

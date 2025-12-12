@@ -17,7 +17,7 @@ interface NotificationBellProps {
 
 const BASE_STYLES = {
   wrapper:
-    "relative p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-[var(--surface-dark)]/70 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all",
+    "relative p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[var(--surface-dark)]/70 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all",
   icon: "h-6 w-6",
   badge:
     "absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1 whitespace-nowrap",
@@ -117,7 +117,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
           <span>Alerts</span>
           <button
             type="button"
-            className="text-xs font-semibold text-[var(--primary)] hover:underline"
+            className="text-xs font-semibold text-(--primary) hover:underline"
             onClick={() => {
               setAlerts([]);
               popupRef.current?.close();
@@ -160,7 +160,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
                 </span>
                 <button
                   type="button"
-                  className="text-xs font-semibold text-[var(--primary)] hover:underline disabled:opacity-50"
+                  className="text-xs font-semibold text-(--primary) hover:underline disabled:opacity-50"
                   disabled={resolvingId === alert.id}
                   onClick={() => void handleResolve(alert.id)}
                 >

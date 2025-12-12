@@ -2,14 +2,18 @@ import { useCallback, useMemo } from "react";
 import type { K8sIngress } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type IngressRow = {
   id: string;
@@ -55,6 +59,11 @@ const mapIngressToRow = (ingress: K8sIngress): IngressRow => {
 };
 
 export const IngressesPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sIngresses(params),
@@ -181,11 +190,15 @@ export const IngressesPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="Ingresses"
         description="Ingress resources with routing rules and TLS coverage."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.ingresses") },
+        ]}
       />
 
       <Table<IngressRow>
@@ -294,9 +307,7 @@ export const IngressesPage = () => {
                             ? `:${path.backend.service.port.name}`
                             : ""}
                         </div>
-                      )) ?? (
-                        <span>No HTTP paths</span>
-                      )}
+                      )) ?? <span>No HTTP paths</span>}
                     </div>
                   </div>
                 ))}
@@ -360,6 +371,6 @@ export const IngressesPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };

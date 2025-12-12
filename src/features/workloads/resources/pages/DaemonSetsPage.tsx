@@ -1,19 +1,19 @@
 import { useMemo, useCallback } from "react";
-import type {
-  K8sCondition,
-  K8sContainerSpec,
-  K8sDaemonSet,
-} from "@/types/k8s";
+import type { K8sCondition, K8sContainerSpec, K8sDaemonSet } from "@/types/k8s";
 import { infoApi } from "@/shared/api";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { Table, type TableColumn } from "@/shared/components/Table";
 import { SharedCard } from "@/shared/components/metrics/SharedCard";
-import {
-  formatAge,
-  usePaginatedResource,
-} from "../hooks/usePaginatedResource";
+import { formatAge, usePaginatedResource } from "../hooks/usePaginatedResource";
 import { ResourcePaginationControls } from "../components/ResourcePaginationControls";
 import { CommandSection } from "../components/CommandSection";
+import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useParams } from "react-router-dom";
+import {
+  normalizeLanguageCode,
+  buildLanguagePrefix,
+} from "@/constants/language";
 
 type DaemonSetRow = {
   id: string;
@@ -96,6 +96,11 @@ const renderCondition = (condition: K8sCondition) => (
 );
 
 export const DaemonSetsPage = () => {
+  const { t } = useI18n();
+  const { lng } = useParams();
+  const activeLanguage = normalizeLanguageCode(lng);
+  const prefix = buildLanguagePrefix(activeLanguage);
+
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
       infoApi.fetchK8sDaemonSets(params),
@@ -237,11 +242,15 @@ export const DaemonSetsPage = () => {
   ];
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
+    <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Resources"
         title="DaemonSets"
         description="Inventory of DaemonSets with scheduling and rollout signals."
+        breadcrumbItems={[
+          { label: t("nav.workloads"), to: `${prefix}/workloads` },
+          { label: t("nav.resources"), to: `${prefix}/workloads/resources` },
+          { label: t("nav.daemonSets") },
+        ]}
       />
 
       <Table<DaemonSetRow>
@@ -317,7 +326,8 @@ export const DaemonSetsPage = () => {
                   Labels
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {detailMeta.labels && Object.keys(detailMeta.labels).length ? (
+                  {detailMeta.labels &&
+                  Object.keys(detailMeta.labels).length ? (
                     Object.entries(detailMeta.labels).map(([key, value]) => (
                       <span
                         key={key}
@@ -374,7 +384,9 @@ export const DaemonSetsPage = () => {
                 )}
                 {containers.map((container, index) => (
                   <ContainerCard
-                    key={`${container.name ?? container.image ?? "container"}-${index}`}
+                    key={`${
+                      container.name ?? container.image ?? "container"
+                    }-${index}`}
                     container={container}
                   />
                 ))}
@@ -400,7 +412,10 @@ export const DaemonSetsPage = () => {
               </div>
             </div>
 
-            <CommandSection heading="Kubectl Commands" groups={daemonCommands} />
+            <CommandSection
+              heading="Kubectl Commands"
+              groups={daemonCommands}
+            />
           </div>
         ) : (
           <p className="text-sm text-slate-500">
@@ -408,7 +423,7 @@ export const DaemonSetsPage = () => {
           </p>
         )}
       </SharedCard>
-    </div>
+    </SharedPageLayout>
   );
 };
 

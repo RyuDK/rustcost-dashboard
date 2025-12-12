@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { MetricGetResponse } from "@/types/metrics";
 import { metricApi } from "@/shared/api";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface GeneratedAlert {
   id: string;
@@ -10,6 +13,7 @@ interface GeneratedAlert {
 }
 
 export function AlertsPage() {
+  const { t } = useI18n();
   const [clusterMetrics, setClusterMetrics] =
     useState<MetricGetResponse | null>(null);
   const [nodeMetrics, setNodeMetrics] = useState<MetricGetResponse | null>(
@@ -127,19 +131,14 @@ export function AlertsPage() {
   }, [alertState]);
 
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
-          Alerts
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Anomaly Center
-        </h1>
-        <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Synthetic alerts derived from workload metrics. Highlight spikes,
-          waste, or potential failures even before backend alerting is wired up.
-        </p>
-      </header>
+    <SharedPageLayout>
+      <SharedPageHeader
+        eyebrow=""
+        title="Anomaly Center"
+        description="Synthetic alerts derived from workload metrics. Highlight spikes,
+          waste, or potential failures even before backend alerting is wired up."
+        breadcrumbItems={[{ label: t("nav.alerts") }]}
+      />
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
@@ -199,6 +198,6 @@ export function AlertsPage() {
           )}
         </div>
       </div>
-    </div>
+    </SharedPageLayout>
   );
 }
