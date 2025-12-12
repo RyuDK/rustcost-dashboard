@@ -61,7 +61,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
                 ? "border-(--primary) bg-(--primary)/10 text-(--primary)"
                 : "border-(--border) bg-(--surface) text-(--text) hover:border-(--primary) hover:text-(--primary)"
             }
-            hover:bg-gray-200 dark:border-(--border) dark:bg-(--surface-dark)
+            hover:bg-gray-200 dark:hover:bg-gray-600 dark:border-(--border) dark:bg-(--surface-dark)
             dark:hover:border-(--primary) dark:hover:text-(--primary)
           `}
         >
