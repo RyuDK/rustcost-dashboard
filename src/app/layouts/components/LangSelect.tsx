@@ -25,7 +25,7 @@ export default function LangSelect({
       className={className}
       ariaLabel={ariaLabel}
       icon={
-        <GlobeAltIcon className="w-4 h-4 text-gray-500 dark:text-gray-400 " />
+        <GlobeAltIcon className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-(--primary)" />
       }
     />
   );

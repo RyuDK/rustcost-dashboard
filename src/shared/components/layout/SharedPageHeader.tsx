@@ -74,8 +74,7 @@ export const SharedPageHeader = ({
   <header
     className="
       flex flex-col gap-4
-      rounded-2xl shadow-sm backdrop-blur
-      md:flex-row md:items-center md:justify-between p-2 md:p-4
+      rounded-2xl md:flex-row md:items-center md:justify-between p-2 md:p-4
     "
   >
     <div className="space-y-3">

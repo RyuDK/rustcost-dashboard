@@ -27,7 +27,7 @@ export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => (
       return (
         <span
           key={item.to ?? item.label}
-          className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
+          className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
         >
           {item.to ? <Link to={item.to}>{content}</Link> : content}
         </span>
