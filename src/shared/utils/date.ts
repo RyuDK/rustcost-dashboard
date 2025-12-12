@@ -6,11 +6,12 @@ export const subtractDays = (date: Date, days: number): Date => {
   return copy;
 };
 
-const toIsoDateTime = (date: Date): string => date.toISOString().slice(0, 19);
+const toIsoDateTime = (date: Date): string => date.toISOString();
 
 export const getDefaultDateRange = (days = 7) => {
   const end = new Date();
   const start = subtractDays(end, days);
+  start.setHours(0, 0, 0, 0);
 
   return {
     start: toIsoDateTime(start),
