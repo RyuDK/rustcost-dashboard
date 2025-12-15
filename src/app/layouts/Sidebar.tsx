@@ -144,24 +144,30 @@ export const Sidebar = ({
   return (
     <aside
       className={`
-        ${sidebarOpen ? "w-64" : "w-[68px]"}
-        transition-all duration-300
-        border-r border-(--border)
-        bg-(--bg-muted)/50 backdrop-blur
-        dark:border-(--border)
-        dark:bg-(--surface-dark)/40
-        flex flex-col h-full
-      `}
+    ${sidebarOpen ? "w-64" : "w-[68px]"}
+    transition-all duration-300
+    border-r border-(--border)
+    bg-(--bg-muted)
+    dark:bg-(--surface-dark)
+    dark:border-(--border)
+    h-full
+
+    overflow-y-auto scroll-area
+  `}
     >
       <div
         className={`
-   p-4 pt-6 grid items-center
-  ${
-    sidebarOpen
-      ? "grid-cols-[auto_32px] pl-8 pr-6"
-      : "grid-cols-[32px] justify-center"
-  }
-`}
+    sticky top-0 z-10
+    p-4 pt-6 grid items-center
+    bg-(--bg-muted)
+    dark:bg-(--surface-dark)
+
+    ${
+      sidebarOpen
+        ? "grid-cols-[auto_32px] pl-8 pr-6"
+        : "grid-cols-[32px] justify-center"
+    }
+  `}
       >
         {sidebarOpen && (
           <span
@@ -188,7 +194,7 @@ export const Sidebar = ({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-auto scroll-area pr-1">
+      <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
         <ul className="flex flex-col gap-1 px-2 pb-4">
           {renderNavItems(items)}
         </ul>
