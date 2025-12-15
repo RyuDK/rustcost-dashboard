@@ -36,6 +36,9 @@ import { PersistentVolumesPage } from "@/features/workloads/resources/pages/Pers
 import { PersistentVolumeClaimsPage } from "@/features/workloads/resources/pages/PersistentVolumeClaimsPage";
 import { NamespacesPage } from "@/features/workloads/resources/pages/NamespacesPage";
 import { WorkloadsPage } from "@/features/workloads/pages/WorkloadsPage";
+import { PodsPage as PodsResourcePage } from "@/features/workloads/resources/pages/PodsPage";
+import { NodesPage as NodesResourcePage } from "@/features/workloads/resources/pages/NodesPage";
+import { ContainersPage as ContainersResourcePage } from "@/features/workloads/resources/pages/ContainersPage";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +60,9 @@ const router = createBrowserRouter([
       { path: "workloads/metrics/pods", element: <PodsPage /> },
       { path: "workloads/metrics/containers", element: <ContainersPage /> },
       { path: "workloads/resources", element: <ResourcesOverviewPage /> },
+      { path: "workloads/resources/nodes", element: <NodesResourcePage /> },
+      { path: "workloads/resources/pods", element: <PodsResourcePage /> },
+      { path: "workloads/resources/containers", element: <ContainersResourcePage /> },
       { path: "workloads/resources/deployments", element: <DeploymentsPage /> },
       {
         path: "workloads/resources/statefulsets",

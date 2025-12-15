@@ -1,4 +1,5 @@
-import type { IsoDateTimeString } from "@/types/api";
+import type { IsoDateTimeString, PaginatedResponse } from "@/types/api";
+import type { K8sNode } from "@/types/k8s";
 
 export interface InfoNode {
   node_name?: string;
@@ -42,3 +43,5 @@ export interface InfoK8sNodePatchRequest {
   env?: string;
 }
 
+export type K8sNodeList = K8sNode[];
+export type K8sNodePage = PaginatedResponse<K8sNode>;

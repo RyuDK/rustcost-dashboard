@@ -11,6 +11,7 @@ import type {
 } from "./dto";
 
 const BASE_URL = `${INFO_BASE}/k8s/store/containers`;
+const LIVE_BASE_URL = `${INFO_BASE}/k8s/live/containers`;
 
 export const fetchInfoK8sContainers = (params?: K8sListQueryParams) =>
   request<ApiResponse<InfoContainer[]>>({
@@ -33,4 +34,17 @@ export const patchInfoK8sContainer = (
     method: "PATCH",
     url: `${BASE_URL}/${encode(containerId)}`,
     data: payload,
+  });
+
+export const fetchK8sLiveContainers = (params?: PaginationParams) =>
+  request<ApiResponse<import("./dto").K8sContainerPage>>({
+    method: "GET",
+    url: LIVE_BASE_URL,
+    params,
+  });
+
+export const getK8sLiveContainer = (containerId: string) =>
+  request<ApiResponse<InfoContainer>>({
+    method: "GET",
+    url: `${LIVE_BASE_URL}/${encode(containerId)}`,
   });

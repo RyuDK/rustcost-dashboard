@@ -220,6 +220,13 @@ export const WorkloadsPage = () => {
             subtitle="Resources"
             to="resources/deployments"
           />
+          <LinkCard title="Nodes" subtitle="Resources" to="resources/nodes" />
+          <LinkCard
+            title="Containers"
+            subtitle="Resources"
+            to="resources/containers"
+          />
+          <LinkCard title="Pods" subtitle="Resources" to="resources/pods" />
           <LinkCard
             title="StatefulSets"
             subtitle="Resources"

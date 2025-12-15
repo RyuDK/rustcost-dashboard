@@ -53,6 +53,21 @@ export const navItems: NavItem[] = [
             icon: IoGitBranchOutline,
           },
           {
+            to: "/workloads/resources/nodes",
+            translationKey: "nav.nodes",
+            icon: IoHardwareChipOutline,
+          },
+          {
+            to: "/workloads/resources/containers",
+            translationKey: "nav.containers",
+            icon: IoConstructOutline,
+          },
+          {
+            to: "/workloads/resources/pods",
+            translationKey: "nav.pods",
+            icon: IoCubeOutline,
+          },
+          {
             to: "/workloads/resources/statefulsets",
             translationKey: "nav.statefulSets",
             icon: IoLayersOutline,

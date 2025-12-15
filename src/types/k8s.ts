@@ -24,6 +24,18 @@ export interface K8sContainerSpec {
   }>;
 }
 
+export interface K8sContainerStatus {
+  name?: string;
+  state?: Record<string, unknown>;
+  lastState?: Record<string, unknown>;
+  ready?: boolean;
+  restartCount?: number;
+  image?: string;
+  imageID?: string;
+  containerID?: string;
+  started?: boolean;
+}
+
 export interface K8sPodTemplateSpec {
   metadata?: {
     labels?: Record<string, string>;
@@ -35,6 +47,48 @@ export interface K8sPodTemplateSpec {
     serviceAccountName?: string;
     volumes?: Array<Record<string, unknown>>;
   };
+}
+
+export interface K8sPodSpec {
+  nodeName?: string;
+  serviceAccountName?: string;
+  restartPolicy?: string;
+  containers?: K8sContainerSpec[];
+  nodeSelector?: Record<string, string>;
+  tolerations?: Array<{
+    key?: string;
+    operator?: string;
+    value?: string;
+    effect?: string;
+    tolerationSeconds?: number;
+  }>;
+  volumes?: Array<Record<string, unknown>>;
+}
+
+export interface K8sPodStatus {
+  phase?: string;
+  hostIP?: string;
+  podIP?: string;
+  podIPs?: Array<{ ip?: string }>;
+  startTime?: string;
+  qosClass?: string;
+  conditions?: K8sCondition[];
+  containerStatuses?: K8sContainerStatus[];
+}
+
+export interface K8sPod {
+  apiVersion?: string;
+  kind?: string;
+  metadata?: K8sObjectMeta & {
+    ownerReferences?: Array<{
+      apiVersion?: string;
+      kind?: string;
+      name?: string;
+      uid?: string;
+    }>;
+  };
+  spec?: K8sPodSpec;
+  status?: K8sPodStatus;
 }
 
 export interface K8sLabelSelector {
@@ -348,4 +402,53 @@ export interface K8sNamespace {
   status?: {
     phase?: string;
   };
+}
+
+export interface K8sNodeAddress {
+  type?: string;
+  address?: string;
+}
+
+export interface K8sNodeInfo {
+  architecture?: string;
+  bootID?: string;
+  containerRuntimeVersion?: string;
+  kernelVersion?: string;
+  kubeProxyVersion?: string;
+  kubeletVersion?: string;
+  machineID?: string;
+  operatingSystem?: string;
+  osImage?: string;
+  systemUUID?: string;
+}
+
+export interface K8sNodeStatus {
+  addresses?: K8sNodeAddress[];
+  allocatable?: Record<string, string>;
+  capacity?: Record<string, string>;
+  conditions?: K8sCondition[];
+  daemonEndpoints?: Record<string, unknown>;
+  images?: Array<{
+    names?: string[];
+    sizeBytes?: number;
+  }>;
+  nodeInfo?: K8sNodeInfo;
+}
+
+export interface K8sNodeSpec {
+  podCIDR?: string;
+  podCIDRs?: string[];
+  taints?: Array<{
+    key?: string;
+    value?: string;
+    effect?: string;
+  }>;
+}
+
+export interface K8sNode {
+  apiVersion?: string;
+  kind?: string;
+  metadata?: K8sObjectMeta;
+  spec?: K8sNodeSpec;
+  status?: K8sNodeStatus;
 }

@@ -1,4 +1,4 @@
-import type { IsoDateTimeString } from "@/types/api";
+import type { IsoDateTimeString, PaginatedResponse } from "@/types/api";
 import type { InfoK8sNodePatchRequest } from "@/shared/api/info/k8s/node/dto";
 
 export interface InfoContainer {
@@ -37,3 +37,5 @@ export interface InfoContainer {
 
 export type InfoK8sContainerPatchRequest = InfoK8sNodePatchRequest;
 
+export type K8sContainerList = InfoContainer[];
+export type K8sContainerPage = PaginatedResponse<InfoContainer>;

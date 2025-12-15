@@ -1,5 +1,6 @@
-import type { IsoDateTimeString } from "@/types/api";
+import type { IsoDateTimeString, PaginatedResponse } from "@/types/api";
 import type { InfoK8sNodePatchRequest } from "@/shared/api/info/k8s/node/dto";
+import type { K8sPod } from "@/types/k8s";
 
 export interface InfoPod {
   podName?: string;
@@ -46,3 +47,5 @@ export interface InfoPod {
 
 export type InfoK8sPodPatchRequest = InfoK8sNodePatchRequest;
 
+export type K8sPodList = K8sPod[];
+export type K8sPodPage = PaginatedResponse<K8sPod>;
