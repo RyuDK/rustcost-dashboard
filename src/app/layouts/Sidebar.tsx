@@ -1,37 +1,34 @@
-import { NavLink, Outlet, useLocation, useParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import i18n from "@/i18n/i18n";
+import { NavLink, useLocation } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import {
-  buildLanguagePrefix,
-  normalizeLanguageCode,
-} from "@/constants/language";
+import { buildLanguagePrefix } from "@/constants/language";
 import type { LanguageCode } from "@/types/i18n";
-import { Header } from "./Header";
-import { navItems } from "@/constants/nav";
-import type { NavItem } from "@/types/nav";
 import { IoChevronDown } from "react-icons/io5";
 import type { JSX } from "react/jsx-runtime";
-import { Sidebar } from "./Sidebar";
+import type { NavItem } from "@/types/nav";
+import { LuPanelLeftOpen, LuPanelLeftClose } from "react-icons/lu";
 
-export const RootLayout = () => {
-  type LanguageParams = { ["lng"]?: LanguageCode };
-  const params = useParams<LanguageParams>();
-  const activeLanguage = normalizeLanguageCode(params["lng"]);
+type SidebarProps = {
+  sidebarOpen: boolean;
+  onToggleSidebar: () => void;
+  activeLanguage: LanguageCode;
+  items: NavItem[];
+};
+
+export const Sidebar = ({
+  sidebarOpen,
+  onToggleSidebar,
+  activeLanguage,
+  items,
+}: SidebarProps) => {
   const { t } = useI18n();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
   const prefix = useMemo(
     () => buildLanguagePrefix(activeLanguage),
     [activeLanguage]
   );
-
-  useEffect(() => {
-    if (i18n.language !== activeLanguage) {
-      void i18n.changeLanguage(activeLanguage);
-    }
-  }, [activeLanguage]);
 
   const buildLinkPath = (to: string) =>
     to === "/" ? `${prefix}/` : `${prefix}${to}`;
@@ -55,8 +52,8 @@ export const RootLayout = () => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const renderNavItems = (items: NavItem[], depth = 0): JSX.Element[] =>
-    items.map((item) => {
+  const renderNavItems = (navs: NavItem[], depth = 0): JSX.Element[] =>
+    navs.map((item) => {
       const Icon = item.icon;
       const hasChildren = Boolean(item.children?.length);
       const childActive = hasActiveChild(item);
@@ -64,6 +61,7 @@ export const RootLayout = () => {
       const itemKey = `${item.translationKey}-${item.to ?? "root"}-${depth}`;
       const isOpen = childActive || openSections[itemKey];
       const paddingLeft = sidebarOpen ? 12 + depth * 12 : 0;
+
       const rowClasses = `
         flex items-center rounded-md py-1 text-sm transition-colors
         ${sidebarOpen ? "gap-2 px-2" : "justify-center px-0"}
@@ -73,11 +71,13 @@ export const RootLayout = () => {
             : `text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary-hover)]/15 dark:text-[var(--text-muted)] dark:hover:text-[var(--primary)] dark:hover:bg-[var(--primary-hover)]/20`
         }
       `;
+
       const linkClasses = `
         flex flex-1 items-center
         ${sidebarOpen ? "gap-3 px-1 py-1" : "justify-center px-0 py-2"}
         text-inherit no-underline
       `;
+
       const toggleClasses = `
         flex flex-1 items-center
         ${sidebarOpen ? "gap-3 px-1 py-1" : "justify-center px-0 py-2"}
@@ -142,38 +142,67 @@ export const RootLayout = () => {
     });
 
   return (
-    <div
-      className="
-        h-screen flex flex-col 
-        bg-(--bg) text-(--text)
-        dark:bg-(--bg) dark:text-(--text)
-        transition-colors
-      "
+    <aside
+      className={`
+    ${sidebarOpen ? "w-64" : "w-[68px]"}
+    transition-all duration-300
+    border-r border-(--border)
+    bg-(--bg-muted)
+    dark:bg-(--surface-dark)
+    dark:border-(--border)
+    h-full
+
+    overflow-y-auto scroll-area
+  `}
     >
-      {/* ---------------- HEADER ---------------- */}
-      <Header />
+      <div
+        className={`
+    sticky top-0 z-10
+    p-4 pt-6 grid items-center
+    bg-(--bg-muted)
+    dark:bg-(--surface-dark)
 
-      {/* ---------------- LAYOUT ---------------- */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* ---------------- SIDEBAR ---------------- */}
-        <Sidebar
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={() => setSidebarOpen((s) => !s)}
-          activeLanguage={activeLanguage}
-          items={navItems}
-        />
+    ${
+      sidebarOpen
+        ? "grid-cols-[auto_32px] pl-8 pr-6"
+        : "grid-cols-[32px] justify-center"
+    }
+  `}
+      >
+        {sidebarOpen && (
+          <span
+            className={`
+      font-semibold text-(--primary) dark:text-(--primary)
+      transition-opacity duration-200
+    `}
+          >
+            Navigation
+          </span>
+        )}
 
-        {/* ---------------- CONTENT ---------------- */}
-        <main
-          className="
-            flex-1 overflow-auto p-6 
-            bg-(--bg) text-(--text)
-            dark:bg-(--bg) dark:text-(--text)
-          "
+        <button
+          type="button"
+          onClick={onToggleSidebar}
+          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+          className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
         >
-          <Outlet />
-        </main>
+          {sidebarOpen ? (
+            <LuPanelLeftClose className="h-5 w-5" />
+          ) : (
+            <LuPanelLeftOpen className="h-5 w-5" />
+          )}
+        </button>
       </div>
-    </div>
+
+      <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
+        <ul className="flex flex-col gap-1 px-2 pb-4">
+          {renderNavItems(items)}
+        </ul>
+      </nav>
+
+      <div className="p-3 text-center text-xs text-(--text-muted) dark:text-(--text-muted)">
+        {__APP_VERSION__}
+      </div>
+    </aside>
   );
 };

@@ -5,12 +5,10 @@ import LangSelect from "@/app/layouts/components/LangSelect";
 import { NotificationBell } from "@/shared/components/NotificationBell";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { setShowExplain } from "@/store/slices/preferenceSlice";
+import { useNavigate } from "react-router-dom";
 
-type HeaderProps = {
-  onToggleSidebar: () => void;
-};
-
-export const Header = ({ onToggleSidebar }: HeaderProps) => {
+export const Header = () => {
+  const navigate = useNavigate();
   const { language, setLanguage } = useI18n();
   const dispatch = useAppDispatch();
   const showExplain = useAppSelector((state) => state.preferences.showExplain);
@@ -27,27 +25,23 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
         h-16
       "
     >
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onToggleSidebar}
-          className="
+      <button
+        onClick={() => navigate("/")}
+        className="
             p-2 rounded-md 
             hover:bg-(--overlay) 
             dark:hover:bg-(--overlay)
             transition
             flex items-center justify-center
           "
-        >
-          {/* Larger logo */}
-          <img
-            src="/logo-square.webp"
-            alt="Logo"
-            className="h-10 w-10 object-contain"
-          />
-        </button>
-
+      >
+        <img
+          src="/logo-square.webp"
+          alt="Logo"
+          className="h-10 w-10 object-contain"
+        />
         <h1 className="text-xl font-semibold text-(--text)">RustCost</h1>
-      </div>
+      </button>
 
       <div className="flex items-center gap-3">
         <button
