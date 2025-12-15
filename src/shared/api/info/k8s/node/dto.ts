@@ -35,12 +35,19 @@ export interface InfoNode {
   team?: string;
   service?: string;
   env?: string;
+  fixed_instance_usd?: number;
+  price_period?: "Unit" | "Hour" | "Day" | "Month";
 }
 
 export interface InfoK8sNodePatchRequest {
   team?: string;
   service?: string;
   env?: string;
+}
+
+export interface InfoK8sNodePricePatchRequest {
+  fixed_instance_usd?: number;
+  price_period?: "Unit" | "Hour" | "Day" | "Month";
 }
 
 export type K8sNodeList = K8sNode[];

@@ -4,6 +4,7 @@ import type { ApiResponse, K8sListQueryParams } from "@/types/api";
 import type {
   InfoNode,
   InfoK8sNodePatchRequest,
+  InfoK8sNodePricePatchRequest,
   K8sNode,
   K8sNodePage,
 } from "./dto";
@@ -31,6 +32,16 @@ export const patchInfoK8sNode = (
   request<ApiResponse<InfoNode>>({
     method: "PATCH",
     url: `${BASE_URL}/${encode(nodeName)}/filter`,
+    data: payload,
+  });
+
+export const patchInfoK8sNodePrice = (
+  nodeName: string,
+  payload: InfoK8sNodePricePatchRequest
+) =>
+  request<ApiResponse<InfoNode>>({
+    method: "PATCH",
+    url: `${BASE_URL}/${encode(nodeName)}/price`,
     data: payload,
   });
 
