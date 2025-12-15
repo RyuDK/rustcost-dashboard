@@ -7,7 +7,7 @@ import { request } from "@/shared/api/http";
 import type { ApiResponse, K8sListQueryParams } from "@/types/api";
 import type { InfoPod, InfoK8sPodPatchRequest } from "./dto";
 
-const BASE_URL = `${INFO_BASE}/k8s/pods`;
+const BASE_URL = `${INFO_BASE}/k8s/store/pods`;
 
 export const fetchInfoK8sPods = (params?: K8sListQueryParams) =>
   request<ApiResponse<InfoPod[]>>({
@@ -31,4 +31,3 @@ export const patchInfoK8sPod = (
     url: `${BASE_URL}/${encode(podUid)}`,
     data: payload,
   });
-

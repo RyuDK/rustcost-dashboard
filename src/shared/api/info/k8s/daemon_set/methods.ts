@@ -8,6 +8,6 @@ export const fetchK8sDaemonSets = (
 ): Promise<ApiResponse<K8sDaemonSetPage>> =>
   request<ApiResponse<K8sDaemonSetPage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/daemonsets`,
+    url: `${INFO_BASE}/k8s/live/daemonsets`,
     params,
   });

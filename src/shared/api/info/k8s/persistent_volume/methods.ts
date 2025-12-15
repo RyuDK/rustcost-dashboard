@@ -8,7 +8,6 @@ export const fetchK8sPersistentVolumes = (
 ): Promise<ApiResponse<K8sPersistentVolumePage>> =>
   request<ApiResponse<K8sPersistentVolumePage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/persistentvolumes`,
+    url: `${INFO_BASE}/k8s/live/persistentvolumes`,
     params,
   });
-

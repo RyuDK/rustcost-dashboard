@@ -10,7 +10,7 @@ import type {
   InfoK8sContainerPatchRequest,
 } from "./dto";
 
-const BASE_URL = `${INFO_BASE}/k8s/containers`;
+const BASE_URL = `${INFO_BASE}/k8s/store/containers`;
 
 export const fetchInfoK8sContainers = (params?: K8sListQueryParams) =>
   request<ApiResponse<InfoContainer[]>>({
@@ -34,4 +34,3 @@ export const patchInfoK8sContainer = (
     url: `${BASE_URL}/${encode(containerId)}`,
     data: payload,
   });
-

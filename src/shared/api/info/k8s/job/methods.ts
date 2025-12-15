@@ -8,6 +8,6 @@ export const fetchK8sJobs = (
 ): Promise<ApiResponse<K8sJobPage>> =>
   request<ApiResponse<K8sJobPage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/jobs`,
+    url: `${INFO_BASE}/k8s/live/jobs`,
     params,
   });

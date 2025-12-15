@@ -8,6 +8,6 @@ export const fetchK8sCronJobs = (
 ): Promise<ApiResponse<K8sCronJobPage>> =>
   request<ApiResponse<K8sCronJobPage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/cronjobs`,
+    url: `${INFO_BASE}/k8s/live/cronjobs`,
     params,
   });

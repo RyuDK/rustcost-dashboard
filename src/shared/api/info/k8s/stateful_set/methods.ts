@@ -8,6 +8,6 @@ export const fetchK8sStatefulSets = (
 ): Promise<ApiResponse<K8sStatefulSetPage>> =>
   request<ApiResponse<K8sStatefulSetPage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/statefulsets`,
+    url: `${INFO_BASE}/k8s/live/statefulsets`,
     params,
   });

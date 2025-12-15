@@ -8,7 +8,6 @@ export const fetchK8sDeployments = (
 ): Promise<ApiResponse<K8sDeploymentPage>> =>
   request<ApiResponse<K8sDeploymentPage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/deployments`,
+    url: `${INFO_BASE}/k8s/live/deployments`,
     params,
   });
-

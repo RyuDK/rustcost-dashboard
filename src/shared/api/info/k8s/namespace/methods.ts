@@ -8,7 +8,6 @@ export const fetchK8sNamespaces = (
 ): Promise<ApiResponse<K8sNamespacePage>> =>
   request<ApiResponse<K8sNamespacePage>>({
     method: "GET",
-    url: `${INFO_BASE}/k8s/namespaces`,
+    url: `${INFO_BASE}/k8s/live/namespaces`,
     params,
   });
-
