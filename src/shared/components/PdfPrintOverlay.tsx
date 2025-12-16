@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { formatDateTimeWithGmt, useTimezone } from "@/shared/time";
 
 interface PdfPrintOverlayProps {
   open: boolean;
@@ -64,10 +65,11 @@ export const PdfPrintOverlay = ({
 }: PdfPrintOverlayProps) => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { timeZone } = useTimezone();
 
   const timestamp = useMemo(
-    () => generatedAt ?? new Date().toLocaleString(),
-    [generatedAt]
+    () => formatDateTimeWithGmt(generatedAt ?? new Date(), { timeZone }),
+    [generatedAt, timeZone]
   );
 
   const handlePrint = useCallback(() => {

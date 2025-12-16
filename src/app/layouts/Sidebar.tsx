@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { buildLanguagePrefix } from "@/constants/language";
 import type { LanguageCode } from "@/types/i18n";
@@ -7,92 +7,7 @@ import { IoChevronDown } from "react-icons/io5";
 import type { JSX } from "react/jsx-runtime";
 import type { NavItem } from "@/types/nav";
 import { LuPanelLeftOpen, LuPanelLeftClose } from "react-icons/lu";
-import { useAppSelector } from "@/store/hook";
-
-const defaultTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-const buildPartsLookup = (date: Date, timeZone?: string) => {
-  const targetTimeZone = timeZone || defaultTimeZone;
-  const formatter = (() => {
-    try {
-      return new Intl.DateTimeFormat("en-CA", {
-        hour12: false,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: targetTimeZone,
-        timeZoneName: "shortOffset",
-      });
-    } catch {
-      return new Intl.DateTimeFormat("en-CA", {
-        hour12: false,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "shortOffset",
-      });
-    }
-  })();
-
-  return formatter
-    .formatToParts(date)
-    .reduce<Record<string, string>>((acc, part) => {
-      if (part.type !== "literal") {
-        acc[part.type] = part.value;
-      }
-      return acc;
-    }, {});
-};
-
-const getGmtLabelFromTimezone = (timeZone: string): string => {
-  const parts = buildPartsLookup(new Date(), timeZone);
-  return parts.timeZoneName ?? "";
-};
-
-const formatNowWithTimezone = (date: Date, timeZone?: string): string => {
-  const parts = buildPartsLookup(date, timeZone);
-  const gmtLabel =
-    parts.timeZoneName ?? getGmtLabelFromTimezone(defaultTimeZone);
-
-  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} (${gmtLabel})`;
-};
-
-const useNow = () => {
-  const [now, setNow] = useState<Date>(() => new Date());
-
-  useEffect(() => {
-    let intervalId: number;
-    let timeoutId: number;
-
-    const scheduleNextTick = () => {
-      const current = new Date();
-
-      const msUntilNextMinute =
-        (60 - current.getSeconds()) * 1000 - current.getMilliseconds();
-
-      timeoutId = window.setTimeout(() => {
-        setNow(new Date());
-
-        intervalId = window.setInterval(() => {
-          setNow(new Date());
-        }, 60000);
-      }, msUntilNextMinute);
-    };
-
-    scheduleNextTick();
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.clearInterval(intervalId);
-    };
-  }, []);
-
-  return now;
-};
+import { formatDateTimeWithGmt, useNow, useTimezone } from "@/shared/time";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -110,7 +25,7 @@ export const Sidebar = ({
   const { t } = useI18n();
   const location = useLocation();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-  const timezone = useAppSelector((state) => state.preferences.timezone);
+  const { timeZone } = useTimezone();
   const now = useNow();
 
   const prefix = useMemo(
@@ -118,8 +33,8 @@ export const Sidebar = ({
     [activeLanguage]
   );
   const formattedNow = useMemo(
-    () => formatNowWithTimezone(now, timezone),
-    [now, timezone]
+    () => formatDateTimeWithGmt(now, { timeZone }),
+    [now, timeZone]
   );
 
   const buildLinkPath = (to: string) =>

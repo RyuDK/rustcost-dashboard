@@ -15,6 +15,7 @@ import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { useAppSelector } from "@/store/hook";
 import { ExplainHint } from "@/shared/components/ExplainHint";
+import { formatDateTime, useTimezone } from "@/shared/time";
 
 const COST_SERIES: ChartSeries<Record<string, unknown>>[] = [
   {
@@ -50,6 +51,7 @@ export const DashboardPage = () => {
   const { t } = useI18n();
   const [showPrint, setShowPrint] = useState(false);
   const showExplain = useAppSelector((state) => state.preferences.showExplain);
+  const { timeZone } = useTimezone();
 
   const breadcrumbItems = useMemo(() => [{ label: t("nav.dashboard") }], [t]);
 
@@ -172,7 +174,7 @@ export const DashboardPage = () => {
               const timestamp =
                 (point.time as string | undefined) ??
                 (point.timestamp as string | undefined);
-              return timestamp ? new Date(timestamp).toLocaleString() : "";
+              return timestamp ? formatDateTime(timestamp, { timeZone }) : "";
             }}
           />
         </div>
