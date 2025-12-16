@@ -8,9 +8,7 @@ import { TrendsPage } from "@/features/trends/pages/TrendsPage";
 import { EfficiencyPage } from "@/features/efficiency/pages/EfficiencyPage";
 import { SettingsPage } from "@/features/settings/pages/SettingsPage";
 import { WorkloadDetailPage } from "@/features/workloadDetail/WorkloadDetailPage";
-import { ResourcesPage } from "@/features/resources/ResourcesPage";
 import { AllocationPage } from "@/features/allocation/AllocationPage";
-import { MetricsPage } from "@/features/metrics/MetricsPage";
 import { AlertsPage } from "@/features/alerts/AlertsPage";
 import { SystemPage } from "@/features/system/SystemPage";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
@@ -62,7 +60,10 @@ const router = createBrowserRouter([
       { path: "workloads/resources", element: <ResourcesOverviewPage /> },
       { path: "workloads/resources/nodes", element: <NodesResourcePage /> },
       { path: "workloads/resources/pods", element: <PodsResourcePage /> },
-      { path: "workloads/resources/containers", element: <ContainersResourcePage /> },
+      {
+        path: "workloads/resources/containers",
+        element: <ContainersResourcePage />,
+      },
       { path: "workloads/resources/deployments", element: <DeploymentsPage /> },
       {
         path: "workloads/resources/statefulsets",
@@ -84,9 +85,7 @@ const router = createBrowserRouter([
         path: "workloads/resources/namespaces",
         element: <NamespacesPage />,
       },
-      { path: "resources", element: <ResourcesPage /> },
       { path: "allocation", element: <AllocationPage /> },
-      { path: "metrics", element: <MetricsPage /> },
       { path: "alerts", element: <AlertsPage /> },
       { path: "system", element: <SystemPage /> },
       { path: "unit-prices", element: <UnitPricesPage /> },

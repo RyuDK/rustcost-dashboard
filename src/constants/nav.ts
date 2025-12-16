@@ -117,16 +117,10 @@ export const navItems: NavItem[] = [
     translationKey: "nav.efficiency",
     icon: IoConstructOutline,
   },
-  { to: "/resources", translationKey: "nav.resources", icon: IoCubeOutline },
   {
     to: "/allocation",
     translationKey: "nav.allocation",
     icon: IoGitBranchOutline,
-  },
-  {
-    to: "/metrics",
-    translationKey: "nav.metrics",
-    icon: IoFileTrayFullOutline,
   },
   { to: "/alerts", translationKey: "nav.alerts", icon: IoAlertCircleOutline },
   { to: "/system", translationKey: "nav.system", icon: IoHardwareChipOutline },
