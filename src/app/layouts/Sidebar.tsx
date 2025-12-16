@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { buildLanguagePrefix } from "@/constants/language";
 import type { LanguageCode } from "@/types/i18n";
@@ -7,6 +7,92 @@ import { IoChevronDown } from "react-icons/io5";
 import type { JSX } from "react/jsx-runtime";
 import type { NavItem } from "@/types/nav";
 import { LuPanelLeftOpen, LuPanelLeftClose } from "react-icons/lu";
+import { useAppSelector } from "@/store/hook";
+
+const defaultTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const buildPartsLookup = (date: Date, timeZone?: string) => {
+  const targetTimeZone = timeZone || defaultTimeZone;
+  const formatter = (() => {
+    try {
+      return new Intl.DateTimeFormat("en-CA", {
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: targetTimeZone,
+        timeZoneName: "shortOffset",
+      });
+    } catch {
+      return new Intl.DateTimeFormat("en-CA", {
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZoneName: "shortOffset",
+      });
+    }
+  })();
+
+  return formatter
+    .formatToParts(date)
+    .reduce<Record<string, string>>((acc, part) => {
+      if (part.type !== "literal") {
+        acc[part.type] = part.value;
+      }
+      return acc;
+    }, {});
+};
+
+const getGmtLabelFromTimezone = (timeZone: string): string => {
+  const parts = buildPartsLookup(new Date(), timeZone);
+  return parts.timeZoneName ?? "";
+};
+
+const formatNowWithTimezone = (date: Date, timeZone?: string): string => {
+  const parts = buildPartsLookup(date, timeZone);
+  const gmtLabel =
+    parts.timeZoneName ?? getGmtLabelFromTimezone(defaultTimeZone);
+
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} (${gmtLabel})`;
+};
+
+const useNow = () => {
+  const [now, setNow] = useState<Date>(() => new Date());
+
+  useEffect(() => {
+    let intervalId: number;
+    let timeoutId: number;
+
+    const scheduleNextTick = () => {
+      const current = new Date();
+
+      const msUntilNextMinute =
+        (60 - current.getSeconds()) * 1000 - current.getMilliseconds();
+
+      timeoutId = window.setTimeout(() => {
+        setNow(new Date());
+
+        intervalId = window.setInterval(() => {
+          setNow(new Date());
+        }, 60000);
+      }, msUntilNextMinute);
+    };
+
+    scheduleNextTick();
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  return now;
+};
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -24,10 +110,16 @@ export const Sidebar = ({
   const { t } = useI18n();
   const location = useLocation();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const timezone = useAppSelector((state) => state.preferences.timezone);
+  const now = useNow();
 
   const prefix = useMemo(
     () => buildLanguagePrefix(activeLanguage),
     [activeLanguage]
+  );
+  const formattedNow = useMemo(
+    () => formatNowWithTimezone(now, timezone),
+    [now, timezone]
   );
 
   const buildLinkPath = (to: string) =>
@@ -144,64 +236,71 @@ export const Sidebar = ({
   return (
     <aside
       className={`
-    ${sidebarOpen ? "w-64" : "w-[68px]"}
-    transition-all duration-300
-    border-r border-(--border)
-    bg-(--bg-muted)
-    dark:bg-(--surface-dark)
-    dark:border-(--border)
-    h-full
-
-    overflow-y-auto scroll-area
-  `}
+  ${sidebarOpen ? "w-64" : "w-[68px]"}
+  transition-all duration-300
+  border-r border-(--border)
+  bg-(--bg-muted) dark:bg-(--surface-dark) dark:border-(--border)
+  h-full
+  overflow-hidden
+`}
     >
-      <div
-        className={`
-    sticky top-0 z-10
-    p-4 pt-6 grid items-center
-    bg-(--bg-muted)
-    dark:bg-(--surface-dark)
+      <div className="h-full flex flex-col">
+        {/* header */}
+        <div
+          className={`
+      sticky top-0 z-10
+      p-4 pt-6 grid items-center
+      bg-(--bg-muted)
+      dark:bg-(--surface-dark)
 
-    ${
-      sidebarOpen
-        ? "grid-cols-[auto_32px] pl-8 pr-6"
-        : "grid-cols-[32px] justify-center"
-    }
-  `}
-      >
-        {sidebarOpen && (
-          <span
-            className={`
-      font-semibold text-(--primary) dark:text-(--primary)
-      transition-opacity duration-200
+      ${
+        sidebarOpen
+          ? "grid-cols-[auto_32px] pl-8 pr-6"
+          : "grid-cols-[32px] justify-center"
+      }
     `}
-          >
-            Navigation
-          </span>
-        )}
-
-        <button
-          type="button"
-          onClick={onToggleSidebar}
-          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
         >
-          {sidebarOpen ? (
-            <LuPanelLeftClose className="h-5 w-5" />
-          ) : (
-            <LuPanelLeftOpen className="h-5 w-5" />
+          {sidebarOpen && (
+            <span
+              className={`
+        font-semibold text-(--primary) dark:text-(--primary)
+        transition-opacity duration-200
+      `}
+            >
+              Navigation
+            </span>
           )}
-        </button>
-      </div>
 
-      <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
-        <ul className="flex flex-col gap-1 px-2 pb-4">
-          {renderNavItems(items)}
-        </ul>
-      </nav>
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
+          >
+            {sidebarOpen ? (
+              <LuPanelLeftClose className="h-5 w-5" />
+            ) : (
+              <LuPanelLeftOpen className="h-5 w-5" />
+            )}
+          </button>
+        </div>
 
-      <div className="p-3 text-center text-xs text-(--text-muted) dark:text-(--text-muted)">
-        {__APP_VERSION__}
+        {/* scroll area */}
+        <div className="flex-1 overflow-y-auto scroll-area">
+          <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
+            <ul className="flex flex-col gap-1 px-2 pb-4">
+              {renderNavItems(items)}
+            </ul>
+          </nav>
+        </div>
+
+        {/* footer */}
+        <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
+          <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
+            <div className="font-mono text-[11px]">{formattedNow}</div>
+            <div className="mt-1 text-xs">{__APP_VERSION__}</div>
+          </div>
+        </div>
       </div>
     </aside>
   );
