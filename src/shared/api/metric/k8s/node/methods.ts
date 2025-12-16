@@ -3,6 +3,7 @@ import {
   encode,
   metricGet,
 } from "@/shared/api/base";
+import { withAutoGranularity } from "@/shared/utils/metrics";
 import type { MetricRangeQueryParams } from "@/types/api";
 import type {
   NodeMetricTargetParams,
@@ -42,7 +43,7 @@ export const fetchNodeRawSummary = (
 export const fetchNodesRawEfficiency = (params?: MetricRangeQueryParams) =>
   metricGet<MetricRawEfficiencyResponse>(
     `${BASE_URL}/raw/efficiency`,
-    params
+    withAutoGranularity(params)
   );
 
 export const fetchNodeRawEfficiency = (
@@ -51,7 +52,7 @@ export const fetchNodeRawEfficiency = (
 ) =>
   metricGet<MetricRawEfficiencyResponse>(
     `${BASE_URL}/${encode(target.nodeName)}/raw/efficiency`,
-    params
+    withAutoGranularity(params)
   );
 
 export const fetchNodesCost = (params?: MetricRangeQueryParams) =>
@@ -89,4 +90,3 @@ export const fetchNodeCostTrend = (
     `${BASE_URL}/${encode(target.nodeName)}/cost/trend`,
     params
   );
-

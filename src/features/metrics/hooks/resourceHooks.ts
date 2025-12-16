@@ -6,9 +6,11 @@ import type { UseFetchResult } from "@/types/fetch";
 import type {
   MetricCostTrendResponse,
   MetricGetResponse,
+  MetricRawEfficiencyResponse,
   MetricsQueryOptions,
 } from "@/types/metrics";
 import { buildMetricsQueryKey, toEfficiencyMetrics } from "@/features/metrics/lib/transformers";
+import { withAutoGranularity } from "@/shared/utils/metrics";
 
 const serializeParams = (params?: MetricsQueryOptions) =>
   JSON.stringify(params ?? {});
@@ -84,4 +86,32 @@ export const useDeploymentEfficiencyMetrics = (params: MetricsQueryOptions) => {
     { deps: [serializeParams(params)] }
   );
   return mapToEfficiencyResult(query);
+};
+
+export const useNodeEfficiencyMetrics = (params: MetricsQueryOptions) => {
+  const normalizedParams = withAutoGranularity(params) ?? params;
+  const query = useFetch<ApiResponse<MetricRawEfficiencyResponse>>(
+    buildMetricsQueryKey("nodes", "rawEfficiency", normalizedParams),
+    () => metricApi.fetchNodesRawEfficiency(normalizedParams),
+    { deps: [serializeParams(normalizedParams)] }
+  );
+
+  const payload = extractPayload(query.data);
+  const efficiency = payload?.efficiency;
+
+  return {
+    data: efficiency
+      ? {
+          ...efficiency,
+          start: payload?.start,
+          end: payload?.end,
+          granularity: payload?.granularity,
+        }
+      : undefined,
+    isLoading: query.isLoading,
+    error:
+      query.error ??
+      (!query.data?.is_successful ? query.data?.error_msg : undefined),
+    refetch: query.refetch,
+  };
 };

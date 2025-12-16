@@ -1,4 +1,5 @@
 import { METRICS_BASE, metricGet } from "@/shared/api/base";
+import { withAutoGranularity } from "@/shared/utils/metrics";
 import type { MetricRangeQueryParams } from "@/types/api";
 import type {
   MetricGetResponse,
@@ -17,7 +18,10 @@ export const fetchClusterRawSummary = (params?: MetricRangeQueryParams) =>
   metricGet<MetricRawSummaryResponse>(`${BASE_URL}/raw/summary`, params);
 
 export const fetchClusterRawEfficiency = (params?: MetricRangeQueryParams) =>
-  metricGet<MetricRawEfficiencyResponse>(`${BASE_URL}/raw/efficiency`, params);
+  metricGet<MetricRawEfficiencyResponse>(
+    `${BASE_URL}/raw/efficiency`,
+    withAutoGranularity(params)
+  );
 
 export const fetchClusterCost = (params?: MetricRangeQueryParams) =>
   metricGet<MetricGetResponse>(`${BASE_URL}/cost`, params);
@@ -27,4 +31,3 @@ export const fetchClusterCostSummary = (params?: MetricRangeQueryParams) =>
 
 export const fetchClusterCostTrend = (params?: MetricRangeQueryParams) =>
   metricGet<MetricCostTrendResponse>(`${BASE_URL}/cost/trend`, params);
-

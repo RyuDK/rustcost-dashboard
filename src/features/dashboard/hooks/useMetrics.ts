@@ -7,6 +7,7 @@ import {
   toSummaryMetrics,
   toTrendMetrics,
 } from "@/features/metrics/lib/transformers";
+import { pickGranularity } from "@/shared/utils/metrics";
 import { getDefaultDateRange } from "@/shared/utils/date";
 import { DEFAULT_PAGE_SIZE } from "@/constants/api";
 import { useFetch } from "@/shared/hooks/useFetch";
@@ -22,6 +23,7 @@ export const createDefaultMetricsParams = (): MetricsQueryOptions => {
   return {
     start,
     end,
+    granularity: pickGranularity(start, end),
     limit: DEFAULT_PAGE_SIZE,
     sort: "cpu_usage_nano_cores:desc",
     metric: ["cpu_usage", "memory_usage"],
