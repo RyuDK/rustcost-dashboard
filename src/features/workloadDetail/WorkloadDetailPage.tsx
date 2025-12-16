@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import type { MetricGetResponse } from "@/types/metrics";
 import { infoApi, metricApi } from "@/shared/api";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import { formatDateTime, useTimezone } from "@/shared/time";
 
 interface WorkloadResource {
   name: string;
@@ -39,6 +40,7 @@ export function WorkloadDetailPage() {
   const [alerts, setAlerts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { timeZone } = useTimezone();
 
   const fetchWorkloadResources = useCallback(async () => {
     if (!workloadId) {
@@ -192,9 +194,9 @@ export function WorkloadDetailPage() {
             </p>
             <p className="text-xs text-slate-500">
               Last sample:{" "}
-              {new Date(
-                series.points[series.points.length - 1]?.time ?? Date.now()
-              ).toLocaleString()}
+              {formatDateTime(series.points[series.points.length - 1]?.time ?? Date.now(), {
+                timeZone,
+              })}
             </p>
           </div>
         ))}
@@ -205,18 +207,18 @@ export function WorkloadDetailPage() {
   return (
     <SharedPageLayout>
       <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
-      <header className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
-          Workload Detail
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          {workloadId ?? "Unknown Workload"}
-        </h1>
-        <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
-          Deep dive into deployments, pods, and containers that compose this workload. Metrics,
-          resources, and alerts update as new telemetry is ingested.
-        </p>
-      </header>
+        <header className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
+            Workload Detail
+          </p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            {workloadId ?? "Unknown Workload"}
+          </h1>
+          <p className="max-w-3xl text-sm text-slate-500 dark:text-slate-400">
+            Deep dive into deployments, pods, and containers that compose this workload. Metrics,
+            resources, and alerts update as new telemetry is ingested.
+          </p>
+        </header>
 
       <div className="flex flex-wrap gap-2">
         {sections.map((section) => (

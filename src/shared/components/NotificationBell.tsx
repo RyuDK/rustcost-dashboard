@@ -10,6 +10,7 @@ import {
   type AlertEvent,
 } from "@/shared/api/state/alerts";
 import type { PopupActions } from "reactjs-popup/dist/types";
+import { formatDateTime, useTimezone } from "@/shared/time";
 
 interface NotificationBellProps {
   className?: string;
@@ -38,6 +39,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const { timeZone } = useTimezone();
 
   const unreadCount = alerts.filter((a) => a.active).length;
   const displayCount =
@@ -171,7 +173,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
                 {alert.message}
               </p>
               <p className="mt-1 text-[11px] text-gray-500">
-                Created: {new Date(alert.created_at).toLocaleString()}
+                Created: {formatDateTime(alert.created_at, { timeZone })}
               </p>
             </div>
           ))}

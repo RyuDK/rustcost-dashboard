@@ -13,6 +13,7 @@ import type {
   InfoAlertEntity,
   InfoAlertUpsertRequest,
 } from "@/shared/api/info";
+import { formatDateTime, useTimezone } from "@/shared/time";
 
 const metricOptions: { label: string; value: AlertMetricType }[] = [
   { label: "CPU usage %", value: "CpuUsagePercent" },
@@ -94,6 +95,7 @@ export function AlertsPage() {
   const [isSaving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [recipientInput, setRecipientInput] = useState("");
+  const { timeZone } = useTimezone();
 
   useEffect(() => {
     if (data) {
@@ -671,18 +673,10 @@ export function AlertsPage() {
                 Version {draft.version}
               </p>
               <p>
-                Updated:{" "}
-                {new Date(draft.updated_at).toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
+                Updated: {formatDateTime(draft.updated_at, { timeZone })}
               </p>
               <p>
-                Created:{" "}
-                {new Date(draft.created_at).toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
+                Created: {formatDateTime(draft.created_at, { timeZone })}
               </p>
             </div>
           </section>
