@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { IoInformationCircleOutline } from "react-icons/io5";
+import { IoInformationCircle } from "react-icons/io5";
 
 interface ExplainHintProps {
   children: ReactNode;
@@ -14,14 +14,9 @@ export const ExplainHint = ({ children }: ExplainHintProps) => (
     "
   >
     <span className="mt-0.5 text-amber-300">
-      <IoInformationCircleOutline className="text-base" />
+      <IoInformationCircle className="text-base" />
     </span>
 
-    <div className="space-y-1">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-        Explain
-      </p>
-      <p className="text-white/90 leading-relaxed">{children}</p>
-    </div>
+    <p className="text-white/90 leading-relaxed">{children}</p>
   </div>
 );
