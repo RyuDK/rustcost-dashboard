@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { normalizeLanguageCode } from "@/constants/language";
 import { buildLanguagePrefix } from "@/constants/language";
+import { formatDateTime, useTimezone } from "@/shared/time";
 
 export const SettingsPage = () => {
   const { t } = useI18n();
@@ -16,13 +17,14 @@ export const SettingsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const { timeZone } = useTimezone();
 
   const generalRows = data
     ? [
         { label: "Language", value: data.language },
         { label: "Dark Mode", value: data.is_dark_mode ? "On" : "Off" },
         { label: "Version", value: data.version },
-        { label: "Updated", value: new Date(data.updated_at).toLocaleString() },
+        { label: "Updated", value: formatDateTime(data.updated_at, { timeZone }) },
       ]
     : [];
 

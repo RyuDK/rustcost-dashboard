@@ -12,7 +12,11 @@ const defaultLabelFormatter = (point: Record<string, unknown>): string => {
   }
 
   const value =
-    raw instanceof Date ? raw : typeof raw === "number" ? new Date(raw) : new Date(String(raw));
+    raw instanceof Date
+      ? raw
+      : typeof raw === "number"
+      ? new Date(raw)
+      : new Date(String(raw));
 
   if (Number.isNaN(value.getTime())) {
     return String(raw);
@@ -95,7 +99,9 @@ export const useMetricChartOptions = <T extends Record<string, unknown>>(
         tooltip: definition.valueFormatter
           ? {
               valueFormatter: (value: unknown) =>
-                definition.valueFormatter?.(typeof value === "number" ? value : Number(value) || 0),
+                definition.valueFormatter?.(
+                  typeof value === "number" ? value : Number(value) || 0
+                ),
             }
           : undefined,
       })),

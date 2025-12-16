@@ -7,6 +7,7 @@ import { IoChevronDown } from "react-icons/io5";
 import type { JSX } from "react/jsx-runtime";
 import type { NavItem } from "@/types/nav";
 import { LuPanelLeftOpen, LuPanelLeftClose } from "react-icons/lu";
+import { formatDateTimeWithGmt, useNow, useTimezone } from "@/shared/time";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -24,10 +25,16 @@ export const Sidebar = ({
   const { t } = useI18n();
   const location = useLocation();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const { timeZone } = useTimezone();
+  const now = useNow();
 
   const prefix = useMemo(
     () => buildLanguagePrefix(activeLanguage),
     [activeLanguage]
+  );
+  const formattedNow = useMemo(
+    () => formatDateTimeWithGmt(now, { timeZone }),
+    [now, timeZone]
   );
 
   const buildLinkPath = (to: string) =>
@@ -144,64 +151,71 @@ export const Sidebar = ({
   return (
     <aside
       className={`
-    ${sidebarOpen ? "w-64" : "w-[68px]"}
-    transition-all duration-300
-    border-r border-(--border)
-    bg-(--bg-muted)
-    dark:bg-(--surface-dark)
-    dark:border-(--border)
-    h-full
-
-    overflow-y-auto scroll-area
-  `}
+  ${sidebarOpen ? "w-64" : "w-[68px]"}
+  transition-all duration-300
+  border-r border-(--border)
+  bg-(--bg-muted) dark:bg-(--surface-dark) dark:border-(--border)
+  h-full
+  overflow-hidden
+`}
     >
-      <div
-        className={`
-    sticky top-0 z-10
-    p-4 pt-6 grid items-center
-    bg-(--bg-muted)
-    dark:bg-(--surface-dark)
+      <div className="h-full flex flex-col">
+        {/* header */}
+        <div
+          className={`
+      sticky top-0 z-10
+      p-4 pt-6 grid items-center
+      bg-(--bg-muted)
+      dark:bg-(--surface-dark)
 
-    ${
-      sidebarOpen
-        ? "grid-cols-[auto_32px] pl-8 pr-6"
-        : "grid-cols-[32px] justify-center"
-    }
-  `}
-      >
-        {sidebarOpen && (
-          <span
-            className={`
-      font-semibold text-(--primary) dark:text-(--primary)
-      transition-opacity duration-200
+      ${
+        sidebarOpen
+          ? "grid-cols-[auto_32px] pl-8 pr-6"
+          : "grid-cols-[32px] justify-center"
+      }
     `}
-          >
-            Navigation
-          </span>
-        )}
-
-        <button
-          type="button"
-          onClick={onToggleSidebar}
-          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
         >
-          {sidebarOpen ? (
-            <LuPanelLeftClose className="h-5 w-5" />
-          ) : (
-            <LuPanelLeftOpen className="h-5 w-5" />
+          {sidebarOpen && (
+            <span
+              className={`
+        font-semibold text-(--primary) dark:text-(--primary)
+        transition-opacity duration-200
+      `}
+            >
+              Navigation
+            </span>
           )}
-        </button>
-      </div>
 
-      <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
-        <ul className="flex flex-col gap-1 px-2 pb-4">
-          {renderNavItems(items)}
-        </ul>
-      </nav>
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
+          >
+            {sidebarOpen ? (
+              <LuPanelLeftClose className="h-5 w-5" />
+            ) : (
+              <LuPanelLeftOpen className="h-5 w-5" />
+            )}
+          </button>
+        </div>
 
-      <div className="p-3 text-center text-xs text-(--text-muted) dark:text-(--text-muted)">
-        {__APP_VERSION__}
+        {/* scroll area */}
+        <div className="flex-1 overflow-y-auto scroll-area">
+          <nav className={sidebarOpen ? "pr-1" : "pr-0"}>
+            <ul className="flex flex-col gap-1 px-2 pb-4">
+              {renderNavItems(items)}
+            </ul>
+          </nav>
+        </div>
+
+        {/* footer */}
+        <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
+          <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
+            <div className="font-mono text-[11px]">{formattedNow}</div>
+            <div className="mt-1 text-xs">{__APP_VERSION__}</div>
+          </div>
+        </div>
       </div>
     </aside>
   );
