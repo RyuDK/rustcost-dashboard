@@ -440,7 +440,7 @@ export const PodsPage = () => {
 
       return { pod, metrics, cpuMemSeries, storageNetSeries };
     });
-  }, [sparklinePods, rawSeries, rawSeriesMap, rawSeriesMap]);
+  }, [sparklinePods, rawSeries, rawSeriesMap]);
 
   return (
     <SharedPageLayout>
