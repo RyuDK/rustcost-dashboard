@@ -1,10 +1,11 @@
-import { INFO_BASE, encode, buildK8sListQuery } from "@/shared/api/base";
+import { INFO_BASE, encode } from "@/shared/api/base";
 import { request, type PaginationParams } from "@/shared/api/http";
-import type { ApiResponse, K8sListQueryParams } from "@/types/api";
+import type { ApiResponse, QueryDict } from "@/types/api";
 import type {
   InfoNode,
   InfoK8sNodePatchRequest,
   InfoK8sNodePricePatchRequest,
+  InfoK8sNodeListQuery,
   K8sNode,
   K8sNodePage,
 } from "./dto";
@@ -12,11 +13,18 @@ import type {
 const BASE_URL = `${INFO_BASE}/k8s/store/nodes`;
 const LIVE_BASE_URL = `${INFO_BASE}/k8s/live/nodes`;
 
-export const fetchInfoK8sNodes = (params?: K8sListQueryParams) =>
+export const fetchInfoK8sNodes = (payload?: InfoK8sNodeListQuery) =>
   request<ApiResponse<InfoNode[]>>({
     method: "GET",
     url: BASE_URL,
-    params: buildK8sListQuery(params),
+    params: (() => {
+      if (!payload) return undefined;
+      const params: QueryDict = {};
+      if (payload.team) params["team"] = payload.team;
+      if (payload.service) params["service"] = payload.service;
+      if (payload.env) params["env"] = payload.env;
+      return params;
+    })(),
   });
 
 export const getInfoK8sNode = (nodeName: string) =>

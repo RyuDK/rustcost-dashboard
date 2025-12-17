@@ -1,616 +1,518 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { infoApi } from "@/shared/api";
-import { request } from "@/shared/api/http";
-import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
-import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import ReactECharts from "echarts-for-react";
+
 import { useI18n } from "@/app/providers/i18n/useI18n";
+import { infoApi, metricApi } from "@/shared/api";
+import { SharedMetricChart, type ChartSeries } from "@/shared/components/chart/SharedMetricChart";
+import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
+import type {
+  InfoK8sNodeListQuery,
+  InfoK8sNodePatchRequest,
+  InfoNode,
+} from "@/shared/api/info/k8s/node/dto";
+import type { MetricsQueryOptions, MetricSeries } from "@/types/metrics";
+import { getDefaultRange, normalizeRange } from "@/shared/utils/metrics";
+import { formatCurrency } from "@/shared/utils/format";
 
-interface ApiResponse<T> {
-  data?: T;
-  is_successful?: boolean;
-  error_msg?: string;
-}
+type FilterFields = {
+  team: string;
+  service: string;
+  env: string;
+  search: string;
+};
 
-interface ResourceRef {
-  name: string;
-  namespace?: string;
-  kind: string;
-  team?: string;
-  service?: string;
-  env?: string;
-  labels?: Record<string, string>;
-}
+type CostPoint = {
+  time?: string;
+} & Record<string, number | string | undefined>;
 
-interface OwnershipRecord {
-  workload?: string;
-  owner?: string;
-}
+const PALETTE = [
+  "#2563eb",
+  "#10b981",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ec4899",
+  "#14b8a6",
+  "#f97316",
+  "#22c55e",
+];
+
+const getSeriesKey = (s: MetricSeries): string =>
+  ((s as any)?.key ?? (s as any)?.target ?? s.name ?? "") as string;
 
 export const AllocationPage = () => {
   const { t } = useI18n();
 
-  const [resources, setResources] = useState<ResourceRef[]>([]);
-  const [ownership, setOwnership] = useState<Record<string, OwnershipRecord>>(
-    {}
+  const [filters, setFilters] = useState<FilterFields>({
+    team: "",
+    service: "",
+    env: "",
+    search: "",
+  });
+  const [range, setRange] = useState<MetricsQueryOptions>(() =>
+    getDefaultRange()
   );
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const loadResources = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const [nodes, setNodes] = useState<InfoNode[]>([]);
+  const [isLoadingNodes, setIsLoadingNodes] = useState(false);
+  const [nodesError, setNodesError] = useState<string | null>(null);
+
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [metadataDraft, setMetadataDraft] = useState<InfoK8sNodePatchRequest>({
+    team: "",
+    service: "",
+    env: "",
+  });
+  const [isSavingMeta, setIsSavingMeta] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+  const [costSeries, setCostSeries] = useState<MetricSeries[]>([]);
+  const [isLoadingCost, setIsLoadingCost] = useState(false);
+  const [costError, setCostError] = useState<string | null>(null);
+
+  const loadNodes = useCallback(async () => {
+    setIsLoadingNodes(true);
+    setNodesError(null);
+    const payload: InfoK8sNodeListQuery = {
+      team: filters.team || undefined,
+      service: filters.service || undefined,
+      env: filters.env || undefined,
+    };
     try {
-      const [podsRes, deploymentsRes, containersRes] = await Promise.all([
-        infoApi.fetchInfoK8sPods(),
-        infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
-        infoApi.fetchInfoK8sContainers(),
-      ]);
-
-      const pods = (podsRes.data ?? []).map((item) => ({
-        name: item.podName ?? item.podUid ?? "pod",
-        namespace: item.namespace,
-        kind: "Pod" as const,
-        team: item.team,
-        service: item.service,
-        env: item.env,
-        labels: item.label ? { raw: item.label } : undefined,
-      }));
-
-      const deployments = (deploymentsRes.data?.items ?? []).map(
-        (deployment) => {
-          const meta = deployment.metadata ?? {};
-          const labels = meta.labels ?? {};
-          return {
-            name: meta.name ?? "deployment",
-            namespace: meta.namespace,
-            kind: "Deployment" as const,
-            team: labels.team,
-            service: labels.service,
-            env: labels.env,
-            labels,
-          };
-        }
-      );
-
-      const containerItems = (containersRes.data ?? []).map((item, index) => ({
-        name: item.containerName ?? `container-${index}`,
-        namespace: item.namespace,
-        kind: "Container" as const,
-        team: item.team,
-        service: item.service,
-        env: item.env,
-        labels: item.labels ? { raw: item.labels } : undefined,
-      }));
-
-      const combined = [...pods, ...deployments, ...containerItems];
-
-      setResources(combined);
-      setOwnership(
-        combined.reduce<Record<string, OwnershipRecord>>((acc, resource) => {
-          const key = `${resource.namespace ?? "default"}/${resource.name}`;
-          acc[key] = {
-            workload: resource.labels?.workload ?? undefined,
-            owner: resource.team ?? resource.labels?.team ?? undefined,
-          };
-          return acc;
-        }, {})
+      const res = await infoApi.fetchInfoK8sNodes(payload);
+      const list = res.data ?? [];
+      setNodes(list);
+      const firstNode = list.find((n) => n.node_name)?.node_name ?? null;
+      setSelectedNode((prev) =>
+        prev && list.some((n) => n.node_name === prev) ? prev : firstNode
       );
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load allocation data"
+      setNodesError(
+        err instanceof Error ? err.message : "Failed to load node inventory"
       );
     } finally {
-      setIsLoading(false);
+      setIsLoadingNodes(false);
     }
-  }, []);
+  }, [filters]);
+
+  const loadCosts = useCallback(async () => {
+    const nodeNames = nodes
+      .map((n) => n.node_name)
+      .filter((name): name is string => Boolean(name));
+
+    if (!nodeNames.length) {
+      setCostSeries([]);
+      return;
+    }
+
+    setIsLoadingCost(true);
+    setCostError(null);
+    try {
+      const res = await metricApi.fetchNodesCost({
+        ...range,
+        nodeNames,
+      });
+      setCostSeries(res.data?.series ?? []);
+    } catch (err) {
+      setCostError(
+        err instanceof Error ? err.message : "Failed to load node costs"
+      );
+    } finally {
+      setIsLoadingCost(false);
+    }
+  }, [nodes, range]);
 
   useEffect(() => {
-    void loadResources();
-  }, [loadResources]);
+    void loadNodes();
+  }, [loadNodes]);
 
-  const allocationSummary = useMemo(() => {
-    const teams = new Map<string, number>();
-    resources.forEach((resource) => {
-      const team = resource.team ?? resource.labels?.team ?? "unassigned";
-      teams.set(team, (teams.get(team) ?? 0) + 1);
+  useEffect(() => {
+    void loadCosts();
+  }, [loadCosts]);
+
+  useEffect(() => {
+    if (!selectedNode) {
+      setMetadataDraft({ team: "", service: "", env: "" });
+      return;
+    }
+    const found = nodes.find((n) => n.node_name === selectedNode);
+    setMetadataDraft({
+      team: found?.team ?? "",
+      service: found?.service ?? "",
+      env: found?.env ?? "",
     });
-    return Array.from(teams.entries()).map(([team, count]) => ({
-      team,
-      count,
-    }));
-  }, [resources]);
+  }, [nodes, selectedNode]);
 
-  const allocationState = useMemo(
-    () => ({
-      resources,
-      ownership,
-      allocationSummary,
-      isLoading,
-      error,
-    }),
-    [allocationSummary, error, isLoading, ownership, resources]
+  const handleSaveMetadata = async () => {
+    if (!selectedNode) return;
+    setIsSavingMeta(true);
+    setSaveMessage(null);
+    try {
+      await infoApi.patchInfoK8sNode(selectedNode, {
+        team: metadataDraft.team || undefined,
+        service: metadataDraft.service || undefined,
+        env: metadataDraft.env || undefined,
+      });
+      setSaveMessage("Node metadata updated.");
+      await loadNodes();
+    } catch (err) {
+      setNodesError(
+        err instanceof Error ? err.message : "Failed to update node metadata"
+      );
+    } finally {
+      setIsSavingMeta(false);
+    }
+  };
+
+  const filteredNodes = useMemo(() => {
+    const term = filters.search.trim().toLowerCase();
+    return term
+      ? nodes.filter((n) =>
+          (n.node_name ?? "").toLowerCase().includes(term)
+        )
+      : nodes;
+  }, [filters.search, nodes]);
+
+  const teamSummary = useMemo(() => {
+    const map = new Map<string, number>();
+    nodes.forEach((node) => {
+      const team = node.team?.trim() || "unassigned";
+      map.set(team, (map.get(team) ?? 0) + 1);
+    });
+    return Array.from(map.entries()).map(([team, count]) => ({ team, count }));
+  }, [nodes]);
+
+  const selectedNodeInfo = useMemo(
+    () => nodes.find((n) => n.node_name === selectedNode),
+    [nodes, selectedNode]
   );
 
-  useEffect(() => {
-    // Placeholder effect for allocation state observers
-  }, [allocationState]);
+  const { costChartMetrics, costChartSeries } = useMemo(() => {
+    if (!costSeries.length) {
+      return {
+        costChartMetrics: [] as CostPoint[],
+        costChartSeries: [] as ChartSeries<CostPoint>[],
+      };
+    }
+
+    const timeMap = new Map<string, CostPoint>();
+    const seriesDefs: ChartSeries<CostPoint>[] = [];
+
+    costSeries.forEach((series, idx) => {
+      const key = getSeriesKey(series) || `node-${idx + 1}`;
+      seriesDefs.push({
+        key: key as keyof CostPoint,
+        label: key,
+        color: PALETTE[idx % PALETTE.length],
+        valueFormatter: (v) => formatCurrency(v, "USD"),
+      });
+
+      series.points?.forEach((pt) => {
+        const ts = (pt as any).timestamp ?? pt.time;
+        if (!ts) return;
+        const cost = (pt as any)?.cost?.total_cost_usd ?? 0;
+        const existing = timeMap.get(ts) ?? { time: ts };
+        (existing as Record<string, number | string>)[key] = cost;
+        timeMap.set(ts, existing);
+      });
+    });
+
+    const metrics = Array.from(timeMap.values()).sort((a, b) => {
+      const at = (a.time as string) ?? "";
+      const bt = (b.time as string) ?? "";
+      return at.localeCompare(bt);
+    });
+
+    return { costChartMetrics: metrics, costChartSeries: seriesDefs };
+  }, [costSeries]);
+
+  const teamPieOptions = useMemo(
+    () => ({
+      tooltip: { trigger: "item" },
+      series: [
+        {
+          name: "Teams",
+          type: "pie",
+          radius: ["52%", "78%"],
+          avoidLabelOverlap: false,
+          label: { formatter: "{b}: {c}" },
+          data: teamSummary.map((bucket, idx) => ({
+            value: bucket.count,
+            name: bucket.team,
+            itemStyle: { color: PALETTE[idx % PALETTE.length] },
+          })),
+        },
+      ],
+    }),
+    [teamSummary]
+  );
 
   return (
     <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
-        title="Resource Assignment Center"
-        description="Review which workloads own pods, deployments, and containers. Reassign
-          ownership to keep governance metadata current."
+        title="Node Allocation"
+        description="Filter Kubernetes nodes by team, service, or environment, adjust metadata, and track cost by node."
         breadcrumbItems={[{ label: t("nav.allocation") }]}
       />
 
-      {error && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
-          {error}
+      <ExplainHint>
+        Backend: list_k8s_nodes (team/service/env query) + patch_info_k8s_node_filter + get_metric_k8s_nodes_cost.
+        Use the filters to query, then edit metadata on the selected node.
+      </ExplainHint>
+
+      <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40 md:grid-cols-4">
+        <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          Team
+          <input
+            value={filters.team}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, team: e.target.value }))
+            }
+            placeholder="team label"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          Service
+          <input
+            value={filters.service}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, service: e.target.value }))
+            }
+            placeholder="service label"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          Environment
+          <input
+            value={filters.env}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, env: e.target.value }))
+            }
+            placeholder="dev / stage / prod"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          />
+        </label>
+        <div className="flex items-end gap-2">
+          <button
+            type="button"
+            onClick={() => void loadNodes()}
+            className="flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+          >
+            Apply Filters
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setFilters({ team: "", service: "", env: "", search: "" });
+              setRange(getDefaultRange());
+            }}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-amber-300 hover:text-amber-600 dark:border-slate-700 dark:text-slate-200"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          Search by node name
+          <input
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
+            placeholder="e.g., ip-10-0-0-1"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          />
+        </label>
+      </div>
+
+      {nodesError && (
+        <div className="mt-3 rounded-2xl border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/30 dark:text-red-100">
+          {nodesError}
         </div>
       )}
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {allocationSummary.map((team) => (
-          <div
-            key={team.team}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              {team.team}
-            </p>
-            <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-              {team.count} resources
-            </p>
-          </div>
-        ))}
-      </section>
+      <SharedMetricsFilterBar
+        params={range}
+        onChange={(key, value) =>
+          setRange((prev) => normalizeRange({ ...prev, [key]: value }))
+        }
+        onRefresh={() => void loadCosts()}
+      />
 
-      <section className="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Resource Inventory
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {resources.length} resource(s) tracked.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => loadResources()}
-            className="inline-flex items-center justify-center rounded-full border border-amber-500 px-4 py-2 text-sm font-semibold text-amber-600 transition hover:border-amber-600 hover:text-amber-700 dark:text-amber-300"
-          >
-            Refresh
-          </button>
+      {costError && (
+        <div className="mt-3 rounded-2xl border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/30 dark:text-red-100">
+          {costError}
         </div>
-        <div className="space-y-3 p-6">
-          {isLoading && (
-            <p className="text-sm text-slate-500">Loading resources…</p>
-          )}
-          {!isLoading && resources.length === 0 && (
-            <p className="text-sm text-slate-500">No resources discovered.</p>
-          )}
-          {resources.slice(0, 20).map((resource) => (
-            <div
-              key={`${resource.kind}-${resource.namespace ?? "default"}-${
-                resource.name
-              }`}
-              className="flex flex-wrap items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/40"
-            >
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                  {resource.name}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {resource.kind} · namespace {resource.namespace ?? "default"}
-                </p>
-              </div>
-              <div className="text-right text-xs text-slate-500">
-                <p>Team: {resource.team ?? "—"}</p>
-                <p>Service: {resource.service ?? "—"}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <AllocationOverview />
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <AssignResourceModal />
-        <DeallocateResourceModal />
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
+          <div className="mb-2 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                Team Coverage
+              </p>
+              <p className="text-xs text-slate-500">
+                {nodes.length} node(s) grouped by team label
+              </p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              Pie
+            </span>
+          </div>
+          {teamSummary.length ? (
+            <ReactECharts
+              option={teamPieOptions}
+              style={{ width: "100%", height: 320 }}
+              opts={{ renderer: "svg" }}
+            />
+          ) : (
+            <p className="text-sm text-slate-500">No nodes found.</p>
+          )}
+        </div>
+
+        <SharedMetricChart
+          title="Node Cost Trend"
+          subtitle="Cost per node (total USD)"
+          metrics={costChartMetrics}
+          series={costChartSeries}
+          isLoading={isLoadingCost}
+          getXAxisLabel={(point) => (point.time as string) ?? ""}
+        />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                Nodes
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {isLoadingNodes
+                  ? "Loading nodes…"
+                  : `${filteredNodes.length} node(s)`}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void loadNodes()}
+              className="rounded-lg border border-amber-400 px-3 py-1 text-xs font-semibold text-amber-700 transition hover:border-amber-500 hover:text-amber-800 dark:border-amber-700 dark:text-amber-200"
+            >
+              Refresh
+            </button>
+          </div>
+
+          <div className="grid gap-2 md:grid-cols-2">
+            {filteredNodes.map((node) => {
+              const isSelected = node.node_name === selectedNode;
+              return (
+                <button
+                  key={node.node_uid ?? node.node_name ?? Math.random()}
+                  type="button"
+                  onClick={() => setSelectedNode(node.node_name ?? null)}
+                  className={`rounded-xl border px-4 py-3 text-left shadow-sm transition ${
+                    isSelected
+                      ? "border-emerald-400 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-900/30"
+                      : "border-slate-200 bg-white hover:border-amber-300 dark:border-slate-800 dark:bg-slate-900/40"
+                  }`}
+                >
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {node.node_name ?? "unknown-node"}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    team: {node.team ?? "—"} · service: {node.service ?? "—"} · env:{" "}
+                    {node.env ?? "—"}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    cpu: {node.cpu_capacity_cores ?? 0} · mem:{" "}
+                    {Math.round((node.memory_capacity_bytes ?? 0) / 1_073_741_824)} GiB
+                  </p>
+                </button>
+              );
+            })}
+            {!isLoadingNodes && filteredNodes.length === 0 && (
+              <p className="text-sm text-slate-500">No nodes matched the filters.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+            Edit node metadata
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {selectedNode
+              ? `Patch labels for ${selectedNode}`
+              : "Select a node to edit team / service / env"}
+          </p>
+
+          <div className="mt-3 space-y-3">
+            <label className="text-xs text-slate-600 dark:text-slate-400">
+              Team
+              <input
+                value={metadataDraft.team ?? ""}
+                onChange={(e) =>
+                  setMetadataDraft((prev) => ({ ...prev, team: e.target.value }))
+                }
+                disabled={!selectedNode}
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              />
+            </label>
+            <label className="text-xs text-slate-600 dark:text-slate-400">
+              Service
+              <input
+                value={metadataDraft.service ?? ""}
+                onChange={(e) =>
+                  setMetadataDraft((prev) => ({
+                    ...prev,
+                    service: e.target.value,
+                  }))
+                }
+                disabled={!selectedNode}
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              />
+            </label>
+            <label className="text-xs text-slate-600 dark:text-slate-400">
+              Environment
+              <input
+                value={metadataDraft.env ?? ""}
+                onChange={(e) =>
+                  setMetadataDraft((prev) => ({ ...prev, env: e.target.value }))
+                }
+                disabled={!selectedNode}
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => void handleSaveMetadata()}
+              disabled={!selectedNode || isSavingMeta}
+              className="w-full rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50"
+            >
+              {isSavingMeta ? "Saving..." : "Save metadata"}
+            </button>
+            {selectedNodeInfo?.fixed_instance_usd != null && (
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Fixed price: {formatCurrency(selectedNodeInfo.fixed_instance_usd, "USD")}{" "}
+                {selectedNodeInfo.price_period ? `per ${selectedNodeInfo.price_period}` : ""}
+              </p>
+            )}
+            {saveMessage && (
+              <div className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-100">
+                {saveMessage}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </SharedPageLayout>
   );
 };
-
-export function AllocationOverview() {
-  const [nodeAllocations, setNodeAllocations] = useState<
-    Array<{ node: string; workloadCount: number }>
-  >([]);
-  const [allocationHealth, setAllocationHealth] = useState<{
-    overAllocated: number;
-    underAllocated: number;
-  }>({
-    overAllocated: 0,
-    underAllocated: 0,
-  });
-
-  const loadOverview = useCallback(async () => {
-    const [nodesRes, podsRes] = await Promise.all([
-      infoApi.fetchInfoK8sNodes(),
-      infoApi.fetchInfoK8sPods(),
-    ]);
-
-    const nodeUsage = new Map<string, number>();
-    (podsRes.data ?? []).forEach((pod) => {
-      const node = pod.nodeName ?? "unassigned";
-      nodeUsage.set(node, (nodeUsage.get(node) ?? 0) + 1);
-    });
-
-    setNodeAllocations(
-      (nodesRes.data ?? []).map((node) => ({
-        node: node.node_name ?? "unknown",
-        workloadCount: nodeUsage.get(node.node_name ?? "unknown") ?? 0,
-      }))
-    );
-
-    const overAllocated = Array.from(nodeUsage.values()).filter(
-      (count) => count > 50
-    ).length;
-    const underAllocated = Array.from(nodeUsage.values()).filter(
-      (count) => count < 5
-    ).length;
-    setAllocationHealth({ overAllocated, underAllocated });
-  }, []);
-
-  useEffect(() => {
-    void loadOverview();
-  }, [loadOverview]);
-
-  const overviewState = useMemo(
-    () => ({
-      nodeAllocations,
-      allocationHealth,
-    }),
-    [allocationHealth, nodeAllocations]
-  );
-
-  useEffect(() => {
-    // Placeholder effect for overview data
-  }, [overviewState]);
-
-  return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-          Node Allocation Overview
-        </h2>
-        <p className="text-xs uppercase tracking-wide text-slate-400">
-          Over: {allocationHealth.overAllocated} · Under:{" "}
-          {allocationHealth.underAllocated}
-        </p>
-      </div>
-      <p className="text-sm text-slate-500 dark:text-slate-400">
-        Distribution of workloads per node to identify hot spots or
-        underutilized nodes.
-      </p>
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
-        {nodeAllocations.slice(0, 6).map((allocation) => (
-          <div
-            key={allocation.node}
-            className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
-          >
-            <p className="text-sm font-semibold text-slate-900 dark:text-white">
-              {allocation.node}
-            </p>
-            <p className="text-xs text-slate-500">
-              {allocation.workloadCount} workload(s) scheduled
-            </p>
-            <div className="mt-3 h-2 rounded-full bg-slate-100 dark:bg-slate-800">
-              <div
-                className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
-                style={{
-                  width: `${Math.min(allocation.workloadCount, 100)}%`,
-                }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export function AssignResourceModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [availableResources, setAvailableResources] = useState<ResourceRef[]>(
-    []
-  );
-  const [workloads, setWorkloads] = useState<string[]>([]);
-  const [selectedResource, setSelectedResource] = useState<string | null>(null);
-  const [selectedWorkload, setSelectedWorkload] = useState<string | null>(null);
-
-  const loadSelectableResources = useCallback(async () => {
-    if (!isOpen) {
-      return;
-    }
-    const [podsRes, deploymentsRes] = await Promise.all([
-      infoApi.fetchInfoK8sPods(),
-      infoApi.fetchK8sDeployments({ limit: 100, offset: 0 }),
-    ]);
-    const pods = (podsRes.data ?? []).map((item) => ({
-      ...item,
-      kind: "Pod" as const,
-      name: item.podName ?? item.podUid ?? "pod",
-    }));
-    const deployments = (deploymentsRes.data?.items ?? []).map(
-      (deployment) => ({
-        name: deployment.metadata?.name ?? "deployment",
-        namespace: deployment.metadata?.namespace,
-        kind: "Deployment" as const,
-      })
-    );
-    const combined = [...pods, ...deployments];
-    setAvailableResources(combined);
-    const workloadCandidates = combined
-      .map((item) => item.labels?.workload)
-      .filter((id): id is string => Boolean(id));
-    setWorkloads(workloadCandidates);
-    if (!selectedResource && combined.length) {
-      setSelectedResource(`${combined[0].kind}:${combined[0].name}`);
-    }
-    if (!selectedWorkload && workloadCandidates.length) {
-      setSelectedWorkload(workloadCandidates[0]);
-    }
-  }, [isOpen, selectedResource, selectedWorkload]);
-
-  useEffect(() => {
-    void loadSelectableResources();
-  }, [loadSelectableResources]);
-
-  const assignResource = useCallback(async () => {
-    if (!selectedResource || !selectedWorkload) {
-      return;
-    }
-    await request<ApiResponse<unknown>>({
-      method: "POST",
-      url: "/allocation/assign",
-      data: { resource: selectedResource, workload: selectedWorkload },
-    });
-    setIsOpen(false);
-  }, [selectedResource, selectedWorkload]);
-
-  useEffect(() => {
-    // Placeholder effect for invoking assignment handler
-  }, [assignResource]);
-
-  const assignState = useMemo(
-    () => ({
-      availableResources,
-      workloads,
-      selectedResource,
-      selectedWorkload,
-      isOpen,
-    }),
-    [availableResources, isOpen, selectedResource, selectedWorkload, workloads]
-  );
-
-  useEffect(() => {
-    // Placeholder effect for assign modal state
-  }, [assignState]);
-
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-            Assign Resource
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Map pods or deployments to a workload record.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="rounded-full border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:border-emerald-600 hover:text-emerald-700 dark:text-emerald-300"
-        >
-          Assign
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="mt-4 space-y-4 rounded-2xl border border-slate-100 p-4 dark:border-slate-800">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Resource
-            </label>
-            <select
-              value={selectedResource ?? ""}
-              onChange={(event) => setSelectedResource(event.target.value)}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            >
-              <option value="" disabled>
-                Select resource
-              </option>
-              {availableResources.map((resource) => (
-                <option
-                  key={`${resource.kind}:${resource.name}`}
-                  value={`${resource.kind}:${resource.name}`}
-                >
-                  {resource.kind} · {resource.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Workload
-            </label>
-            <select
-              value={selectedWorkload ?? ""}
-              onChange={(event) => setSelectedWorkload(event.target.value)}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            >
-              <option value="" disabled>
-                Select workload
-              </option>
-              {workloads.map((workload) => (
-                <option key={workload} value={workload}>
-                  {workload}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => assignResource()}
-              className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function DeallocateResourceModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [assignedResources, setAssignedResources] = useState<
-    Array<{ id: string; workload: string }>
-  >([]);
-  const [selectedAllocation, setSelectedAllocation] = useState<string | null>(
-    null
-  );
-
-  const loadAssignments = useCallback(async () => {
-    if (!isOpen) {
-      return;
-    }
-    const res = await request<
-      ApiResponse<Array<{ resource_id: string; workload: string }>>
-    >({
-      method: "GET",
-      url: "/allocation/list",
-    });
-    const formatted = (res.data ?? []).map((record) => ({
-      id: record.resource_id,
-      workload: record.workload,
-    }));
-    setAssignedResources(formatted);
-    if (!selectedAllocation && formatted.length) {
-      setSelectedAllocation(formatted[0].id);
-    }
-  }, [isOpen, selectedAllocation]);
-
-  useEffect(() => {
-    void loadAssignments();
-  }, [loadAssignments]);
-
-  const deallocate = useCallback(async () => {
-    if (!selectedAllocation) {
-      return;
-    }
-    await request<ApiResponse<unknown>>({
-      method: "POST",
-      url: "/allocation/deallocate",
-      data: { resource: selectedAllocation },
-    });
-    setIsOpen(false);
-  }, [selectedAllocation]);
-
-  useEffect(() => {
-    // Placeholder effect for invoking deallocation handler
-  }, [deallocate]);
-
-  const modalState = useMemo(
-    () => ({
-      assignedResources,
-      isOpen,
-      selectedAllocation,
-    }),
-    [assignedResources, isOpen, selectedAllocation]
-  );
-
-  useEffect(() => {
-    // Placeholder effect for deallocation modal state
-  }, [modalState]);
-
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-            Deallocate Resource
-          </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Remove stale ownership mappings from workloads.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="rounded-full border border-red-500 px-4 py-2 text-sm font-semibold text-red-600 transition hover:border-red-600 hover:text-red-700 dark:text-red-300"
-        >
-          Deallocate
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="mt-4 space-y-4 rounded-2xl border border-slate-100 p-4 dark:border-slate-800">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Allocation
-            </label>
-            <select
-              value={selectedAllocation ?? ""}
-              onChange={(event) => setSelectedAllocation(event.target.value)}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            >
-              <option value="" disabled>
-                Select allocation
-              </option>
-              {assignedResources.map((record) => (
-                <option key={record.id} value={record.id}>
-                  {record.id} · {record.workload}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => deallocate()}
-              className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}

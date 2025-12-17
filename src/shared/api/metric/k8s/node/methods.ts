@@ -55,8 +55,14 @@ export const fetchNodeRawEfficiency = (
     withAutoGranularity(params)
   );
 
-export const fetchNodesCost = (params?: MetricRangeQueryParams) =>
-  metricGet<MetricGetResponse>(`${BASE_URL}/cost`, params);
+export const fetchNodesCost = (
+  params?: MetricRangeQueryParams & { nodeNames?: string[] }
+) =>
+  metricGet<MetricGetResponse>(`${BASE_URL}/cost`, (() => {
+    if (!params) return undefined;
+    const { nodeNames, ...rest } = params;
+    return { ...rest, node_names: nodeNames } as MetricRangeQueryParams;
+  })());
 
 export const fetchNodeCost = (
   target: NodeMetricTargetParams,

@@ -45,6 +45,12 @@ export interface InfoK8sNodePatchRequest {
   env?: string;
 }
 
+export interface InfoK8sNodeListQuery {
+  team?: string;
+  service?: string;
+  env?: string;
+}
+
 export interface InfoK8sNodePricePatchRequest {
   fixed_instance_usd?: number;
   price_period?: "Unit" | "Hour" | "Day" | "Month";
