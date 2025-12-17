@@ -28,7 +28,7 @@ export const LoadingPage = () => {
   const POLL_INTERVAL = 5000;
 
   const ALERT_TITLE = "Alert";
-  const ALERT_MESSAGE = "are you ready to change PopUp?";
+  const ALERT_MESSAGE = "Unable to reach backend service.";
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -105,47 +105,82 @@ export const LoadingPage = () => {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]">
-      <div className="w-full max-w-md rounded-3xl border border-[color:var(--border)] bg-[var(--surface)] p-6 shadow-xl">
-        <div className="flex items-center justify-between">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-(--bg) px-6 text-(--text)">
+      <div className="w-full max-w-md rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-2xl">
+        {/* Header */}
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-              System sync
+            <p className="text-xs font-semibold uppercase tracking-wide text-(--text-muted)">
+              System preparation
             </p>
-            <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">
-              Preparing dashboard
+            <h1 className="mt-1 text-xl font-semibold">
+              Initialize backend cache
             </h1>
           </div>
-          <div className="h-10 w-10 rounded-full bg-[color:var(--bg-subtle)]">
-            <span className="sr-only">Loading</span>
-          </div>
+
+          <span
+            className={`mt-1 h-3 w-3 rounded-full ${
+              popup?.tone === "error" ? "bg-red-500" : "bg-(--primary)"
+            }`}
+            aria-hidden
+          />
         </div>
 
-        <p className="mt-4 text-sm text-[var(--text-subtle)]">
-          {status?.resync_running
-            ? "We are resyncing Kubernetes state with the latest cluster view."
-            : "Checking system readiness and recent discovery status."}
+        {/* Explanation */}
+        <p className="mt-4 text-sm text-(--text-subtle)">
+          Before continuing, the backend will warm its cache to ensure fast and
+          consistent responses. This operation may take a few moments.
         </p>
 
-        <div className="mt-6 flex items-center gap-3">
-          <span className="inline-flex h-3 w-3 animate-pulse rounded-full bg-[color:var(--primary)]" />
-          <span className="text-sm font-medium text-[var(--text-muted)]">
-            {status?.resync_running
-              ? "Resync in progress..."
-              : "Contacting control plane..."}
-          </span>
-        </div>
-      </div>
+        {/* Status */}
+        {status?.resync_running && (
+          <div className="mt-5 flex items-center gap-3">
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-(--primary)" />
+            <span className="text-sm font-medium">
+              Cache initialization in progress…
+            </span>
+          </div>
+        )}
 
-      <LoadingAlert
-        open={!!popup}
-        title={popup?.title ?? ALERT_TITLE}
-        message={popup?.message ?? ALERT_MESSAGE}
-        detail={popup?.detail}
-        onCancel={() => setPopup(null)}
-        onOk={() => setPopup(null)}
-        tone={popup?.tone}
-      />
+        {/* Inline Alert */}
+        {popup && (
+          <div
+            className={`mt-5 rounded-lg border px-4 py-3 text-sm ${
+              popup.tone === "error"
+                ? "border-red-300 bg-red-50 text-red-800"
+                : "border-slate-300 bg-slate-50 text-slate-700"
+            }`}
+          >
+            <p className="font-medium">{popup.message}</p>
+            {popup.detail && (
+              <p className="mt-1 text-xs opacity-80">{popup.detail}</p>
+            )}
+          </div>
+        )}
+
+        {/* Actions */}
+        {!status?.resync_running && (
+          <div className="mt-6 flex justify-end gap-3">
+            {/* <button
+              type="button"
+              onClick={() => setPopup(null)}
+              className="rounded-full border border-(--primary) px-4 py-2 text-sm font-semibold uppercase tracking-wide text-(--primary) hover:bg-(--bg-subtle)"
+            >
+              Cancel
+            </button> */}
+            {/* 
+            <button
+              type="button"
+              onClick={async () => {
+                await postSystemResync();
+              }}
+              className="rounded-full bg-(--primary) px-4 py-2 text-sm font-semibold uppercase tracking-wide text-(--accent-contrast) hover:bg-(--primary-hover)"
+            >
+              Initialize
+            </button> */}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
