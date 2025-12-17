@@ -61,6 +61,24 @@ const getDefaultRange = (): MetricsQueryOptions => {
 const getSeriesKey = (s: MetricSeries): string =>
   ((s as any)?.key ?? (s as any)?.target ?? s.name ?? "") as string;
 
+const normalizeRange = (next: MetricsQueryOptions): MetricsQueryOptions => {
+  const startStr = next.start;
+  const endStr = next.end;
+
+  if (!startStr || !endStr) return next;
+
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return next;
+
+  if (end.getTime() < start.getTime()) {
+    return { ...next, end: next.start };
+  }
+
+  return next;
+};
+
 export const PodsPage = () => {
   const { t } = useI18n();
   const { lng } = useParams();
@@ -160,11 +178,14 @@ export const PodsPage = () => {
 
       setTableData(rows);
       setTrendSeries(listRes.data?.series ?? []);
+
+      // (기존 패턴 유지)
       if (rawRes && typeof rawRes === "object" && "data" in rawRes) {
         setPodRaw(rawRes.data ?? null);
       } else {
         setPodRaw(null);
       }
+
       setRawSeries(podsRawRes.data?.series ?? []);
     } catch (err) {
       if (reqId !== metricsReqIdRef.current) return;
@@ -229,7 +250,6 @@ export const PodsPage = () => {
       .slice(0, 10);
   }, [tableData, debouncedSearch]);
 
-  // lookup map (O(1))
   const trendSeriesMap = useMemo(() => {
     const m = new Map<string, MetricSeries>();
     for (const s of trendSeries) {
@@ -420,7 +440,7 @@ export const PodsPage = () => {
 
       return { pod, metrics, cpuMemSeries, storageNetSeries };
     });
-  }, [sparklinePods, rawSeries, rawSeriesMap]);
+  }, [sparklinePods, rawSeries, rawSeriesMap, rawSeriesMap]);
 
   return (
     <SharedPageLayout>
@@ -438,7 +458,7 @@ export const PodsPage = () => {
       <SharedMetricsFilterBar
         params={params}
         onChange={(key, value) =>
-          setParams((prev) => ({ ...prev, [key]: value }))
+          setParams((prev) => normalizeRange({ ...prev, [key]: value }))
         }
         onRefresh={loadMetrics}
       />
