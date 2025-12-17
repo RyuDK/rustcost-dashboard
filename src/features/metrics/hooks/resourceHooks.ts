@@ -62,12 +62,17 @@ export const useClusterTrendMetrics = (params: MetricsQueryOptions) => {
 };
 
 export const useNamespaceTrendMetrics = (params: MetricsQueryOptions) => {
-  const query = useFetch<ApiResponse<MetricGetResponse>>(
-    buildMetricsQueryKey("namespaces", "raw", params),
-    () => metricApi.fetchNamespacesRaw(params),
-    { deps: [serializeParams(params)] }
+  const normalizedParams = withAutoGranularity(params) ?? params;
+  const query = useFetch<ApiResponse<MetricCostTrendResponse>>(
+    buildMetricsQueryKey("namespaces", "costTrend", normalizedParams),
+    () => metricApi.fetchNamespacesCostTrend(normalizedParams),
+    { deps: [serializeParams(normalizedParams)] }
   );
-  return mapToTrendResult(query);
+
+  return mapToTrendResult(query, (payload) => ({
+    trend: payload?.trend,
+    points: payload?.points ?? [],
+  }));
 };
 
 export const useNamespaceEfficiencyMetrics = (params: MetricsQueryOptions) => {
