@@ -213,7 +213,10 @@ export const Sidebar = ({
         <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
           <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
             <div className="font-mono text-[11px]">{formattedNow}</div>
-            <div className="mt-1 text-xs">{__APP_VERSION__}</div>
+            <div className="mt-1 text-xs">
+              {"ver "}
+              {__APP_VERSION__}
+            </div>
           </div>
         </div>
       </div>
