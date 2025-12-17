@@ -10,6 +10,8 @@ import { getDefaultDateRange, formatDateTime } from "@/shared/utils/date";
 import { withAutoGranularity } from "@/shared/utils/metrics";
 import { formatPercent } from "@/shared/utils/format";
 import type { MetricsQueryOptions } from "@/types/metrics";
+import { useAppSelector } from "@/store/hook";
+import { ExplainHint } from "@/shared/components/ExplainHint";
 
 const toPercentLabel = (value?: number) => formatPercent((value ?? 0) * 100);
 const percentWidth = (value?: number) =>
@@ -27,6 +29,7 @@ export const EfficiencyPage = () => {
     const range = getDefaultDateRange();
     return withAutoGranularity(range) ?? range;
   });
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const nodeEfficiency = useNodeEfficiencyMetrics(params);
   const errorMessage = nodeEfficiency.error
@@ -115,6 +118,11 @@ export const EfficiencyPage = () => {
         onRefresh={nodeEfficiency.refetch}
       />
 
+      <ExplainHint visible={showExplain}>
+        Use the filters to set your time window; refresh pulls aligned efficiency
+        data using auto-selected granularity.
+      </ExplainHint>
+
       {errorMessage && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
           {errorMessage}
@@ -132,6 +140,10 @@ export const EfficiencyPage = () => {
           subtitle="Node utilization by resource type"
           isLoading={nodeEfficiency.isLoading}
         >
+          <ExplainHint visible={showExplain}>
+            Bars show efficiency by resource. Hover for precise percentages; the
+            right-hand cards summarize the snapshot details.
+          </ExplainHint>
           <div className="space-y-4">
             {efficiencyRows.map((row) => (
               <div key={row.key} className="space-y-2">

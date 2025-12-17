@@ -14,6 +14,8 @@ import {
   buildLanguagePrefix,
 } from "@/constants/language";
 import type { K8sContainerStatus, K8sPod } from "@/types/k8s";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type PodRow = {
   id: string;
@@ -102,6 +104,7 @@ export const PodsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const {
     items: pods,
@@ -236,6 +239,11 @@ export const PodsPage = () => {
           { label: t("nav.pods") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Sort or filter the pod table, then select a row to inspect labels,
+        annotations, and kubectl-ready commands for quick debugging.
+      </ExplainHint>
 
       <Table<PodRow>
         title="Pod Inventory"

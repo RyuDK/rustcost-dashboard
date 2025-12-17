@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type DaemonSetRow = {
   id: string;
@@ -100,6 +102,7 @@ export const DaemonSetsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -252,6 +255,12 @@ export const DaemonSetsPage = () => {
           { label: t("nav.daemonSets") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Use the inventory to spot rollout health across nodes. Selecting a
+        daemon set surfaces scheduling details and kubectl commands for quick
+        fixes.
+      </ExplainHint>
 
       <Table<DaemonSetRow>
         title="DaemonSet Inventory"

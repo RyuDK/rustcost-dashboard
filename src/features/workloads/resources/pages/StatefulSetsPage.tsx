@@ -18,6 +18,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type StatefulSetRow = {
   id: string;
@@ -99,6 +101,7 @@ export const StatefulSetsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -252,6 +255,11 @@ export const StatefulSetsPage = () => {
           { label: t("nav.statefulSets") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Track replica health and storage claims for each StatefulSet. Select a
+        row to surface identity details and kubectl helpers.
+      </ExplainHint>
 
       <Table<StatefulSetRow>
         title="StatefulSet Inventory"

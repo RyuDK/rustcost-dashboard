@@ -15,6 +15,8 @@ import {
   buildLanguagePrefix,
 } from "@/constants/language";
 import { SharedConfirmModal } from "@/shared/components/modal/SharedConfirmModal";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 export const UnitPricesPage = () => {
   const { t } = useI18n();
@@ -22,6 +24,7 @@ export const UnitPricesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   /** -------------------------------------------
    * FETCH EXISTING UNIT PRICES
@@ -172,6 +175,11 @@ export const UnitPricesPage = () => {
         }}
       />
 
+      <ExplainHint visible={showExplain}>
+        Edit price inputs used for allocation. Refresh to pull current values;
+        saves require confirmation to avoid accidental overwrites.
+      </ExplainHint>
+
       {/* --- Errors --- */}
       {errorMessage && (
         <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:text-red-200">
@@ -187,6 +195,10 @@ export const UnitPricesPage = () => {
 
       {!isLoading && data && (
         <>
+          <ExplainHint visible={showExplain}>
+            Adjust on-demand and spot rates by resource type. Empty fields stay
+            unchanged; use Save to persist or Cancel to revert to the last load.
+          </ExplainHint>
           {/* --- Editable Grid --- */}
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <EditablePrice

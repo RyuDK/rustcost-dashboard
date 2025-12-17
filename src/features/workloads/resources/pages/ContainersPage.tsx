@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type ContainerRow = {
   id: string;
@@ -97,6 +99,7 @@ export const ContainersPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const {
     items: containers,
@@ -220,6 +223,11 @@ export const ContainersPage = () => {
           { label: t("nav.containers") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Browse containers in real time. Select a row to view runtime details,
+        labels, mounts, IDs, and ready-to-run kubectl commands.
+      </ExplainHint>
 
       <Table<ContainerRow>
         title="Container Inventory"

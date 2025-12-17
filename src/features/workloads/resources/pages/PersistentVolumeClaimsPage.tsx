@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type PersistentVolumeClaimRow = {
   id: string;
@@ -60,6 +62,7 @@ export const PersistentVolumeClaimsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -170,6 +173,12 @@ export const PersistentVolumeClaimsPage = () => {
           { label: t("nav.persistentVolumeClaims") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Track claims, storage classes, and bound volumes. Selecting a PVC shows
+        capacity requests, access modes, and kubectl commands for binding
+        issues.
+      </ExplainHint>
 
       <Table<PersistentVolumeClaimRow>
         title="PersistentVolumeClaims"

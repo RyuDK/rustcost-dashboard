@@ -19,6 +19,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type JobRow = {
   id: string;
@@ -141,6 +143,7 @@ export const JobsCronJobsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const jobFetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -399,6 +402,12 @@ export const JobsCronJobsPage = () => {
           { label: t("nav.jobsCronJobs") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Use the tables to compare jobs and cron schedules. Selecting a row
+        reveals templates, pod activity, and kubectl commands for reruns or
+        cleanup.
+      </ExplainHint>
 
       <div className="grid gap-6 xl:grid-cols-2">
         <div className="space-y-4">

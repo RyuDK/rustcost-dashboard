@@ -16,6 +16,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type DeploymentRow = {
   id: string;
@@ -126,6 +128,7 @@ export const DeploymentsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
   const [deployments, setDeployments] = useState<K8sDeployment[]>([]);
   const [selectedDeployment, setSelectedDeployment] =
     useState<K8sDeployment | null>(null);
@@ -363,6 +366,11 @@ export const DeploymentsPage = () => {
           { label: t("nav.deployments") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Page through deployments, sort columns, and pick a row to inspect
+        rollout history, container images, and helpful kubectl commands.
+      </ExplainHint>
 
       <Table<DeploymentRow>
         title="Deployment Inventory"

@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type PersistentVolumeRow = {
   id: string;
@@ -61,6 +63,7 @@ export const PersistentVolumesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -171,6 +174,12 @@ export const PersistentVolumesPage = () => {
           { label: t("nav.persistentVolumes") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Review persistent volumes, capacity, and reclaim policies. Selecting a
+        PV surfaces claims, access modes, and kubectl commands for storage
+        operations.
+      </ExplainHint>
 
       <Table<PersistentVolumeRow>
         title="PersistentVolumes"

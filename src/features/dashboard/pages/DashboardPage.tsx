@@ -13,7 +13,6 @@ import { useDashboardParams } from "@/features/dashboard/hooks/useDashboardParam
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
-import { useAppSelector } from "@/store/hook";
 import { ExplainHint } from "@/shared/components/ExplainHint";
 import { formatDateTime, useTimezone } from "@/shared/time";
 
@@ -50,7 +49,6 @@ export const DashboardPage = () => {
     useDashboardMetrics(params);
   const { t } = useI18n();
   const [showPrint, setShowPrint] = useState(false);
-  const showExplain = useAppSelector((state) => state.preferences.showExplain);
   const { timeZone } = useTimezone();
 
   const breadcrumbItems = useMemo(() => [{ label: t("nav.dashboard") }], [t]);
@@ -145,21 +143,17 @@ export const DashboardPage = () => {
         onRefresh={refetchAll}
       />
 
-      {showExplain && (
-        <ExplainHint>
-          Filters apply to every widget below. Set your date range, then hit
-          refresh to pull aligned data across the dashboard.
-        </ExplainHint>
-      )}
+      <ExplainHint>
+        Filters apply to every widget below. Set your date range, then hit
+        refresh to pull aligned data across the dashboard.
+      </ExplainHint>
 
       <SharedMetricsSummaryCards cards={summaryCards} isLoading={isLoading} />
 
-      {showExplain && (
-        <ExplainHint>
-          Summary cards show total, CPU, memory, and storage+network costs for
-          the selected window. They refresh with the filter above.
-        </ExplainHint>
-      )}
+      <ExplainHint>
+        Summary cards show total, CPU, memory, and storage+network costs for the
+        selected window. They refresh with the filter above.
+      </ExplainHint>
 
       <div className="grid grid-cols-1 gap-6">
         <div className="lg:col-span-12">
@@ -180,23 +174,19 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      {showExplain && (
-        <ExplainHint>
-          The cost trend plots each cost component over time. Hover for exact
-          values; the X-axis follows your chosen date range.
-        </ExplainHint>
-      )}
+      <ExplainHint>
+        The cost trend plots each cost component over time. Hover for exact
+        values; the X-axis follows your chosen date range.
+      </ExplainHint>
 
       {/* Node table removed per request */}
 
       <SystemStatus />
 
-      {showExplain && (
-        <ExplainHint>
-          System Status summarizes platform health and alerts reported by
-          backend services.
-        </ExplainHint>
-      )}
+      <ExplainHint>
+        System Status summarizes platform health and alerts reported by backend
+        services.
+      </ExplainHint>
 
       <PdfPrintOverlay
         open={showPrint}

@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type NamespaceRow = {
   id: string;
@@ -48,6 +50,7 @@ export const NamespacesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -163,6 +166,11 @@ export const NamespacesPage = () => {
           { label: t("nav.namespaces") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Inspect namespaces, their phases, and labels. Selecting one provides
+        lifecycle details and kubectl commands for governance tasks.
+      </ExplainHint>
 
       <Table<NamespaceRow>
         title="Namespaces"

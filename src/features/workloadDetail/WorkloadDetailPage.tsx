@@ -4,6 +4,8 @@ import type { MetricGetResponse } from "@/types/metrics";
 import { infoApi, metricApi } from "@/shared/api";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { formatDateTime, useTimezone } from "@/shared/time";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 interface WorkloadResource {
   name: string;
@@ -29,6 +31,7 @@ interface WorkloadOverviewState {
 
 export function WorkloadDetailPage() {
   const { workloadId } = useParams<{ workloadId: string }>();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
   const [activeTab] = useState<WorkloadTab>("overview");
   const [overview, setOverview] = useState<WorkloadOverviewState>({
     deployments: [],
@@ -218,6 +221,10 @@ export function WorkloadDetailPage() {
             Deep dive into deployments, pods, and containers that compose this workload. Metrics,
             resources, and alerts update as new telemetry is ingested.
           </p>
+          <ExplainHint visible={showExplain}>
+            The page pulls live deployments, pods, and containers matching the workload label.
+            Metric panels sample the latest series; refresh the page to pick up new telemetry.
+          </ExplainHint>
         </header>
 
       <div className="flex flex-wrap gap-2">

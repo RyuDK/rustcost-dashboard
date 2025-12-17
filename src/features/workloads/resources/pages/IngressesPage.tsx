@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type IngressRow = {
   id: string;
@@ -63,6 +65,7 @@ export const IngressesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -200,6 +203,11 @@ export const IngressesPage = () => {
           { label: t("nav.ingresses") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Review ingress hosts, paths, and backend services. Selecting a row
+        surfaces rules and kubectl commands to inspect live routing.
+      </ExplainHint>
 
       <Table<IngressRow>
         title="Ingresses"

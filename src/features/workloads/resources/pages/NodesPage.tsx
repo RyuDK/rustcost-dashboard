@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type NodeRow = {
   id: string;
@@ -73,6 +75,7 @@ export const NodesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const {
     items: nodes,
@@ -195,6 +198,11 @@ export const NodesPage = () => {
           { label: t("nav.nodes") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Sort and page through nodes to spot readiness issues. Selecting a row
+        surfaces capacity, labels, and kubectl commands for troubleshooting.
+      </ExplainHint>
 
       <Table<NodeRow>
         title="Node Inventory"

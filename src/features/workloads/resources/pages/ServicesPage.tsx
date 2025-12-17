@@ -14,6 +14,8 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type ServiceRow = {
   id: string;
@@ -59,6 +61,7 @@ export const ServicesPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const fetcher = useCallback(
     (params: { limit?: number; offset?: number }) =>
@@ -197,6 +200,11 @@ export const ServicesPage = () => {
           { label: t("nav.services") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Review service types, ports, and selectors. Select a service to see
+        endpoints, labels, and kubectl commands for traffic debugging.
+      </ExplainHint>
 
       <Table<ServiceRow>
         title="Services"

@@ -11,6 +11,7 @@ import {
   type ChartSeries,
 } from "@/shared/components/chart/SharedMetricChart";
 import { MetricTable } from "@/shared/components/MetricTable";
+import { ExplainHint } from "@/shared/components/ExplainHint";
 
 import { formatCurrency } from "@/shared/utils/format";
 import type {
@@ -31,6 +32,7 @@ import { getDefaultRange, normalizeRange } from "@/shared/utils/metrics";
 import { MetricsInventorySelector } from "@/features/metrics/components/MetricsInventorySelector";
 import { useInventorySelection } from "@/shared/hooks/useInventorySelection";
 import { useLatestRequestGuard } from "@/shared/hooks/useLatestRequestGuard";
+import { useAppSelector } from "@/store/hook";
 
 type PodRow = {
   id: string;
@@ -67,6 +69,7 @@ export const PodsPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
 
@@ -424,6 +427,12 @@ export const PodsPage = () => {
         ]}
       />
 
+      <ExplainHint visible={showExplain}>
+        Filters and the pod search drive every panel on this page. Refresh
+        after adjusting the window to keep cost, usage, and sparkline data in
+        sync.
+      </ExplainHint>
+
       <SharedMetricsFilterBar
         params={params}
         onChange={(k, v) => setParams((p) => normalizeRange({ ...p, [k]: v }))}
@@ -451,6 +460,11 @@ export const PodsPage = () => {
           setSearch(candidate?.label ?? "");
         }}
       />
+
+      <ExplainHint visible={showExplain}>
+        Pick a pod from the selector to focus trend and raw charts. The table
+        and sparklines below mirror the same filter and search criteria.
+      </ExplainHint>
 
       {error && (
         <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">

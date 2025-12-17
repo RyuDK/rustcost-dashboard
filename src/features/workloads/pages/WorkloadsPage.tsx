@@ -8,6 +8,8 @@ import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { formatCurrency } from "@/shared/utils/format";
 import { useI18n } from "@/app/providers/i18n/useI18n";
+import { useAppSelector } from "@/store/hook";
+import { ExplainHint } from "@/shared/components/ExplainHint";
 
 /* --------------------------- Types --------------------------- */
 
@@ -49,6 +51,7 @@ const getDefaultDateRange = (): MetricsQueryOptions => {
 
 export const WorkloadsPage = () => {
   const { t } = useI18n();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const [params, setParams] =
     useState<MetricsQueryOptions>(getDefaultDateRange);
@@ -196,6 +199,11 @@ export const WorkloadsPage = () => {
         description="Cluster resource usage & cost overview"
         breadcrumbItems={[{ label: t("nav.workloads") }]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Date filters drive both usage and cost summaries. Refresh to pull
+        aligned metrics before navigating to detailed subpages.
+      </ExplainHint>
 
       <SharedMetricsFilterBar
         params={params}

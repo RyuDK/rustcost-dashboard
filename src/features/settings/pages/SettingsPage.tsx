@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import { normalizeLanguageCode } from "@/constants/language";
 import { buildLanguagePrefix } from "@/constants/language";
 import { formatDateTime, useTimezone } from "@/shared/time";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 export const SettingsPage = () => {
   const { t } = useI18n();
@@ -18,6 +20,7 @@ export const SettingsPage = () => {
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
   const { timeZone } = useTimezone();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const generalRows = data
     ? [
@@ -69,6 +72,11 @@ export const SettingsPage = () => {
         breadcrumbItems={[{ label: t("nav.settings") }]}
       />
 
+      <ExplainHint visible={showExplain}>
+        Settings reflect live control plane values. Use Unit Prices to manage
+        billing inputs and tweak metrics collection from the cards below.
+      </ExplainHint>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* General */}
         <InfoCard
@@ -112,6 +120,10 @@ export const SettingsPage = () => {
         />
       </div>
 
+      <ExplainHint visible={showExplain}>
+        Timezone selection applies across date pickers and chart labels so teams
+        read timestamps consistently.
+      </ExplainHint>
       <SharedTimezoneSelector />
     </SharedPageLayout>
   );

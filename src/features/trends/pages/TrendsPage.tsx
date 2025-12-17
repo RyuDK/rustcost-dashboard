@@ -4,6 +4,8 @@ import { TrendChart } from "@/features/trends/components/TrendChart";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 import { pickGranularity } from "@/shared/utils/metrics";
 import { subtractDays } from "@/shared/utils/date";
 import {
@@ -38,6 +40,7 @@ export const TrendsPage = () => {
   const { t } = useI18n();
   const [params, setParams] = useState(() => createDefaultMetricsParams());
   const [activePreset, setActivePreset] = useState<string | null>("7d");
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const quickRanges: QuickRange[] = useMemo(() => {
     const today = new Date();
@@ -135,6 +138,11 @@ export const TrendsPage = () => {
         breadcrumbItems={[{ label: t("nav.trends") }]}
       />
 
+      <ExplainHint visible={showExplain}>
+        Choose a preset or enter exact dates to drive both trend charts; the
+        page auto-selects a matching granularity for the window.
+      </ExplainHint>
+
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm dark:border-gray-800/70 dark:bg-[var(--surface-dark)]/60">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1">
@@ -218,6 +226,10 @@ export const TrendsPage = () => {
       </section>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <ExplainHint visible={showExplain}>
+          Cluster and namespace charts align to the same window; use them
+          together to spot top-line and team-level cost shifts.
+        </ExplainHint>
         <TrendChart
           title={t("trends.chart.cluster")}
           data={clusterTrends.data}

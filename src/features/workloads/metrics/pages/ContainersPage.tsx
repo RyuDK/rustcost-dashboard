@@ -28,6 +28,8 @@ import { getDefaultRange, normalizeRange } from "@/shared/utils/metrics";
 import { MetricsInventorySelector } from "@/features/metrics/components/MetricsInventorySelector";
 import { useInventorySelection } from "@/shared/hooks/useInventorySelection";
 import { useLatestRequestGuard } from "@/shared/hooks/useLatestRequestGuard";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type PodOption = { uid: string; label: string };
 
@@ -62,6 +64,7 @@ export const ContainersPage = () => {
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
 
@@ -381,6 +384,12 @@ export const ContainersPage = () => {
         ]}
       />
 
+      <ExplainHint visible={showExplain}>
+        Time filters and container selection drive all charts, tables, and
+        summaries. Refresh after adjusting the window to align cost and usage
+        data.
+      </ExplainHint>
+
       <SharedMetricsFilterBar
         params={params}
         onChange={(key, value) =>
@@ -440,6 +449,11 @@ export const ContainersPage = () => {
           }}
         />
       </div>
+
+      <ExplainHint visible={showExplain}>
+        Pick a container to plot cost trends and a pod to show raw CPU/memory.
+        The table below lists the same scoped containers and last-point costs.
+      </ExplainHint>
 
       {error && (
         <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">

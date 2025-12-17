@@ -37,6 +37,8 @@ import type {
 import { MetricsInventorySelector } from "@/features/metrics/components/MetricsInventorySelector";
 import { useInventorySelection } from "@/shared/hooks/useInventorySelection";
 import { useLatestRequestGuard } from "@/shared/hooks/useLatestRequestGuard";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 type NodeRow = {
   id: string;
@@ -68,6 +70,7 @@ export const NodesPage = () => {
   const { lng } = useRouterParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
 
@@ -566,6 +569,11 @@ export const NodesPage = () => {
         ]}
       />
 
+      <ExplainHint visible={showExplain}>
+        Date, team, and environment filters drive every chart and table. Refresh
+        after adjusting the window to align summary, trend, and sparkline data.
+      </ExplainHint>
+
       <SharedMetricsFilterBar
         params={params}
         onChange={(key, value) =>
@@ -608,6 +616,11 @@ export const NodesPage = () => {
           </button>
         }
       />
+
+      <ExplainHint visible={showExplain}>
+        Pick a node to focus the charts and edit metadata. Use the readiness
+        toggle to filter inventory, and reset to clear scoped filters quickly.
+      </ExplainHint>
 
       <div className="mt-4 flex flex-wrap gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-(--surface-dark)/40 md:p-6">
         <div className="flex flex-1 flex-wrap gap-3">

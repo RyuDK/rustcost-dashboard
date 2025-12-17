@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 import { LoadingAlert } from "../components/LoadingAlert";
 import { fetchSystemStatus, postSystemResync } from "@/shared/api/system";
 import type { SystemStatusResponse } from "@/types/system";
@@ -19,6 +21,7 @@ export const LoadingPage = () => {
   const lastResyncTime = useSelector(
     (state: RootState) => state.system.last_resync_time_utc
   );
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   const [status, setStatus] = useState<SystemStatusResponse | null>(null);
   const [popup, setPopup] = useState<PopupState | null>(null);
@@ -127,6 +130,10 @@ export const LoadingPage = () => {
         </div>
 
         {/* Explanation */}
+        <ExplainHint visible={showExplain}>
+          This overlay warms the backend cache and checks system status. It
+          auto-triggers a resync if needed and closes once discovery finishes.
+        </ExplainHint>
         <p className="mt-4 text-sm text-(--text-subtle)">
           Before continuing, the backend will warm its cache to ensure fast and
           consistent responses. This operation may take a few moments.

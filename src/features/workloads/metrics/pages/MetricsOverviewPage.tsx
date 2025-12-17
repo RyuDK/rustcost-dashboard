@@ -7,12 +7,15 @@ import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 export const MetricOverviewPage = () => {
   const { t } = useI18n();
   const { lng } = useParams();
   const activeLanguage = normalizeLanguageCode(lng);
   const prefix = buildLanguagePrefix(activeLanguage);
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   return (
     <SharedPageLayout>
@@ -25,6 +28,11 @@ export const MetricOverviewPage = () => {
           { label: t("nav.metrics") },
         ]}
       />
+
+      <ExplainHint visible={showExplain}>
+        Pick a metric type to drill into node, pod, or container views. These
+        tiles inherit your language selection and keep breadcrumb context.
+      </ExplainHint>
 
       {/* LINKS SECTION */}
       <div className="space-y-3">

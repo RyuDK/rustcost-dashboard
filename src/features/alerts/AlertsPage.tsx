@@ -5,6 +5,8 @@ import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
 import { LoadingSpinner } from "@/shared/components/LoadingSpinner";
 import { useFetch } from "@/shared/hooks/useFetch";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 import type {
   AlertMetricType,
   AlertOperator,
@@ -96,6 +98,7 @@ export function AlertsPage() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [recipientInput, setRecipientInput] = useState("");
   const { timeZone } = useTimezone();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
 
   useEffect(() => {
     if (data) {
@@ -219,6 +222,11 @@ export function AlertsPage() {
         }}
       />
 
+      <ExplainHint visible={showExplain}>
+        Refresh pulls alert delivery settings from the backend. Changes apply to
+        all channels listed below—remember to save after editing.
+      </ExplainHint>
+
       {errorMessage && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
           {errorMessage}
@@ -233,6 +241,11 @@ export function AlertsPage() {
 
       {!isLoading && (
         <div className="space-y-6">
+          <ExplainHint visible={showExplain}>
+            Configure delivery targets first, then define rules that evaluate
+            metrics server-side. Use save/reset controls at the bottom to commit
+            or discard edits.
+          </ExplainHint>
           <section className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm shadow-slate-100 ring-1 ring-slate-100 dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 dark:shadow-none dark:ring-0">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="space-y-1.5">

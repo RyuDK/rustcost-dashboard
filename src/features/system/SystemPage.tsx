@@ -11,9 +11,12 @@ import type {
   LogLineResponse,
 } from "@/types/system";
 import { infoApi, systemApi } from "@/shared/api";
+import { ExplainHint } from "@/shared/components/ExplainHint";
+import { useAppSelector } from "@/store/hook";
 
 export function SystemPage() {
   const { t } = useI18n();
+  const showExplain = useAppSelector((state) => state.preferences.showExplain);
   const [status, setStatus] =
     useState<ApiResponse<SystemStatusResponse> | null>(null);
   const [health, setHealth] = useState<ApiResponse<SystemResponse> | null>(
@@ -179,6 +182,12 @@ export function SystemPage() {
         }}
       />
 
+      <ExplainHint visible={showExplain}>
+        Refresh to pull live control-plane health, settings, and log inventory.
+        Use backup/resync actions below when configuration drifts or nodes fall
+        behind.
+      </ExplainHint>
+
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
           {error}
@@ -296,6 +305,11 @@ export function SystemPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
+        <ExplainHint visible={showExplain}>
+          Select a log file on the left to stream entries; scrolling fetches
+          additional chunks. Use the actions above to trigger new backups or
+          resyncs before inspecting logs.
+        </ExplainHint>
         {/* File List - 1 column */}
         <div className="lg:col-span-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
