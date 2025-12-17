@@ -1,4 +1,5 @@
 import type { MetricGranularity } from "@/types/api";
+import type { MetricsQueryOptions } from "@/types/metrics";
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 const TWO_DAYS_MS = 48 * ONE_HOUR_MS;
@@ -58,4 +59,37 @@ export const withAutoGranularity = <
     ...params,
     granularity: pickGranularity(params.start, params.end),
   };
+};
+
+export const getDefaultRange = (): MetricsQueryOptions => {
+  const now = new Date();
+  const start = new Date();
+  start.setDate(now.getDate() - 7);
+  return {
+    start: start.toISOString().slice(0, 10) + "T00:00:00",
+    end: now.toISOString().slice(0, 10) + "T00:00:00",
+    granularity: "day",
+  };
+};
+
+export const normalizeRange = (
+  next: MetricsQueryOptions
+): MetricsQueryOptions => {
+  const startStr = next.start;
+  const endStr = next.end;
+
+  if (!startStr || !endStr) return next;
+
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return next;
+  }
+
+  if (end.getTime() < start.getTime()) {
+    return { ...next, end: next.start };
+  }
+
+  return next;
 };

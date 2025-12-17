@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+// src/features/workloads/metrics/pages/PodsPage.tsx
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
@@ -8,6 +11,7 @@ import {
   type ChartSeries,
 } from "@/shared/components/chart/SharedMetricChart";
 import { MetricTable } from "@/shared/components/MetricTable";
+
 import { formatCurrency } from "@/shared/utils/format";
 import type {
   MetricsQueryOptions,
@@ -15,12 +19,18 @@ import type {
   MetricSeries,
 } from "@/types/metrics";
 import { metricApi, stateApi } from "@/shared/api";
+
 import { useI18n } from "@/app/providers/i18n/useI18n";
-import { useParams } from "react-router-dom";
 import {
   normalizeLanguageCode,
   buildLanguagePrefix,
 } from "@/constants/language";
+
+import { useDebouncedEffect } from "@/shared/hooks/useDebouncedEffect";
+import { getDefaultRange, normalizeRange } from "@/shared/utils/metrics";
+import { MetricsInventorySelector } from "@/features/metrics/components/MetricsInventorySelector";
+import { useInventorySelection } from "@/shared/hooks/useInventorySelection";
+import { useLatestRequestGuard } from "@/shared/hooks/useLatestRequestGuard";
 
 type PodRow = {
   id: string;
@@ -47,36 +57,9 @@ type UsagePoint = {
 
 type PodOption = { uid: string; label: string };
 
-const getDefaultRange = (): MetricsQueryOptions => {
-  const now = new Date();
-  const start = new Date();
-  start.setDate(now.getDate() - 7);
-  return {
-    start: start.toISOString().slice(0, 10) + "T00:00:00",
-    end: now.toISOString().slice(0, 10) + "T00:00:00",
-    granularity: "day",
-  };
-};
-
-const getSeriesKey = (s: MetricSeries): string =>
-  ((s as any)?.key ?? (s as any)?.target ?? s.name ?? "") as string;
-
-const normalizeRange = (next: MetricsQueryOptions): MetricsQueryOptions => {
-  const startStr = next.start;
-  const endStr = next.end;
-
-  if (!startStr || !endStr) return next;
-
-  const start = new Date(startStr);
-  const end = new Date(endStr);
-
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return next;
-
-  if (end.getTime() < start.getTime()) {
-    return { ...next, end: next.start };
-  }
-
-  return next;
+const getSeriesKey = (s: MetricSeries): string => {
+  const anyS = s as any;
+  return (anyS?.key ?? anyS?.target ?? s.name ?? "") as string;
 };
 
 export const PodsPage = () => {
@@ -87,10 +70,7 @@ export const PodsPage = () => {
 
   const [params, setParams] = useState<MetricsQueryOptions>(getDefaultRange);
 
-  const [pods, setPods] = useState<PodOption[]>([]);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedPod, setSelectedPod] = useState<PodOption | null>(null);
 
   const [costSummary, setCostSummary] = useState<
     Record<string, number | undefined>
@@ -103,37 +83,45 @@ export const PodsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const metricsReqIdRef = useRef(0);
+  const { begin, isLatest } = useLatestRequestGuard();
 
-  const loadPods = useCallback(async () => {
-    try {
-      const res = await stateApi.k8s.fetchK8sRuntimeState();
-      const runtimePods = res.data?.pods ?? {};
-      const podList: PodOption[] = Object.values(runtimePods).map((pod) => ({
-        uid: pod.uid,
-        label: `${pod.namespace}/${pod.name}`,
-      }));
-      setPods(podList);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load pod list");
-    }
+  // --- inventory (pods) ---
+  const fetchPods = useCallback(async (): Promise<PodOption[]> => {
+    const res = await stateApi.k8s.fetchK8sRuntimeState();
+    const runtimePods = res.data?.pods ?? {};
+    return Object.values(runtimePods).map((pod) => ({
+      uid: pod.uid,
+      label: `${pod.namespace}/${pod.name}`,
+    }));
   }, []);
 
-  useEffect(() => {
-    if (pods.length === 0) {
-      setSelectedPod(null);
-      return;
-    }
+  const inventory = useInventorySelection<PodOption>({
+    fetchItems: fetchPods,
+    getKey: (p) => p.uid,
+    getLabel: (p) => p.label,
+    initialSelectedKey: null,
+  });
 
-    setSelectedPod((prev) => {
-      if (!prev) return pods[0] ?? null;
-      const exists = pods.some((p) => p.uid === prev.uid);
-      return exists ? prev : pods[0] ?? null;
-    });
-  }, [pods]);
+  const pods = inventory.items;
+  const selectedPodUid = inventory.selectedKey; // uid
+  const selectedPod = inventory.selectedItem; // { uid, label }
+
+  // inventory 로딩 (deps 안정화: refreshItems만)
+  useEffect(() => {
+    (async () => {
+      try {
+        await inventory.refreshItems();
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load pod list"
+        );
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inventory.refreshItems]);
 
   const loadMetrics = useCallback(async () => {
-    const reqId = ++metricsReqIdRef.current;
+    const token = begin();
 
     setLoading(true);
     setError(null);
@@ -142,13 +130,13 @@ export const PodsPage = () => {
       const [summaryRes, listRes, rawRes, podsRawRes] = await Promise.all([
         metricApi.fetchPodsCostSummary(params),
         metricApi.fetchPodsCost({ ...params, limit: 10, offset: 0 }),
-        selectedPod
-          ? metricApi.fetchPodRaw({ podUid: selectedPod.uid }, params)
+        selectedPodUid
+          ? metricApi.fetchPodRaw({ podUid: selectedPodUid }, params)
           : Promise.resolve<MetricGetResponse | null>(null),
         metricApi.fetchPodsRaw({ ...params, limit: 10, offset: 0 }),
       ]);
 
-      if (reqId !== metricsReqIdRef.current) return;
+      if (!isLatest(token)) return;
 
       const summary = summaryRes.data?.summary;
       setCostSummary({
@@ -161,57 +149,54 @@ export const PodsPage = () => {
         network: summary?.network_cost_usd,
       });
 
-      const rows =
-        listRes.data?.series?.map((series) => {
-          const points = series.points ?? [];
-          const lastPoint = points[points.length - 1];
-          const target = (series as any)?.target ?? series.name ?? "unknown";
+      const series = listRes.data?.series ?? [];
+      setTrendSeries(series);
+
+      setTableData(
+        series.map((s) => {
+          const last = s.points?.at(-1);
+          const target = (s as any)?.target ?? s.name ?? "unknown";
           return {
             id: target,
             label: target,
-            total_cost_usd: lastPoint?.cost?.total_cost_usd,
-            cpu_cost_usd: lastPoint?.cost?.cpu_cost_usd,
-            memory_cost_usd: lastPoint?.cost?.memory_cost_usd,
-            storage_cost_usd: lastPoint?.cost?.storage_cost_usd,
+            total_cost_usd: last?.cost?.total_cost_usd,
+            cpu_cost_usd: last?.cost?.cpu_cost_usd,
+            memory_cost_usd: last?.cost?.memory_cost_usd,
+            storage_cost_usd: last?.cost?.storage_cost_usd,
           };
-        }) ?? [];
+        })
+      );
 
-      setTableData(rows);
-      setTrendSeries(listRes.data?.series ?? []);
-
-      // (기존 패턴 유지)
-      if (rawRes && typeof rawRes === "object" && "data" in rawRes) {
-        setPodRaw(rawRes.data ?? null);
-      } else {
-        setPodRaw(null);
-      }
-
+      setPodRaw((rawRes as any)?.data ?? null);
       setRawSeries(podsRawRes.data?.series ?? []);
     } catch (err) {
-      if (reqId !== metricsReqIdRef.current) return;
+      if (!isLatest(token)) return;
       setError(err instanceof Error ? err.message : "Failed to load metrics");
     } finally {
-      if (reqId === metricsReqIdRef.current) setLoading(false);
+      if (isLatest(token)) setLoading(false);
     }
-  }, [params, selectedPod]);
+  }, [begin, isLatest, params, selectedPodUid]);
 
-  useEffect(() => {
-    void loadPods();
-  }, [loadPods]);
+  // metrics fetch (deps 안정화: loadMetrics만)
+  useDebouncedEffect(() => void loadMetrics(), [loadMetrics], 300);
 
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      void loadMetrics();
-    }, 300);
+  // --- derived lists (search) ---
+  const filteredPods = useMemo(() => {
+    const term = search.toLowerCase().trim();
+    const pool = term
+      ? pods.filter((p) => p.label.toLowerCase().includes(term))
+      : pods;
+    return pool.slice(0, 10);
+  }, [pods, search]);
 
-    return () => window.clearTimeout(id);
-  }, [params, selectedPod?.uid, loadMetrics]);
+  const filteredTable = useMemo(() => {
+    const term = search.toLowerCase().trim();
+    return tableData
+      .filter((row) => (term ? row.label.toLowerCase().includes(term) : true))
+      .slice(0, 10);
+  }, [tableData, search]);
 
-  useEffect(() => {
-    const id = window.setTimeout(() => setDebouncedSearch(search), 200);
-    return () => window.clearTimeout(id);
-  }, [search]);
-
+  // --- summary cards ---
   const summaryCards = useMemo(
     () => [
       {
@@ -235,21 +220,7 @@ export const PodsPage = () => {
     [costSummary]
   );
 
-  const filteredPods = useMemo(() => {
-    const term = debouncedSearch.toLowerCase().trim();
-    const pool = term
-      ? pods.filter((pod) => pod.label.toLowerCase().includes(term))
-      : pods;
-    return pool.slice(0, 10);
-  }, [pods, debouncedSearch]);
-
-  const filteredTable = useMemo(() => {
-    const term = debouncedSearch.toLowerCase().trim();
-    return tableData
-      .filter((row) => (term ? row.label.toLowerCase().includes(term) : true))
-      .slice(0, 10);
-  }, [tableData, debouncedSearch]);
-
+  // --- series maps ---
   const trendSeriesMap = useMemo(() => {
     const m = new Map<string, MetricSeries>();
     for (const s of trendSeries) {
@@ -268,17 +239,17 @@ export const PodsPage = () => {
     return m;
   }, [rawSeries]);
 
+  // --- chart data ---
+  // cost trend는 "label(namespace/name)" 기준으로만 매칭 (uid mismatch 방지)
   const costChartSeriesData: CostPoint[] = useMemo(() => {
-    const uid = selectedPod?.uid ?? "";
-    const label = selectedPod?.label ?? "";
+    const labelKey = selectedPod?.label?.trim();
+    if (!labelKey) return [];
 
-    const match =
-      (uid && trendSeriesMap.get(uid)) ||
-      (label && trendSeriesMap.get(label)) ||
-      trendSeries[0];
+    const match = trendSeriesMap.get(labelKey);
+    if (!match) return [];
 
     return (
-      match?.points?.map((pt) => ({
+      match.points?.map((pt) => ({
         time: (pt as any)?.timestamp ?? pt.time,
         total_cost_usd: pt.cost?.total_cost_usd ?? 0,
         cpu_cost_usd: pt.cost?.cpu_cost_usd ?? 0,
@@ -286,20 +257,20 @@ export const PodsPage = () => {
         storage_cost_usd: pt.cost?.storage_cost_usd ?? 0,
       })) ?? []
     );
-  }, [trendSeries, trendSeriesMap, selectedPod?.uid, selectedPod?.label]);
+  }, [selectedPod?.label, trendSeriesMap]);
 
   const podRawSeriesData: UsagePoint[] = useMemo(() => {
-    const series = podRaw?.series?.[0];
+    const s = podRaw?.series?.[0];
     return (
-      series?.points?.map((pt) => ({
+      s?.points?.map((pt) => ({
         time: (pt as any)?.timestamp ?? pt.time,
-        cpu_cores: (pt.cpu_memory?.cpu_usage_nano_cores ?? 0) / 1_000_000_000,
+        cpu_cores: (pt.cpu_memory?.cpu_usage_nano_cores ?? 0) / 1e9,
         memory_gb: (pt.cpu_memory?.memory_usage_bytes ?? 0) / 1_073_741_824,
       })) ?? []
     );
   }, [podRaw]);
 
-  const costChartSeries: ChartSeries<CostPoint>[] = useMemo(
+  const costSeries: ChartSeries<CostPoint>[] = useMemo(
     () => [
       {
         key: "total_cost_usd",
@@ -380,6 +351,7 @@ export const PodsPage = () => {
     []
   );
 
+  // --- sparklines (fallback 제거: 매칭 없으면 빈 데이터) ---
   const sparklinePods = useMemo(
     () => filteredPods.slice(0, 10),
     [filteredPods]
@@ -387,15 +359,12 @@ export const PodsPage = () => {
 
   const sparklineCards = useMemo(() => {
     return sparklinePods.map((pod) => {
-      const series =
-        rawSeriesMap.get(pod.uid) ||
-        rawSeriesMap.get(pod.label) ||
-        rawSeries[0];
+      const s = rawSeriesMap.get(pod.label); // uid fallback 제거
 
       const metrics =
-        series?.points?.map((pt) => ({
+        s?.points?.map((pt) => ({
           time: (pt as any)?.timestamp ?? pt.time,
-          cpu_cores: (pt.cpu_memory?.cpu_usage_nano_cores ?? 0) / 1_000_000_000,
+          cpu_cores: (pt.cpu_memory?.cpu_usage_nano_cores ?? 0) / 1e9,
           memory_gb: (pt.cpu_memory?.memory_usage_bytes ?? 0) / 1_073_741_824,
           storage_gb: (pt.filesystem?.used_bytes ?? 0) / 1_073_741_824,
           network_tx_mb: (pt.network?.tx_bytes ?? 0) / 1_000_000,
@@ -440,7 +409,7 @@ export const PodsPage = () => {
 
       return { pod, metrics, cpuMemSeries, storageNetSeries };
     });
-  }, [sparklinePods, rawSeries, rawSeriesMap]);
+  }, [sparklinePods, rawSeriesMap]);
 
   return (
     <SharedPageLayout>
@@ -457,65 +426,34 @@ export const PodsPage = () => {
 
       <SharedMetricsFilterBar
         params={params}
-        onChange={(key, value) =>
-          setParams((prev) => normalizeRange({ ...prev, [key]: value }))
-        }
+        onChange={(k, v) => setParams((p) => normalizeRange({ ...p, [k]: v }))}
         onRefresh={loadMetrics}
       />
 
-      {/* Search + selector */}
-      <div className="flex flex-wrap items-end gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-(--surface-dark)/40 md:p-6">
-        <div className="flex w-full flex-col gap-1 md:w-80">
-          <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-            Search Pods
-          </label>
-          <input
-            type="search"
-            list="pod-suggestions"
-            value={search}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSearch(v);
-
-              if (!v) {
-                setSelectedPod(pods[0] ?? null);
-              }
-            }}
-            onBlur={(e) => {
-              const match = pods.find((p) => p.label === e.target.value);
-              if (match) setSelectedPod(match);
-            }}
-            placeholder="Type a pod name"
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-(--surface-dark)/70 dark:text-gray-100"
-          />
-          <datalist id="pod-suggestions">
-            {filteredPods.map((pod) => (
-              <option key={pod.uid} value={pod.label} />
-            ))}
-          </datalist>
-          <p className="text-[11px] text-gray-500">
-            Showing up to 10 matches from runtime inventory.
-          </p>
-        </div>
-
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            className="rounded-lg border border-(--border) bg-(--surface) px-4 py-2 text-sm font-semibold text-(--text) hover:border-(--primary) hover:text-(--primary) dark:border-(--border) dark:bg-(--surface-dark)"
-            onClick={() => {
-              const candidate = filteredPods[0] ?? pods[0] ?? null;
-              setSelectedPod(candidate);
-              setSearch(candidate?.label ?? "");
-              setDebouncedSearch(candidate?.label ?? "");
-            }}
-          >
-            Apply
-          </button>
-        </div>
-      </div>
+      <MetricsInventorySelector
+        label="Search Pods"
+        placeholder="Type a pod name"
+        items={filteredPods}
+        getKey={(p) => p.uid}
+        getLabel={(p) => p.label}
+        search={search}
+        onSearchChange={(v) => {
+          setSearch(v);
+          if (!v) inventory.setSelectedKey(pods[0]?.uid ?? null);
+        }}
+        onPickByLabel={(label) => {
+          if (!label) return;
+          inventory.pickByLabel(label);
+        }}
+        onApply={() => {
+          const candidate = filteredPods[0] ?? pods[0] ?? null;
+          inventory.setSelectedKey(candidate?.uid ?? null);
+          setSearch(candidate?.label ?? "");
+        }}
+      />
 
       {error && (
-        <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">
+        <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">
           {error}
         </div>
       )}
@@ -529,9 +467,9 @@ export const PodsPage = () => {
             selectedPod ? `Cost trend for ${selectedPod.label}` : "Cost trend"
           }
           metrics={costChartSeriesData}
-          series={costChartSeries}
+          series={costSeries}
           isLoading={loading}
-          getXAxisLabel={(point) => (point.time as string) ?? ""}
+          getXAxisLabel={(p) => (p.time as string) ?? ""}
         />
 
         <SharedMetricChart
@@ -544,7 +482,7 @@ export const PodsPage = () => {
           metrics={podRawSeriesData}
           series={usageSeries}
           isLoading={loading}
-          getXAxisLabel={(point) => (point.time as string) ?? ""}
+          getXAxisLabel={(p) => (p.time as string) ?? ""}
         />
       </div>
 
@@ -564,7 +502,7 @@ export const PodsPage = () => {
           {sparklineCards.map((card) => (
             <div
               key={card.pod.uid}
-              className="rounded-xl border border-(--border) bg-(--surface)/70 p-4 shadow-sm dark:border-(--border) dark:bg-(--surface-dark)/50"
+              className="rounded-xl border border-(--border) bg-(--surface)/70 p-4 shadow-sm dark:border-(--border) dark:bg-[var(--surface-dark)]/50"
             >
               <div className="mb-2 flex items-center justify-between">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
