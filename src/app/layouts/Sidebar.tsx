@@ -64,7 +64,8 @@ export const Sidebar = ({
     navs.map((item) => {
       const hasChildren = Boolean(item.children?.length);
       const childActive = hasActiveChild(item);
-      const isActive = isPathActive(item.to) || childActive;
+      const isLeafActive = Boolean(item.to) && isPathActive(item.to) && !childActive;
+      const isActive = isLeafActive || childActive;
 
       const itemKey = `${item.translationKey}-${item.to ?? "root"}-${depth}`;
       const isOpen =
@@ -79,6 +80,7 @@ export const Sidebar = ({
           sidebarOpen={sidebarOpen}
           isOpen={isOpen}
           isActive={isActive}
+          isLeafActive={isLeafActive}
           onToggle={toggleSection}
           itemKey={itemKey}
           paddingLeft={paddingLeft}
@@ -150,15 +152,17 @@ export const Sidebar = ({
         </div>
 
         {/* footer */}
-        <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
-          <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
-            <div className="font-mono text-[11px]">{formattedNow}</div>
-            <div className="mt-1 text-xs">
-              {"ver "}
-              {__APP_VERSION__}
+        {sidebarOpen && (
+          <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
+            <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
+              <div className="font-mono text-[11px]">{formattedNow}</div>
+              <div className="mt-1 text-xs">
+                {"ver "}
+                {__APP_VERSION__}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </aside>
   );
