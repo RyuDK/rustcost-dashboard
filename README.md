@@ -12,8 +12,8 @@ Built with modern web technologies and optimized for speed & usability.
 <div align="center">
 
 <!-- Badges -->
-<img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/kimc1992/rustcost-dashboard.svg">
-<img alt="Docker Image Size" src="https://img.shields.io/docker/image-size/kimc1992/rustcost-dashboard/1.0.0-dev.4">
+<img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/rustcost/dashboard.svg">
+<img alt="Docker Image Size" src="https://img.shields.io/docker/image-size/rustcost/dashboard/1.0.0-dev.4">
 <img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache--2.0-blue.svg">
 
 </div>
