@@ -124,14 +124,18 @@ export const Sidebar = ({
                 transition-opacity duration-200
               `}
             >
-              Navigation
+              {t("sidebar.navigation")}
             </span>
           )}
 
           <button
             type="button"
             onClick={onToggleSidebar}
-            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            aria-label={
+              sidebarOpen
+                ? t("sidebar.actions.collapseSidebar")
+                : t("sidebar.actions.expandSidebar")
+            }
             className="h-8 w-8 grid place-items-center rounded-md hover:bg-(--primary-hover)/15"
           >
             {sidebarOpen ? (
@@ -157,7 +161,7 @@ export const Sidebar = ({
             <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
               <div className="font-mono text-[11px]">{formattedNow}</div>
               <div className="mt-1 text-xs">
-                {"ver "}
+                {t("sidebar.versionPrefix")}{" "}
                 {__APP_VERSION__}
               </div>
             </div>

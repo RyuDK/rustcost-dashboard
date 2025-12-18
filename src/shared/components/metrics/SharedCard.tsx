@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import { LoadingSpinner } from "../LoadingSpinner";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type CardPadding = "sm" | "md" | "lg";
 
@@ -44,9 +45,11 @@ export const SharedCard = ({
   padding = "md",
   contentClassName = "",
   isLoading = false,
-  loadingLabel = "Loading",
+  loadingLabel,
   footer,
 }: CardProps) => {
+  const { t } = useI18n();
+  const resolvedLoadingLabel = loadingLabel ?? t("common.loading");
   const basePadding = paddingMap[padding];
   const headerPadding = twMerge(basePadding, "pb-0");
   const bodyPadding = twMerge(
@@ -73,7 +76,7 @@ export const SharedCard = ({
       <div className={bodyPadding}>
         {isLoading ? (
           <LoadingSpinner
-            label={loadingLabel}
+            label={resolvedLoadingLabel}
             className={BASE_CARD_STYLES.loading}
           />
         ) : (

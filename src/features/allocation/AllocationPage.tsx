@@ -90,12 +90,14 @@ export const AllocationPage = () => {
       );
     } catch (err) {
       setNodesError(
-        err instanceof Error ? err.message : "Failed to load node inventory"
+        err instanceof Error
+          ? err.message
+          : t("allocation.errors.nodesLoad")
       );
     } finally {
       setIsLoadingNodes(false);
     }
-  }, [filters]);
+  }, [filters, t]);
 
   const loadCosts = useCallback(async () => {
     const nodeNames = nodes
@@ -117,12 +119,12 @@ export const AllocationPage = () => {
       setCostSeries(res.data?.series ?? []);
     } catch (err) {
       setCostError(
-        err instanceof Error ? err.message : "Failed to load node costs"
+        err instanceof Error ? err.message : t("allocation.errors.costsLoad")
       );
     } finally {
       setIsLoadingCost(false);
     }
-  }, [nodes, range]);
+  }, [nodes, range, t]);
 
   useEffect(() => {
     void loadNodes();
@@ -155,11 +157,13 @@ export const AllocationPage = () => {
         service: metadataDraft.service || undefined,
         env: metadataDraft.env || undefined,
       });
-      setSaveMessage("Node metadata updated.");
+      setSaveMessage(t("allocation.messages.metadataSaved"));
       await loadNodes();
     } catch (err) {
       setNodesError(
-        err instanceof Error ? err.message : "Failed to update node metadata"
+        err instanceof Error
+          ? err.message
+          : t("allocation.errors.metadataUpdate")
       );
     } finally {
       setIsSavingMeta(false);
@@ -178,11 +182,11 @@ export const AllocationPage = () => {
   const teamSummary = useMemo(() => {
     const map = new Map<string, number>();
     nodes.forEach((node) => {
-      const team = node.team?.trim() || "unassigned";
+      const team = node.team?.trim() || t("allocation.team.unassigned");
       map.set(team, (map.get(team) ?? 0) + 1);
     });
     return Array.from(map.entries()).map(([team, count]) => ({ team, count }));
-  }, [nodes]);
+  }, [nodes, t]);
 
   const selectedNodeInfo = useMemo(
     () => nodes.find((n) => n.node_name === selectedNode),
@@ -233,7 +237,7 @@ export const AllocationPage = () => {
       tooltip: { trigger: "item" },
       series: [
         {
-          name: "Teams",
+          name: t("allocation.teamCoverage.label"),
           type: "pie",
           radius: ["52%", "78%"],
           avoidLabelOverlap: false,
@@ -246,54 +250,53 @@ export const AllocationPage = () => {
         },
       ],
     }),
-    [teamSummary]
+    [teamSummary, t]
   );
 
   return (
     <SharedPageLayout>
       <SharedPageHeader
         eyebrow=""
-        title="Node Allocation"
-        description="Filter Kubernetes nodes by team, service, or environment, adjust metadata, and track cost by node."
+        title={t("allocation.title")}
+        description={t("allocation.subtitle")}
         breadcrumbItems={[{ label: t("nav.allocation") }]}
       />
 
       <ExplainHint>
-        Backend: list_k8s_nodes (team/service/env query) + patch_info_k8s_node_filter + get_metric_k8s_nodes_cost.
-        Use the filters to query, then edit metadata on the selected node.
+        {t("allocation.hints.backend")}
       </ExplainHint>
 
       <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40 md:grid-cols-4">
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Team
+          {t("allocation.filters.team")}
           <input
             value={filters.team}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, team: e.target.value }))
             }
-            placeholder="team label"
+            placeholder={t("allocation.filters.placeholders.team")}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Service
+          {t("allocation.filters.service")}
           <input
             value={filters.service}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, service: e.target.value }))
             }
-            placeholder="service label"
+            placeholder={t("allocation.filters.placeholders.service")}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Environment
+          {t("allocation.filters.environment")}
           <input
             value={filters.env}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, env: e.target.value }))
             }
-            placeholder="dev / stage / prod"
+            placeholder={t("allocation.filters.placeholders.environment")}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
@@ -303,7 +306,7 @@ export const AllocationPage = () => {
             onClick={() => void loadNodes()}
             className="flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
-            Apply Filters
+            {t("allocation.filters.apply")}
           </button>
           <button
             type="button"
@@ -313,20 +316,20 @@ export const AllocationPage = () => {
             }}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-amber-300 hover:text-amber-600 dark:border-slate-700 dark:text-slate-200"
           >
-            Reset
+            {t("common.actions.reset")}
           </button>
         </div>
       </div>
 
       <div className="mt-3 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
         <label className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Search by node name
+          {t("allocation.filters.searchLabel")}
           <input
             value={filters.search}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
-            placeholder="e.g., ip-10-0-0-1"
+            placeholder={t("allocation.filters.placeholders.search")}
             className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
@@ -357,14 +360,14 @@ export const AllocationPage = () => {
           <div className="mb-2 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Team Coverage
+                {t("allocation.teamCoverage.title")}
               </p>
               <p className="text-xs text-slate-500">
-                {nodes.length} node(s) grouped by team label
+                {t("allocation.teamCoverage.summary", { count: nodes.length })}
               </p>
             </div>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-              Pie
+              {t("allocation.teamCoverage.chartType")}
             </span>
           </div>
           {teamSummary.length ? (
@@ -374,13 +377,15 @@ export const AllocationPage = () => {
               opts={{ renderer: "svg" }}
             />
           ) : (
-            <p className="text-sm text-slate-500">No nodes found.</p>
+            <p className="text-sm text-slate-500">
+              {t("allocation.teamCoverage.empty")}
+            </p>
           )}
         </div>
 
         <SharedMetricChart
-          title="Node Cost Trend"
-          subtitle="Cost per node (total USD)"
+          title={t("allocation.chart.title")}
+          subtitle={t("allocation.chart.subtitle")}
           metrics={costChartMetrics}
           series={costChartSeries}
           isLoading={isLoadingCost}
@@ -393,12 +398,14 @@ export const AllocationPage = () => {
           <div className="mb-3 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Nodes
+                {t("allocation.nodes.title")}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {isLoadingNodes
-                  ? "Loading nodes…"
-                  : `${filteredNodes.length} node(s)`}
+                  ? t("allocation.nodes.loading")
+                  : t("allocation.nodes.count", {
+                      count: filteredNodes.length,
+                    })}
               </p>
             </div>
             <button
@@ -406,7 +413,7 @@ export const AllocationPage = () => {
               onClick={() => void loadNodes()}
               className="rounded-lg border border-amber-400 px-3 py-1 text-xs font-semibold text-amber-700 transition hover:border-amber-500 hover:text-amber-800 dark:border-amber-700 dark:text-amber-200"
             >
-              Refresh
+              {t("common.refresh")}
             </button>
           </div>
 
@@ -425,38 +432,47 @@ export const AllocationPage = () => {
                   }`}
                 >
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {node.node_name ?? "unknown-node"}
+                    {node.node_name ?? t("allocation.nodes.unknown")}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    team: {node.team ?? "—"} · service: {node.service ?? "—"} · env:{" "}
-                    {node.env ?? "—"}
+                    {t("allocation.nodes.meta", {
+                      team: node.team ?? t("common.notAvailable"),
+                      service: node.service ?? t("common.notAvailable"),
+                      env: node.env ?? t("common.notAvailable"),
+                    })}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    cpu: {node.cpu_capacity_cores ?? 0} · mem:{" "}
-                    {Math.round((node.memory_capacity_bytes ?? 0) / 1_073_741_824)} GiB
+                    {t("allocation.nodes.capacity", {
+                      cpu: node.cpu_capacity_cores ?? 0,
+                      memory: Math.round(
+                        (node.memory_capacity_bytes ?? 0) / 1_073_741_824
+                      ),
+                    })}
                   </p>
                 </button>
               );
             })}
             {!isLoadingNodes && filteredNodes.length === 0 && (
-              <p className="text-sm text-slate-500">No nodes matched the filters.</p>
+              <p className="text-sm text-slate-500">
+                {t("allocation.nodes.emptyFiltered")}
+              </p>
             )}
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40">
           <p className="text-sm font-semibold text-slate-900 dark:text-white">
-            Edit node metadata
+            {t("allocation.metadata.title")}
           </p>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {selectedNode
-              ? `Patch labels for ${selectedNode}`
-              : "Select a node to edit team / service / env"}
+              ? t("allocation.metadata.patchFor", { node: selectedNode })
+              : t("allocation.metadata.empty")}
           </p>
 
           <div className="mt-3 space-y-3">
             <label className="text-xs text-slate-600 dark:text-slate-400">
-              Team
+              {t("allocation.metadata.team")}
               <input
                 value={metadataDraft.team ?? ""}
                 onChange={(e) =>
@@ -467,7 +483,7 @@ export const AllocationPage = () => {
               />
             </label>
             <label className="text-xs text-slate-600 dark:text-slate-400">
-              Service
+              {t("allocation.metadata.service")}
               <input
                 value={metadataDraft.service ?? ""}
                 onChange={(e) =>
@@ -481,7 +497,7 @@ export const AllocationPage = () => {
               />
             </label>
             <label className="text-xs text-slate-600 dark:text-slate-400">
-              Environment
+              {t("allocation.metadata.environment")}
               <input
                 value={metadataDraft.env ?? ""}
                 onChange={(e) =>
@@ -497,12 +513,23 @@ export const AllocationPage = () => {
               disabled={!selectedNode || isSavingMeta}
               className="w-full rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50"
             >
-              {isSavingMeta ? "Saving..." : "Save metadata"}
+              {isSavingMeta
+                ? t("common.actions.saving")
+                : t("allocation.metadata.save")}
             </button>
             {selectedNodeInfo?.fixed_instance_usd != null && (
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Fixed price: {formatCurrency(selectedNodeInfo.fixed_instance_usd, "USD")}{" "}
-                {selectedNodeInfo.price_period ? `per ${selectedNodeInfo.price_period}` : ""}
+                {t("allocation.metadata.fixedPrice", {
+                  price: formatCurrency(
+                    selectedNodeInfo.fixed_instance_usd,
+                    "USD"
+                  ),
+                  period: selectedNodeInfo.price_period
+                    ? t("allocation.metadata.periodPrefix", {
+                        period: selectedNodeInfo.price_period,
+                      })
+                    : "",
+                })}
               </p>
             )}
             {saveMessage && (

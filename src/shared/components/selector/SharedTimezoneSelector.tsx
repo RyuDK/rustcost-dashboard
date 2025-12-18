@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { setTimezone } from "@/store/slices/preferenceSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 function getTimezones(): string[] {
   const fn = Intl.supportedValuesOf?.bind(Intl);
@@ -8,6 +9,7 @@ function getTimezones(): string[] {
 }
 
 export function SharedTimezoneSelector() {
+  const { t } = useI18n();
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.preferences.timezone);
 
@@ -46,7 +48,9 @@ export function SharedTimezoneSelector() {
 
   return (
     <div ref={rootRef} className="relative flex flex-col gap-1">
-      <label className="text-sm font-medium">Timezone</label>
+      <label className="text-sm font-medium">
+        {t("common.timezone.label")}
+      </label>
 
       <div className="relative">
         <input
@@ -65,7 +69,7 @@ export function SharedTimezoneSelector() {
           onKeyDown={(e) => {
             if (e.key === "Escape") setOpen(false);
           }}
-          placeholder="Search timezone (e.g., Asia/Seoul)"
+          placeholder={t("common.timezone.placeholder")}
           className="w-full rounded border bg-white px-3 py-2 dark:bg-gray-800"
           role="combobox"
           aria-expanded={open}
@@ -83,7 +87,9 @@ export function SharedTimezoneSelector() {
             "
           >
             {filtered.length === 0 ? (
-              <div className="px-3 py-2 text-sm text-gray-500">No matches</div>
+              <div className="px-3 py-2 text-sm text-gray-500">
+                {t("common.timezone.noMatches")}
+              </div>
             ) : (
               <ul className="py-1">
                 {filtered.map((tz) => {
@@ -102,7 +108,7 @@ export function SharedTimezoneSelector() {
                         <span className="truncate">{tz}</span>
                         {isSelected && (
                           <span className="text-xs text-gray-500">
-                            Selected
+                            {t("common.timezone.selected")}
                           </span>
                         )}
                       </button>

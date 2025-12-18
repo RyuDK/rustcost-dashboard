@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 export type BreadcrumbItem = {
   label: string;
@@ -11,27 +12,31 @@ interface CommonBreadcrumbProps {
   items: BreadcrumbItem[];
 }
 
-export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => (
-  <nav
-    aria-label="Breadcrumb"
-    className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500"
-  >
-    {items.map((item) => {
-      const content = (
-        <span className="flex items-center gap-1">
-          {item.icon}
-          {item.label}
-        </span>
-      );
+export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => {
+  const { t } = useI18n();
 
-      return (
-        <span
-          key={item.to ?? item.label}
-          className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
-        >
-          {item.to ? <Link to={item.to}>{content}</Link> : content}
-        </span>
-      );
-    })}
-  </nav>
-);
+  return (
+    <nav
+      aria-label={t("common.aria.breadcrumb")}
+      className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500"
+    >
+      {items.map((item) => {
+        const content = (
+          <span className="flex items-center gap-1">
+            {item.icon}
+            {item.label}
+          </span>
+        );
+
+        return (
+          <span
+            key={item.to ?? item.label}
+            className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
+          >
+            {item.to ? <Link to={item.to}>{content}</Link> : content}
+          </span>
+        );
+      })}
+    </nav>
+  );
+};

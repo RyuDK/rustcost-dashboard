@@ -1,4 +1,68 @@
 {
+  "common": {
+    "brandName": "RustCost",
+    "refresh": "search",
+    "retry": "Retry",
+    "loading": "Loading",
+    "errorTitle": "Unable to load data",
+    "actions": {
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "close": "Close",
+      "cancel": "Cancel",
+      "generating": "Generating...",
+      "saving": "Saving...",
+      "save": "Save",
+      "reset": "Reset",
+      "add": "Add",
+      "remove": "Remove",
+      "removeSymbol": "x",
+      "clear": "Clear",
+      "ok": "OK"
+    },
+    "aria": {
+      "breadcrumb": "Breadcrumb"
+    },
+    "states": {
+      "on": "On",
+      "off": "Off",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "table": {
+      "loading": "Loading table",
+      "empty": "No data available"
+    },
+    "metrics": {
+      "loading": "Loading metrics"
+    },
+    "timezone": {
+      "label": "Timezone",
+      "placeholder": "Search timezone (e.g., Asia/Seoul)",
+      "noMatches": "No matches",
+      "selected": "Selected"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "memory": "Memory",
+      "storage": "Storage"
+    },
+    "units": {
+      "cores": "{{value}} cores",
+      "gigabytes": "{{value}} GB"
+    },
+    "notAvailable": "n/a",
+    "versionLabel": "Version {{version}}",
+    "updatedLabel": "Updated: {{timestamp}}",
+    "createdLabel": "Created: {{timestamp}}",
+    "timeRange": "Time range",
+    "date": {
+      "start": "Start date",
+      "end": "End date"
+    },
+    "limit": "Limit",
+    "sort": "Sort"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "trends": "Trends",
@@ -24,22 +88,96 @@
     "persistentVolumes": "PV",
     "persistentVolumeClaims": "PVC"
   },
-  "common": {
-    "refresh": "search",
-    "retry": "Retry",
-    "loading": "Loading",
-    "errorTitle": "Unable to load data",
-    "timeRange": "Time range",
-    "date": {
-      "start": "Start date",
-      "end": "End date"
+  "header": {
+    "logoAlt": "Logo",
+    "explain": {
+      "show": "Explain",
+      "hide": "Hide Explain"
+    }
+  },
+  "sidebar": {
+    "navigation": "Navigation",
+    "versionPrefix": "ver",
+    "actions": {
+      "expandSidebar": "Expand sidebar",
+      "collapseSidebar": "Collapse sidebar"
+    }
+  },
+  "theme": {
+    "toggleAriaLabel": "Toggle dark mode"
+  },
+  "pdf": {
+    "badge": "PDF Export",
+    "title": "Export to PDF",
+    "subtitle": "Render an A4-ready PDF with your report data.",
+    "documentTitle": "RustCost Report",
+    "generatedLabel": "Generated: {{timestamp}}",
+    "closeAriaLabel": "Close PDF overlay",
+    "preview": {
+      "placeholder": "A preview of document layout (A4). Charts or extra content can be injected here later."
     },
-    "limit": "Limit",
-    "sort": "Sort"
+    "print": {
+      "placeholder": "Render charts or additional content here."
+    },
+    "options": {
+      "title": "Options",
+      "body": "Render a clean A4 PDF using the data shown on the left. This uses a light theme regardless of app mode."
+    },
+    "actions": {
+      "printSave": "Print / Save PDF"
+    },
+    "error": {
+      "openWindow": "Unable to open print window",
+      "generatePreview": "Failed to generate PDF preview"
+    }
   },
   "dashboard": {
     "title": "RustCost Overview",
     "subtitle": "Unified visibility into cost and efficiency signals.",
+    "actions": {
+      "exportPdf": "Export PDF"
+    },
+    "costSeries": {
+      "totalCost": "Total Cost",
+      "cpu": "CPU",
+      "memory": "Memory",
+      "storage": "Storage"
+    },
+    "summary": {
+      "totalCost": {
+        "label": "Total Cost",
+        "description": "All cluster costs"
+      },
+      "cpuCost": {
+        "label": "CPU Cost",
+        "description": "Compute spend"
+      },
+      "memoryCost": {
+        "label": "Memory Cost",
+        "description": "RAM spend"
+      },
+      "storageNetwork": {
+        "label": "Storage + Network",
+        "description": "Ephemeral, persistent, network"
+      }
+    },
+    "costFields": {
+      "storageCost": "Storage Cost",
+      "networkCost": "Network Cost"
+    },
+    "chart": {
+      "title": "Cluster Cost Trend",
+      "subtitle": "Cost components over the selected window"
+    },
+    "hints": {
+      "filters": "Filters apply to every widget below. Set your date range, then hit refresh to pull aligned data across the dashboard.",
+      "summaryCards": "Summary cards show total, CPU, memory, and storage+network costs for the selected window. They refresh with the filter above.",
+      "costTrend": "The cost trend plots each cost component over time. Hover for exact values; the X-axis follows your chosen date range.",
+      "systemStatus": "System Status summarizes platform health and alerts reported by backend services."
+    },
+    "pdf": {
+      "documentTitle": "RustCost Cost Report"
+    },
     "overview": {
       "title": "Key Signals"
     },
@@ -82,13 +220,377 @@
     "table": {
       "namespace": "Namespace Efficiency",
       "deployment": "Deployment Efficiency"
+    },
+    "summary": {
+      "overall": {
+        "label": "Overall efficiency",
+        "description": "Granularity: {{granularity}}"
+      },
+      "cpu": {
+        "label": "CPU efficiency"
+      },
+      "memory": {
+        "label": "Memory efficiency"
+      },
+      "storage": {
+        "label": "Storage efficiency"
+      },
+      "allocatable": "{{value}} allocatable"
+    },
+    "resourceCard": {
+      "title": "Resource efficiency",
+      "subtitle": "Node utilization by resource type"
+    },
+    "snapshotCard": {
+      "title": "Snapshot details",
+      "subtitle": "Auto-selects minute/hour/day granularity based on the window",
+      "granularityLabel": "Granularity (auto)",
+      "cpuAllocatable": "CPU allocatable",
+      "memoryAllocatable": "Memory allocatable",
+      "storageAllocatable": "Storage allocatable"
+    },
+    "hints": {
+      "filters": "Use the filters to set your time window; refresh pulls aligned efficiency data using auto-selected granularity.",
+      "resourceCard": "Bars show efficiency by resource. Hover for precise percentages; the right-hand cards summarize the snapshot details."
+    }
+  },
+  "allocation": {
+    "title": "Node Allocation",
+    "subtitle": "Filter Kubernetes nodes by team, service, or environment, adjust metadata, and track cost by node.",
+    "hints": {
+      "backend": "Backend: list_k8s_nodes (team/service/env query) + patch_info_k8s_node_filter + get_metric_k8s_nodes_cost. Use the filters to query, then edit metadata on the selected node."
+    },
+    "errors": {
+      "nodesLoad": "Failed to load node inventory",
+      "costsLoad": "Failed to load node costs",
+      "metadataUpdate": "Failed to update node metadata"
+    },
+    "messages": {
+      "metadataSaved": "Node metadata updated."
+    },
+    "team": {
+      "unassigned": "unassigned"
+    },
+    "teamCoverage": {
+      "label": "Teams",
+      "title": "Team Coverage",
+      "summary": "{{count}} node(s) grouped by team label",
+      "chartType": "Pie",
+      "empty": "No nodes found."
+    },
+    "chart": {
+      "title": "Node Cost Trend",
+      "subtitle": "Cost per node (total USD)"
+    },
+    "filters": {
+      "team": "Team",
+      "service": "Service",
+      "environment": "Environment",
+      "apply": "Apply Filters",
+      "searchLabel": "Search by node name",
+      "placeholders": {
+        "team": "team label",
+        "service": "service label",
+        "environment": "dev / stage / prod",
+        "search": "e.g., ip-10-0-0-1"
+      }
+    },
+    "nodes": {
+      "title": "Nodes",
+      "loading": "Loading nodes...",
+      "count": "{{count}} node(s)",
+      "unknown": "unknown-node",
+      "meta": "team: {{team}} �� service: {{service}} �� env: {{env}}",
+      "capacity": "cpu: {{cpu}} �� mem: {{memory}} GiB",
+      "emptyFiltered": "No nodes matched the filters."
+    },
+    "metadata": {
+      "title": "Edit node metadata",
+      "patchFor": "Patch labels for {{node}}",
+      "empty": "Select a node to edit team / service / env",
+      "team": "Team",
+      "service": "Service",
+      "environment": "Environment",
+      "save": "Save metadata",
+      "fixedPrice": "Fixed price: {{price}}{{period}}",
+      "periodPrefix": " per {{period}}"
+    }
+  },
+  "workloads": {
+    "title": "Workload Metrics",
+    "subtitle": "Cluster resource usage & cost overview",
+    "hints": {
+      "overview": "Date filters drive both usage and cost summaries. Refresh to pull aligned metrics before navigating to detailed subpages."
+    },
+    "errors": {
+      "loadMetrics": "Failed to load cluster metrics."
+    },
+    "subPages": {
+      "title": "Sub Pages",
+      "metrics": "Metrics",
+      "resources": "Resources"
+    },
+    "sections": {
+      "resourceUsage": "Resource Usage Summary",
+      "costSummary": "Cost Summary"
+    },
+    "summary": {
+      "avgCpu": {
+        "label": "Avg CPU",
+        "description": "Average CPU cores used"
+      },
+      "avgMemory": {
+        "label": "Avg Memory",
+        "description": "Average memory usage"
+      },
+      "avgNetwork": {
+        "label": "Avg Network",
+        "description": "Average network throughput"
+      },
+      "avgStorage": {
+        "label": "Avg Storage",
+        "description": "Average storage consumption"
+      },
+      "maxCpu": {
+        "label": "Max CPU",
+        "description": "Peak CPU usage"
+      },
+      "maxMemory": {
+        "label": "Max Memory",
+        "description": "Peak memory usage"
+      },
+      "maxNetwork": {
+        "label": "Max Network",
+        "description": "Peak network throughput"
+      },
+      "nodes": {
+        "label": "Nodes",
+        "description": "Total nodes in the cluster"
+      }
+    },
+    "costSummary": {
+      "cpuCost": {
+        "label": "CPU Cost",
+        "description": "Compute CPU cost"
+      },
+      "memoryCost": {
+        "label": "Memory Cost",
+        "description": "Memory/RAM cost"
+      },
+      "networkCost": {
+        "label": "Network Cost",
+        "description": "Cluster network transfer cost"
+      },
+      "ephemeralStorage": {
+        "label": "Ephemeral Storage",
+        "description": "Ephemeral disk usage cost"
+      },
+      "persistentStorage": {
+        "label": "Persistent Storage",
+        "description": "Persistent volume cost"
+      },
+      "totalCost": {
+        "label": "Total Cost",
+        "description": "Total cost across all resources"
+      }
     }
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Tune preferences and synchronize data sources."
+    "subtitle": "Tune preferences and synchronize data sources.",
+    "general": {
+      "language": "Language",
+      "darkMode": "Dark Mode",
+      "version": "Version",
+      "updated": "Updated"
+    },
+    "metrics": {
+      "scrapeInterval": "Scrape Interval (s)",
+      "batchSize": "Batch Size",
+      "gpuMetrics": "GPU Metrics",
+      "networkMetrics": "Network Metrics"
+    },
+    "billing": {
+      "openUnitPrices": "Open Unit Prices",
+      "description": "Manage cost-allocation unit prices."
+    },
+    "sections": {
+      "general": "General",
+      "metricsRetention": "Metrics & Retention",
+      "billing": "Billing"
+    },
+    "hints": {
+      "overview": "Settings reflect live control plane values. Use Unit Prices to manage billing inputs and tweak metrics collection from the cards below.",
+      "timezone": "Timezone selection applies across date pickers and chart labels so teams read timestamps consistently."
+    },
+    "errors": {
+      "load": "Failed to load settings"
+    }
+  },
+  "unitPrices": {
+    "title": "Unit Prices",
+    "subtitle": "Modify raw pricing used for workload cost allocation.",
+    "loading": "Loading Unit Prices...",
+    "hints": {
+      "overview": "Edit price inputs used for allocation. Refresh to pull current values; saves require confirmation to avoid accidental overwrites.",
+      "editing": "Adjust on-demand and spot rates by resource type. Empty fields stay unchanged; use Save to persist or Cancel to revert to the last load."
+    },
+    "errors": {
+      "load": "Failed to load unit prices",
+      "save": "Failed to save unit prices"
+    },
+    "messages": {
+      "updated": "Unit prices updated successfully."
+    },
+    "resources": {
+      "cpu": "CPU",
+      "cpuSpot": "CPU (Spot)",
+      "memory": "Memory",
+      "memorySpot": "Memory (Spot)",
+      "gpu": "GPU",
+      "gpuSpot": "GPU (Spot)",
+      "storage": "Storage",
+      "networkLocal": "Network (Local)",
+      "networkRegional": "Network (Regional)",
+      "networkExternal": "Network (External)"
+    },
+    "units": {
+      "coreHour": "/core hr",
+      "gbHour": "/GB hr",
+      "hour": "/hr",
+      "gb": "/GB"
+    },
+    "modals": {
+      "noChanges": {
+        "title": "No Changes Detected",
+        "message": "There are no modifications to save."
+      },
+      "confirmSave": {
+        "title": "Confirm Save",
+        "message": "Are you sure you want to update the unit prices?"
+      },
+      "confirmDiscard": {
+        "title": "Discard Changes?",
+        "message": "Your unsaved changes will be lost. Continue?",
+        "ok": "Discard",
+        "cancel": "Stay"
+      }
+    }
+  },
+  "alerts": {
+    "eyebrow": "Observability",
+    "title": "Alert Settings",
+    "subtitle": "Manage alert delivery targets, subjects, and evaluation rules served by the backend.",
+    "loading": "Loading alert settings...",
+    "hints": {
+      "refresh": "Refresh pulls alert delivery settings from the backend. Changes apply to all channels listed below; remember to save after editing.",
+      "configure": "Configure delivery targets first, then define rules that evaluate metrics server-side. Use save/reset controls at the bottom to commit or discard edits."
+    },
+    "metrics": {
+      "cpuUsage": "CPU usage %",
+      "memoryUsage": "Memory usage %",
+      "diskUsage": "Disk usage %",
+      "gpuUsage": "GPU usage %"
+    },
+    "severity": {
+      "info": "Info",
+      "warning": "Warning",
+      "critical": "Critical"
+    },
+    "defaults": {
+      "subject": "RustCost Alert"
+    },
+    "errors": {
+      "loadSettings": "Failed to load alert settings",
+      "updateSettings": "Failed to update alert settings",
+      "saveSettings": "Failed to save alert settings"
+    },
+    "messages": {
+      "updated": "Alert settings updated."
+    },
+    "delivery": {
+      "badge": "Delivery",
+      "title": "Delivery preferences",
+      "subtitle": "Turn built-in health alerts on or off and set a shared subject for all channels.",
+      "clusterHealth": "Cluster health",
+      "rustcostHealth": "RustCost health",
+      "subjectLabel": "Global subject",
+      "subjectPlaceholder": "RustCost Alert",
+      "subjectHelp": "Used as the subject line for all channels.",
+      "linkbackLabel": "Linkback URL (optional)",
+      "linkbackPlaceholder": "https://dashboard.example.com/alerts",
+      "linkbackHelp": "Included in alert bodies for quick navigation."
+    },
+    "recipients": {
+      "title": "Email recipients",
+      "subtitle": "Add addresses one-by-one. All recipients receive every alert.",
+      "placeholder": "user@example.com",
+      "removeAriaLabel": "Remove {{email}}",
+      "empty": "No recipients added yet.",
+      "count": "{{count}} recipient(s) configured."
+    },
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "Send alerts to chat systems. Leave blank to disable a channel.",
+      "slack": "Slack webhook",
+      "teams": "Microsoft Teams webhook",
+      "discord": "Discord webhook",
+      "slackPlaceholder": "https://hooks.slack.com/...",
+      "teamsPlaceholder": "https://outlook.office.com/webhook/...",
+      "discordPlaceholder": "https://discord.com/api/webhooks/..."
+    },
+    "rules": {
+      "title": "Alert rules",
+      "subtitle": "Declarative conditions evaluated by the backend scheduler.",
+      "add": "Add rule",
+      "newRuleName": "New alert rule",
+      "defaultName": "Rule",
+      "idLabel": "ID: {{id}}",
+      "enable": "Enable",
+      "fields": {
+        "name": "Name",
+        "namePlaceholder": "High CPU on node",
+        "metric": "Metric",
+        "operator": "Operator",
+        "threshold": "Threshold",
+        "thresholdPlaceholder": "80",
+        "duration": "For (seconds)",
+        "durationPlaceholder": "60",
+        "severity": "Severity"
+      },
+      "empty": "No alert rules configured yet. Add one to start evaluating metrics."
+    },
+    "actions": {
+      "saveSettings": "Save alert settings"
+    },
+    "notifications": {
+      "ariaLabel": "You have {{count}} active alerts",
+      "title": "Alerts",
+      "loading": "Loading alerts...",
+      "empty": "No active alerts",
+      "loadError": "Failed to load alerts",
+      "resolveError": "Failed to resolve alert",
+      "resolving": "Resolving...",
+      "resolve": "Resolve",
+      "createdAt": "Created: {{timestamp}}"
+    }
   },
   "system": {
+    "title": "Control Plane",
+    "subtitle": "Monitor status, health, settings, unit prices, and administrative actions.",
+    "hints": {
+      "overview": "Refresh to pull live control-plane health, settings, and log inventory. Use backup/resync actions below when configuration drifts or nodes fall behind."
+    },
+    "errors": {
+      "load": "Failed to load system data"
+    },
+    "cards": {
+      "status": "Status",
+      "health": "Health",
+      "settings": "Settings",
+      "healthAvailable": "Available",
+      "healthUnknown": "Unknown"
+    },
     "status": {
       "title": "System Status",
       "refresh": "Refresh status",
@@ -98,6 +600,29 @@
       "backingUp": "Backing up...",
       "resync": "Resync",
       "resyncing": "Resyncing..."
+    },
+    "backup": {
+      "title": "Backup",
+      "subtitle": "Trigger incremental backup to capture configuration.",
+      "action": "Start Backup",
+      "triggered": "Backup triggered",
+      "lastResponse": "Last response: {{response}}"
+    },
+    "resync": {
+      "title": "Resync",
+      "subtitle": "Force resynchronization with upstream components.",
+      "action": "Start Resync",
+      "triggered": "Resync triggered",
+      "lastResponse": "Last response: {{response}}"
+    },
+    "logs": {
+      "hint": "Select a log file on the left to stream entries; scrolling fetches additional chunks. Use the actions above to trigger new backups or resyncs before inspecting logs.",
+      "title": "Log Files",
+      "subtitle": "Select a log file to view recent activity.",
+      "loading": "Loading logs...",
+      "detailTitle": "Log: {{date}}",
+      "detailSubtitle": "Scroll to load more. Latest entries first.",
+      "loadingMore": "Loading more..."
     }
   }
 }

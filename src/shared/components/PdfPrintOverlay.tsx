@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { formatDateTimeWithGmt, useTimezone } from "@/shared/time";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface PdfPrintOverlayProps {
   open: boolean;
@@ -56,13 +57,14 @@ const BASE_PDF_OVERLAY_STYLES = {
 export const PdfPrintOverlay = ({
   open,
   onClose,
-  title = "Export to PDF",
-  subtitle = "Render an A4-ready PDF with your report data.",
-  documentTitle = "RustCost Report",
+  title,
+  subtitle,
+  documentTitle,
   documentFields = [],
   generatedAt,
   className = "",
 }: PdfPrintOverlayProps) => {
+  const { t } = useI18n();
   const [isPrinting, setIsPrinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { timeZone } = useTimezone();
@@ -72,6 +74,13 @@ export const PdfPrintOverlay = ({
     [generatedAt, timeZone]
   );
 
+  const resolvedTitle = title ?? t("pdf.title");
+  const resolvedSubtitle = subtitle ?? t("pdf.subtitle");
+  const resolvedDocumentTitle = documentTitle ?? t("pdf.documentTitle");
+  const generatedLabel = t("pdf.generatedLabel", { timestamp });
+  const printPlaceholder = t("pdf.print.placeholder");
+  const brandName = t("common.brandName");
+
   const handlePrint = useCallback(() => {
     setIsPrinting(true);
     setError(null);
@@ -79,7 +88,7 @@ export const PdfPrintOverlay = ({
     try {
       const printWindow = window.open("", "_blank", "width=900,height=1200");
       if (!printWindow) {
-        throw new Error("Unable to open print window");
+        throw new Error(t("pdf.error.openWindow"));
       }
 
       printWindow.document.write(`
@@ -180,9 +189,9 @@ export const PdfPrintOverlay = ({
             <div class="page">
               <div class="page__header">
                 <div class="title-block">
-                  <span class="brand">RustCost</span>
-                  <span class="title">${documentTitle}</span>
-                  <span class="meta">Generated: ${timestamp}</span>
+                  <span class="brand">${brandName}</span>
+                  <span class="title">${resolvedDocumentTitle}</span>
+                  <span class="meta">${generatedLabel}</span>
                 </div>
               </div>
               ${
@@ -203,7 +212,7 @@ export const PdfPrintOverlay = ({
               }
               <div class="capture">
                 <div class="placeholder">
-                  Render charts or additional content here.
+                  ${printPlaceholder}
                 </div>
               </div>
             </div>
@@ -219,12 +228,23 @@ export const PdfPrintOverlay = ({
       };
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to generate PDF preview";
+        err instanceof Error
+          ? err.message
+          : t("pdf.error.generatePreview");
       setError(message);
     } finally {
       setIsPrinting(false);
     }
-  }, [documentFields, documentTitle, onClose, timestamp]);
+  }, [
+    brandName,
+    documentFields,
+    generatedLabel,
+    onClose,
+    printPlaceholder,
+    resolvedDocumentTitle,
+    t,
+    timestamp,
+  ]);
 
   if (!open) return null;
 
@@ -242,24 +262,26 @@ export const PdfPrintOverlay = ({
       >
         <div className={BASE_PDF_OVERLAY_STYLES.header}>
           <div>
-            <p className={BASE_PDF_OVERLAY_STYLES.badge}>PDF Export</p>
+            <p className={BASE_PDF_OVERLAY_STYLES.badge}>
+              {t("pdf.badge")}
+            </p>
             <h2 id={dialogTitleId} className={BASE_PDF_OVERLAY_STYLES.title}>
-              {title}
+              {resolvedTitle}
             </h2>
             <p
               id={dialogDescriptionId}
               className={BASE_PDF_OVERLAY_STYLES.subtitle}
             >
-              {subtitle}
+              {resolvedSubtitle}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className={BASE_PDF_OVERLAY_STYLES.closeButton}
-            aria-label="Close PDF overlay"
+            aria-label={t("pdf.closeAriaLabel")}
           >
-            Close
+            {t("common.actions.close")}
           </button>
         </div>
 
@@ -268,9 +290,9 @@ export const PdfPrintOverlay = ({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={BASE_PDF_OVERLAY_STYLES.badge}>RustCost</p>
+                  <p className={BASE_PDF_OVERLAY_STYLES.badge}>{brandName}</p>
                   <h3 className={BASE_PDF_OVERLAY_STYLES.metaTitle}>
-                    {documentTitle}
+                    {resolvedDocumentTitle}
                   </h3>
                   <p className={BASE_PDF_OVERLAY_STYLES.metaText}>
                     {timestamp}
@@ -302,18 +324,18 @@ export const PdfPrintOverlay = ({
                 }}
               >
                 <p className={BASE_PDF_OVERLAY_STYLES.placeholderText}>
-                  A preview of document layout (A4). Charts or extra content can
-                  be injected here later.
+                  {t("pdf.preview.placeholder")}
                 </p>
               </div>
             </div>
           </div>
 
           <div className={BASE_PDF_OVERLAY_STYLES.optionsCard}>
-            <p className={BASE_PDF_OVERLAY_STYLES.optionTitle}>Options</p>
+            <p className={BASE_PDF_OVERLAY_STYLES.optionTitle}>
+              {t("pdf.options.title")}
+            </p>
             <p className={BASE_PDF_OVERLAY_STYLES.optionBody}>
-              Render a clean A4 PDF using the data shown on the left. This uses
-              a light theme regardless of app mode.
+              {t("pdf.options.body")}
             </p>
 
             {error && (
@@ -328,14 +350,16 @@ export const PdfPrintOverlay = ({
                 aria-busy={isPrinting}
                 className={BASE_PDF_OVERLAY_STYLES.primaryButton}
               >
-                {isPrinting ? "Generating..." : "Print / Save PDF"}
+                {isPrinting
+                  ? t("common.actions.generating")
+                  : t("pdf.actions.printSave")}
               </button>
               <button
                 type="button"
                 onClick={onClose}
                 className={BASE_PDF_OVERLAY_STYLES.secondaryButton}
               >
-                Cancel
+                {t("common.actions.cancel")}
               </button>
             </div>
           </div>

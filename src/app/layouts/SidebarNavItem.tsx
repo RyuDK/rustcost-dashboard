@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { IoChevronDown } from "react-icons/io5";
 import type { JSX } from "react/jsx-runtime";
 import type { NavItem } from "@/types/nav";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type SidebarNavItemProps = {
   item: NavItem;
@@ -32,6 +33,7 @@ export const SidebarNavItem = ({
   labelText,
   renderChildren,
 }: SidebarNavItemProps) => {
+  const { t } = useI18n();
   const Icon = item.icon;
   const hasChildren = Boolean(item.children?.length);
 
@@ -151,7 +153,9 @@ export const SidebarNavItem = ({
         {hasChildren && sidebarOpen && (
           <button
             type="button"
-            aria-label={isOpen ? "Collapse" : "Expand"}
+            aria-label={
+              isOpen ? t("common.actions.collapse") : t("common.actions.expand")
+            }
             onClick={() => onToggle(itemKey)}
             className="flex h-8 w-8 items-center justify-center text-(--text-muted) transition"
           >

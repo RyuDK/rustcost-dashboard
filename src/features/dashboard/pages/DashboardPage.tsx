@@ -16,33 +16,6 @@ import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { ExplainHint } from "@/shared/components/ExplainHint";
 import { formatDateTime, useTimezone } from "@/shared/time";
 
-const COST_SERIES: ChartSeries<Record<string, unknown>>[] = [
-  {
-    key: "total_cost_usd",
-    label: "Total Cost",
-    color: "#3b82f6",
-    valueFormatter: (value) => formatCurrency(value, "USD"),
-  },
-  {
-    key: "cpu_cost_usd",
-    label: "CPU",
-    color: "#10b981",
-    valueFormatter: (value) => formatCurrency(value, "USD"),
-  },
-  {
-    key: "memory_cost_usd",
-    label: "Memory",
-    color: "#f97316",
-    valueFormatter: (value) => formatCurrency(value, "USD"),
-  },
-  {
-    key: "storage_cost_usd",
-    label: "Storage",
-    color: "#8b5cf6",
-    valueFormatter: (value) => formatCurrency(value, "USD"),
-  },
-];
-
 export const DashboardPage = () => {
   const { params, updateParam } = useDashboardParams();
   const { summary, trends, isLoading, error, refetchAll } =
@@ -53,55 +26,85 @@ export const DashboardPage = () => {
 
   const breadcrumbItems = useMemo(() => [{ label: t("nav.dashboard") }], [t]);
 
+  const costSeries = useMemo<ChartSeries<Record<string, unknown>>[]>(
+    () => [
+      {
+        key: "total_cost_usd",
+        label: t("dashboard.costSeries.totalCost"),
+        color: "#3b82f6",
+        valueFormatter: (value) => formatCurrency(value, "USD"),
+      },
+      {
+        key: "cpu_cost_usd",
+        label: t("dashboard.costSeries.cpu"),
+        color: "#10b981",
+        valueFormatter: (value) => formatCurrency(value, "USD"),
+      },
+      {
+        key: "memory_cost_usd",
+        label: t("dashboard.costSeries.memory"),
+        color: "#f97316",
+        valueFormatter: (value) => formatCurrency(value, "USD"),
+      },
+      {
+        key: "storage_cost_usd",
+        label: t("dashboard.costSeries.storage"),
+        color: "#8b5cf6",
+        valueFormatter: (value) => formatCurrency(value, "USD"),
+      },
+    ],
+    [t]
+  );
+
   const summaryCards = useMemo(() => {
     const cost = summary.cost?.summary;
     return [
       {
-        label: "Total Cost",
+        label: t("dashboard.summary.totalCost.label"),
         value: formatCurrency(cost?.total_cost_usd ?? 0, "USD"),
-        description: "All cluster costs",
+        description: t("dashboard.summary.totalCost.description"),
       },
       {
-        label: "CPU Cost",
+        label: t("dashboard.summary.cpuCost.label"),
         value: formatCurrency(cost?.cpu_cost_usd ?? 0, "USD"),
-        description: "Compute spend",
+        description: t("dashboard.summary.cpuCost.description"),
       },
       {
-        label: "Memory Cost",
+        label: t("dashboard.summary.memoryCost.label"),
         value: formatCurrency(cost?.memory_cost_usd ?? 0, "USD"),
-        description: "RAM spend",
+        description: t("dashboard.summary.memoryCost.description"),
       },
       {
-        label: "Storage + Network",
+        label: t("dashboard.summary.storageNetwork.label"),
         value: formatCurrency(
           (cost?.ephemeral_storage_cost_usd ?? 0) +
             (cost?.persistent_storage_cost_usd ?? 0) +
             (cost?.network_cost_usd ?? 0),
           "USD"
         ),
-        description: "Ephemeral, persistent, network",
+        description: t("dashboard.summary.storageNetwork.description"),
       },
     ];
-  }, [summary.cost]);
+  }, [summary.cost, t]);
 
   const costFields = useMemo(() => {
     const cost = summary.cost?.summary;
     if (!cost) return [];
     return [
       {
-        label: "Total Cost",
+        label: t("dashboard.summary.totalCost.label"),
         value: formatCurrency(cost.total_cost_usd ?? 0, "USD"),
       },
       {
-        label: "CPU Cost",
+        label: t("dashboard.summary.cpuCost.label"),
         value: formatCurrency(cost.cpu_cost_usd ?? 0, "USD"),
       },
       {
-        label: "Memory Cost",
+        label: t("dashboard.summary.memoryCost.label"),
         value: formatCurrency(cost.memory_cost_usd ?? 0, "USD"),
       },
       {
-        label: "Storage Cost",
+        label: t("dashboard.costFields.storageCost"),
         value: formatCurrency(
           (cost.ephemeral_storage_cost_usd ?? 0) +
             (cost.persistent_storage_cost_usd ?? 0),
@@ -109,11 +112,11 @@ export const DashboardPage = () => {
         ),
       },
       {
-        label: "Network Cost",
+        label: t("dashboard.costFields.networkCost"),
         value: formatCurrency(cost.network_cost_usd ?? 0, "USD"),
       },
     ];
-  }, [summary.cost]);
+  }, [summary.cost, t]);
 
   const chartData = trends ?? [];
 
@@ -132,7 +135,7 @@ export const DashboardPage = () => {
         description={t("dashboard.subtitle")}
         breadcrumbItems={breadcrumbItems}
         primaryAction={{
-          label: "Export PDF",
+          label: t("dashboard.actions.exportPdf"),
           onClick: () => setShowPrint(true),
         }}
       />
@@ -144,24 +147,22 @@ export const DashboardPage = () => {
       />
 
       <ExplainHint>
-        Filters apply to every widget below. Set your date range, then hit
-        refresh to pull aligned data across the dashboard.
+        {t("dashboard.hints.filters")}
       </ExplainHint>
 
       <SharedMetricsSummaryCards cards={summaryCards} isLoading={isLoading} />
 
       <ExplainHint>
-        Summary cards show total, CPU, memory, and storage+network costs for the
-        selected window. They refresh with the filter above.
+        {t("dashboard.hints.summaryCards")}
       </ExplainHint>
 
       <div className="grid grid-cols-1 gap-6">
         <div className="lg:col-span-12">
           <SharedMetricChart
-            title="Cluster Cost Trend"
-            subtitle="Cost components over the selected window"
+            title={t("dashboard.chart.title")}
+            subtitle={t("dashboard.chart.subtitle")}
             metrics={chartData}
-            series={COST_SERIES}
+            series={costSeries}
             isLoading={isLoading}
             error={chartErrorMessage}
             getXAxisLabel={(point: Record<string, unknown>) => {
@@ -175,8 +176,7 @@ export const DashboardPage = () => {
       </div>
 
       <ExplainHint>
-        The cost trend plots each cost component over time. Hover for exact
-        values; the X-axis follows your chosen date range.
+        {t("dashboard.hints.costTrend")}
       </ExplainHint>
 
       {/* Node table removed per request */}
@@ -184,14 +184,13 @@ export const DashboardPage = () => {
       <SystemStatus />
 
       <ExplainHint>
-        System Status summarizes platform health and alerts reported by backend
-        services.
+        {t("dashboard.hints.systemStatus")}
       </ExplainHint>
 
       <PdfPrintOverlay
         open={showPrint}
         onClose={() => setShowPrint(false)}
-        documentTitle="RustCost Cost Report"
+        documentTitle={t("dashboard.pdf.documentTitle")}
         documentFields={costFields}
       />
     </SharedPageLayout>

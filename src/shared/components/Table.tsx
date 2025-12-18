@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { SharedCard } from "./metrics/SharedCard";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 type Alignment = "left" | "center" | "right";
 
@@ -87,11 +88,13 @@ export const Table = <T extends Record<string, unknown>>({
   columns,
   isLoading = false,
   error,
-  emptyMessage = "No data available",
+  emptyMessage,
   className = "",
   rowKey,
 }: TableProps<T>) => {
+  const { t } = useI18n();
   const [sortState, setSortState] = useState<SortState | null>(null);
+  const resolvedEmptyMessage = emptyMessage ?? t("common.table.empty");
 
   const sortedData = useMemo(() => {
     if (!sortState) {
@@ -148,7 +151,7 @@ export const Table = <T extends Record<string, unknown>>({
     >
       {isLoading ? (
         <LoadingSpinner
-          label="Loading table"
+          label={t("common.table.loading")}
           className={BASE_TABLE_STYLES.loadingWrapper}
         />
       ) : error ? (
@@ -217,7 +220,7 @@ export const Table = <T extends Record<string, unknown>>({
                     className={BASE_TABLE_STYLES.emptyCell}
                     colSpan={columns.length}
                   >
-                    {emptyMessage}
+                    {resolvedEmptyMessage}
                   </td>
                 </tr>
               ) : (

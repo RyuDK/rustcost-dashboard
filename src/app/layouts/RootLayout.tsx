@@ -119,7 +119,11 @@ export const RootLayout = () => {
             {hasChildren && sidebarOpen && (
               <button
                 type="button"
-                aria-label={isOpen ? "Collapse" : "Expand"}
+                aria-label={
+                  isOpen
+                    ? t("common.actions.collapse")
+                    : t("common.actions.expand")
+                }
                 onClick={() => toggleSection(itemKey)}
                 className="flex h-8 w-8 items-center justify-center text-(--text-muted) transition"
               >

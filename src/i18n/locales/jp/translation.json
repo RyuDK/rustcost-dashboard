@@ -1,0 +1,628 @@
+{
+  "common": {
+    "brandName": "RustCost",
+    "refresh": "検索",
+    "retry": "再試行",
+    "loading": "読み込み中",
+    "errorTitle": "データを読み込めません",
+    "actions": {
+      "expand": "展開",
+      "collapse": "折りたたむ",
+      "close": "閉じる",
+      "cancel": "キャンセル",
+      "generating": "生成中...",
+      "saving": "保存中...",
+      "save": "保存",
+      "reset": "リセット",
+      "add": "追加",
+      "remove": "削除",
+      "removeSymbol": "x",
+      "clear": "クリア",
+      "ok": "OK"
+    },
+    "aria": {
+      "breadcrumb": "パンくずリスト"
+    },
+    "states": {
+      "on": "オン",
+      "off": "オフ",
+      "enabled": "有効",
+      "disabled": "無効"
+    },
+    "table": {
+      "loading": "テーブルを読み込み中",
+      "empty": "データがありません"
+    },
+    "metrics": {
+      "loading": "メトリクスを読み込み中"
+    },
+    "timezone": {
+      "label": "タイムゾーン",
+      "placeholder": "タイムゾーンを検索（例: Asia/Seoul）",
+      "noMatches": "一致する結果がありません",
+      "selected": "選択済み"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "memory": "メモリ",
+      "storage": "ストレージ"
+    },
+    "units": {
+      "cores": "{{value}} コア",
+      "gigabytes": "{{value}} GB"
+    },
+    "notAvailable": "該当なし",
+    "versionLabel": "バージョン {{version}}",
+    "updatedLabel": "更新日時: {{timestamp}}",
+    "createdLabel": "作成日時: {{timestamp}}",
+    "timeRange": "期間",
+    "date": {
+      "start": "開始日",
+      "end": "終了日"
+    },
+    "limit": "上限",
+    "sort": "並び替え"
+  },
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "trends": "トレンド",
+    "efficiency": "効率",
+    "workloads": "ワークロード",
+    "resources": "リソース",
+    "allocation": "割り当て",
+    "metrics": "メトリクス",
+    "alerts": "アラート",
+    "system": "システム",
+    "settings": "設定",
+    "unitPrices": "単価",
+    "nodes": "ノード",
+    "pods": "Pod",
+    "containers": "コンテナ",
+    "deployments": "Deployment",
+    "statefulSets": "StatefulSet",
+    "daemonSets": "DaemonSet",
+    "jobsCronJobs": "Job / CronJob",
+    "services": "サービス",
+    "ingresses": "Ingress",
+    "namespaces": "ネームスペース",
+    "persistentVolumes": "PV",
+    "persistentVolumeClaims": "PVC"
+  },
+  "header": {
+    "logoAlt": "ロゴ",
+    "explain": {
+      "show": "説明を表示",
+      "hide": "説明を非表示"
+    }
+  },
+  "sidebar": {
+    "navigation": "ナビゲーション",
+    "versionPrefix": "ver",
+    "actions": {
+      "expandSidebar": "サイドバーを展開",
+      "collapseSidebar": "サイドバーを折りたたむ"
+    }
+  },
+  "theme": {
+    "toggleAriaLabel": "ダークモードを切り替え"
+  },
+  "pdf": {
+    "badge": "PDF エクスポート",
+    "title": "PDF にエクスポート",
+    "subtitle": "レポートデータを使用して A4 対応の PDF を生成します。",
+    "documentTitle": "RustCost レポート",
+    "generatedLabel": "生成日時: {{timestamp}}",
+    "closeAriaLabel": "PDF オーバーレイを閉じる",
+    "preview": {
+      "placeholder": "ドキュメントレイアウト（A4）のプレビュー。後からグラフや追加コンテンツを挿入できます。"
+    },
+    "print": {
+      "placeholder": "ここにグラフや追加コンテンツをレンダリングします。"
+    },
+    "options": {
+      "title": "オプション",
+      "body": "左側に表示されているデータを使用して、クリーンな A4 PDF を生成します。アプリのモードに関係なくライトテーマが使用されます。"
+    },
+    "actions": {
+      "printSave": "PDF を印刷 / 保存"
+    },
+    "error": {
+      "openWindow": "印刷ウィンドウを開けません",
+      "generatePreview": "PDF プレビューの生成に失敗しました"
+    }
+  },
+  "dashboard": {
+    "title": "RustCost 概要",
+    "subtitle": "コストと効率のシグナルを統合的に可視化します。",
+    "actions": {
+      "exportPdf": "PDF をエクスポート"
+    },
+    "costSeries": {
+      "totalCost": "総コスト",
+      "cpu": "CPU",
+      "memory": "メモリ",
+      "storage": "ストレージ"
+    },
+    "summary": {
+      "totalCost": {
+        "label": "総コスト",
+        "description": "すべてのクラスタコスト"
+      },
+      "cpuCost": {
+        "label": "CPU コスト",
+        "description": "計算コスト"
+      },
+      "memoryCost": {
+        "label": "メモリコスト",
+        "description": "RAM コスト"
+      },
+      "storageNetwork": {
+        "label": "ストレージ + ネットワーク",
+        "description": "一時、永続、ネットワーク"
+      }
+    },
+    "costFields": {
+      "storageCost": "ストレージコスト",
+      "networkCost": "ネットワークコスト"
+    },
+    "chart": {
+      "title": "クラスタコスト推移",
+      "subtitle": "選択した期間におけるコスト内訳"
+    },
+    "hints": {
+      "filters": "フィルターは下のすべてのウィジェットに適用されます。期間を設定し、更新をクリックしてダッシュボード全体のデータを同期してください。",
+      "summaryCards": "サマリーカードには、選択した期間の総コスト、CPU、メモリ、ストレージ+ネットワークコストが表示されます。",
+      "costTrend": "コスト推移は各コスト要素を時系列で表示します。ホバーで正確な値を確認できます。",
+      "systemStatus": "システムステータスは、バックエンドサービスから報告されたプラットフォームの状態とアラートを要約します。"
+    },
+    "pdf": {
+      "documentTitle": "RustCost コストレポート"
+    },
+    "overview": {
+      "title": "主要シグナル"
+    },
+    "metrics": {
+      "nodes": "ノードのコストと使用量",
+      "pods": "Pod 効率",
+      "trends": "使用量トレンド",
+      "efficiency": "効率内訳"
+    },
+    "cards": {
+      "nodeCpu": {
+        "title": "ノード CPU 使用量",
+        "description": "クラスタ全体のミリコア消費量"
+      },
+      "nodeMemory": {
+        "title": "ノードメモリ使用量",
+        "description": "Pod メモリ使用量の集計"
+      },
+      "podEfficiency": {
+        "title": "Pod 効率",
+        "description": "平均ワークロード効率スコア"
+      },
+      "podCost": {
+        "title": "Pod コスト",
+        "description": "フィルタされた Pod の支出"
+      }
+    }
+  },
+  "trends": {
+    "title": "トレンド",
+    "subtitle": "過去のパフォーマンスとコストの推移を確認します。",
+    "chart": {
+      "cluster": "クラスタ利用率の推移",
+      "namespace": "ネームスペース CPU 推移"
+    }
+  },
+  "efficiency": {
+    "title": "効率",
+    "subtitle": "ネームスペースおよびワークロード間の効率を比較します。",
+    "table": {
+      "namespace": "ネームスペース効率",
+      "deployment": "Deployment 効率"
+    },
+    "summary": {
+      "overall": {
+        "label": "全体効率",
+        "description": "粒度: {{granularity}}"
+      },
+      "cpu": {
+        "label": "CPU 効率"
+      },
+      "memory": {
+        "label": "メモリ効率"
+      },
+      "storage": {
+        "label": "ストレージ効率"
+      },
+      "allocatable": "{{value}} 割り当て可能"
+    },
+    "resourceCard": {
+      "title": "リソース効率",
+      "subtitle": "リソース種別ごとのノード利用率"
+    },
+    "snapshotCard": {
+      "title": "スナップショット詳細",
+      "subtitle": "期間に応じて分/時間/日単位の粒度を自動選択",
+      "granularityLabel": "粒度（自動）",
+      "cpuAllocatable": "CPU 割り当て可能",
+      "memoryAllocatable": "メモリ割り当て可能",
+      "storageAllocatable": "ストレージ割り当て可能"
+    },
+    "hints": {
+      "filters": "フィルターで期間を設定し、更新すると自動選択された粒度で効率データが取得されます。",
+      "resourceCard": "バーはリソース別の効率を示します。ホバーで正確な割合を確認できます。"
+    }
+  },
+  "allocation": {
+    "title": "ノード割り当て",
+    "subtitle": "チーム、サービス、環境別に Kubernetes ノードをフィルタリングし、メタデータを調整してノード単位でコストを追跡します。",
+    "hints": {
+      "backend": "バックエンド: list_k8s_nodes（team/service/env クエリ）+ patch_info_k8s_node_filter + get_metric_k8s_nodes_cost。フィルターで検索後、選択したノードのメタデータを編集します。"
+    },
+    "errors": {
+      "nodesLoad": "ノード一覧の読み込みに失敗しました",
+      "costsLoad": "ノードコストの読み込みに失敗しました",
+      "metadataUpdate": "ノードメタデータの更新に失敗しました"
+    },
+    "messages": {
+      "metadataSaved": "ノードメタデータが更新されました。"
+    },
+    "team": {
+      "unassigned": "未割り当て"
+    },
+    "teamCoverage": {
+      "label": "チーム",
+      "title": "チームカバレッジ",
+      "summary": "チームラベルでグループ化されたノード {{count}} 台",
+      "chartType": "円グラフ",
+      "empty": "ノードが見つかりません。"
+    },
+    "chart": {
+      "title": "ノードコスト推移",
+      "subtitle": "ノード別コスト（合計 USD）"
+    },
+    "filters": {
+      "team": "チーム",
+      "service": "サービス",
+      "environment": "環境",
+      "apply": "フィルター適用",
+      "searchLabel": "ノード名で検索",
+      "placeholders": {
+        "team": "チームラベル",
+        "service": "サービスラベル",
+        "environment": "dev / stage / prod",
+        "search": "例: ip-10-0-0-1"
+      }
+    },
+    "nodes": {
+      "title": "ノード",
+      "loading": "ノードを読み込み中...",
+      "count": "{{count}} ノード",
+      "unknown": "不明なノード",
+      "meta": "チーム: {{team}} �� サービス: {{service}} �� 環境: {{env}}",
+      "capacity": "CPU: {{cpu}} �� メモリ: {{memory}} GiB",
+      "emptyFiltered": "フィルターに一致するノードがありません。"
+    },
+    "metadata": {
+      "title": "ノードメタデータ編集",
+      "patchFor": "{{node}} のラベルを更新",
+      "empty": "チーム / サービス / 環境を編集するノードを選択してください",
+      "team": "チーム",
+      "service": "サービス",
+      "environment": "環境",
+      "save": "メタデータを保存",
+      "fixedPrice": "固定価格: {{price}}{{period}}",
+      "periodPrefix": "{{period}} あたり "
+    }
+  },
+  "workloads": {
+    "title": "ワークロードメトリクス",
+    "subtitle": "クラスタのリソース使用量とコスト概要",
+    "hints": {
+      "overview": "日付フィルターは使用量とコストの両方に影響します。詳細ページへ移動する前に更新してください。"
+    },
+    "errors": {
+      "loadMetrics": "クラスタメトリクスの読み込みに失敗しました。"
+    },
+    "subPages": {
+      "title": "サブページ",
+      "metrics": "メトリクス",
+      "resources": "リソース"
+    },
+    "sections": {
+      "resourceUsage": "リソース使用量サマリー",
+      "costSummary": "コストサマリー"
+    },
+    "summary": {
+      "avgCpu": {
+        "label": "平均 CPU",
+        "description": "平均使用 CPU コア数"
+      },
+      "avgMemory": {
+        "label": "平均メモリ",
+        "description": "平均メモリ使用量"
+      },
+      "avgNetwork": {
+        "label": "平均ネットワーク",
+        "description": "平均ネットワークスループット"
+      },
+      "avgStorage": {
+        "label": "平均ストレージ",
+        "description": "平均ストレージ消費量"
+      },
+      "maxCpu": {
+        "label": "最大 CPU",
+        "description": "ピーク CPU 使用量"
+      },
+      "maxMemory": {
+        "label": "最大メモリ",
+        "description": "ピークメモリ使用量"
+      },
+      "maxNetwork": {
+        "label": "最大ネットワーク",
+        "description": "ピークネットワークスループット"
+      },
+      "nodes": {
+        "label": "ノード",
+        "description": "クラスタ内のノード総数"
+      }
+    },
+    "costSummary": {
+      "cpuCost": {
+        "label": "CPU コスト",
+        "description": "CPU 計算コスト"
+      },
+      "memoryCost": {
+        "label": "メモリコスト",
+        "description": "メモリ / RAM コスト"
+      },
+      "networkCost": {
+        "label": "ネットワークコスト",
+        "description": "クラスタネットワーク転送コスト"
+      },
+      "ephemeralStorage": {
+        "label": "一時ストレージ",
+        "description": "一時ディスク使用コスト"
+      },
+      "persistentStorage": {
+        "label": "永続ストレージ",
+        "description": "永続ボリュームコスト"
+      },
+      "totalCost": {
+        "label": "総コスト",
+        "description": "すべてのリソースの合計コスト"
+      }
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "subtitle": "設定を調整し、データソースを同期します。",
+    "general": {
+      "language": "言語",
+      "darkMode": "ダークモード",
+      "version": "バージョン",
+      "updated": "更新済み"
+    },
+    "metrics": {
+      "scrapeInterval": "収集間隔（秒）",
+      "batchSize": "バッチサイズ",
+      "gpuMetrics": "GPU メトリクス",
+      "networkMetrics": "ネットワークメトリクス"
+    },
+    "billing": {
+      "openUnitPrices": "単価を開く",
+      "description": "コスト配分の単価を管理します。"
+    },
+    "sections": {
+      "general": "一般",
+      "metricsRetention": "メトリクスと保持",
+      "billing": "請求"
+    },
+    "hints": {
+      "overview": "設定はライブのコントロールプレーン値を反映します。単価で請求入力を管理し、下のカードからメトリクス収集を調整します。",
+      "timezone": "タイムゾーン設定は日付ピッカーやグラフラベル全体に適用されます。"
+    },
+    "errors": {
+      "load": "設定の読み込みに失敗しました"
+    }
+  },
+  "unitPrices": {
+    "title": "単価",
+    "subtitle": "ワークロードのコスト配分に使用される基本価格を変更します。",
+    "loading": "単価を読み込み中...",
+    "hints": {
+      "overview": "配分に使用される価格入力を編集します。更新で最新の値を取得し、保存時は誤操作を防ぐため確認が必要です。",
+      "editing": "リソース種別ごとにオンデマンドおよびスポット料金を調整します。空欄の項目は変更されません。保存で反映、キャンセルで直前の読み込み状態に戻ります。"
+    },
+    "errors": {
+      "load": "単価の読み込みに失敗しました",
+      "save": "単価の保存に失敗しました"
+    },
+    "messages": {
+      "updated": "単価が正常に更新されました。"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "cpuSpot": "CPU（スポット）",
+      "memory": "メモリ",
+      "memorySpot": "メモリ（スポット）",
+      "gpu": "GPU",
+      "gpuSpot": "GPU（スポット）",
+      "storage": "ストレージ",
+      "networkLocal": "ネットワーク（ローカル）",
+      "networkRegional": "ネットワーク（リージョン）",
+      "networkExternal": "ネットワーク（外部）"
+    },
+    "units": {
+      "coreHour": "/コア 時",
+      "gbHour": "/GB 時",
+      "hour": "/時",
+      "gb": "/GB"
+    },
+    "modals": {
+      "noChanges": {
+        "title": "変更は検出されませんでした",
+        "message": "保存する変更はありません。"
+      },
+      "confirmSave": {
+        "title": "保存の確認",
+        "message": "単価を更新してもよろしいですか？"
+      },
+      "confirmDiscard": {
+        "title": "変更を破棄しますか？",
+        "message": "保存されていない変更は失われます。続行しますか？",
+        "ok": "破棄",
+        "cancel": "戻る"
+      }
+    }
+  },
+  "alerts": {
+    "eyebrow": "可観測性",
+    "title": "アラート設定",
+    "subtitle": "バックエンドで提供されるアラート配信先、件名、評価ルールを管理します。",
+    "loading": "アラート設定を読み込み中...",
+    "hints": {
+      "refresh": "更新するとバックエンドから配信設定を取得します。変更は下記すべてのチャネルに適用されるため、編集後は必ず保存してください。",
+      "configure": "最初に配信先を設定し、その後バックエンド側で評価されるルールを定義します。下部の保存／リセットで変更を確定または破棄できます。"
+    },
+    "metrics": {
+      "cpuUsage": "CPU 使用率 %",
+      "memoryUsage": "メモリ使用率 %",
+      "diskUsage": "ディスク使用率 %",
+      "gpuUsage": "GPU 使用率 %"
+    },
+    "severity": {
+      "info": "情報",
+      "warning": "警告",
+      "critical": "重大"
+    },
+    "defaults": {
+      "subject": "RustCost アラート"
+    },
+    "errors": {
+      "loadSettings": "アラート設定の読み込みに失敗しました",
+      "updateSettings": "アラート設定の更新に失敗しました",
+      "saveSettings": "アラート設定の保存に失敗しました"
+    },
+    "messages": {
+      "updated": "アラート設定が更新されました。"
+    },
+    "delivery": {
+      "badge": "配信",
+      "title": "配信設定",
+      "subtitle": "組み込みのヘルスアラートの有効／無効を切り替え、すべてのチャネルで共通の件名を設定します。",
+      "clusterHealth": "クラスタの健全性",
+      "rustcostHealth": "RustCost の健全性",
+      "subjectLabel": "共通件名",
+      "subjectPlaceholder": "RustCost アラート",
+      "subjectHelp": "すべてのチャネルで使用される件名です。",
+      "linkbackLabel": "リンクバック URL（任意）",
+      "linkbackPlaceholder": "https://dashboard.example.com/alerts",
+      "linkbackHelp": "アラート本文に含め、素早く画面に戻れるようにします。"
+    },
+    "recipients": {
+      "title": "メール受信者",
+      "subtitle": "メールアドレスを1件ずつ追加します。すべての受信者に全アラートが送信されます。",
+      "placeholder": "user@example.com",
+      "removeAriaLabel": "{{email}} を削除",
+      "empty": "受信者はまだ追加されていません。",
+      "count": "{{count}} 件の受信者が設定されています。"
+    },
+    "webhooks": {
+      "title": "Webhook",
+      "subtitle": "チャットシステムにアラートを送信します。空欄にするとそのチャネルは無効になります。",
+      "slack": "Slack Webhook",
+      "teams": "Microsoft Teams Webhook",
+      "discord": "Discord Webhook",
+      "slackPlaceholder": "https://hooks.slack.com/...",
+      "teamsPlaceholder": "https://outlook.office.com/webhook/...",
+      "discordPlaceholder": "https://discord.com/api/webhooks/..."
+    },
+    "rules": {
+      "title": "アラートルール",
+      "subtitle": "バックエンドスケジューラで評価される宣言的条件です。",
+      "add": "ルールを追加",
+      "newRuleName": "新しいアラートルール",
+      "defaultName": "ルール",
+      "idLabel": "ID: {{id}}",
+      "enable": "有効化",
+      "fields": {
+        "name": "名前",
+        "namePlaceholder": "ノードの CPU 使用率が高い",
+        "metric": "メトリクス",
+        "operator": "演算子",
+        "threshold": "しきい値",
+        "thresholdPlaceholder": "80",
+        "duration": "継続時間（秒）",
+        "durationPlaceholder": "60",
+        "severity": "重要度"
+      },
+      "empty": "アラートルールがまだ設定されていません。追加して評価を開始してください。"
+    },
+    "actions": {
+      "saveSettings": "アラート設定を保存"
+    },
+    "notifications": {
+      "ariaLabel": "{{count}} 件のアクティブなアラートがあります",
+      "title": "アラート",
+      "loading": "アラートを読み込み中...",
+      "empty": "アクティブなアラートはありません",
+      "loadError": "アラートの読み込みに失敗しました",
+      "resolveError": "アラートの解決に失敗しました",
+      "resolving": "解決中...",
+      "resolve": "解決",
+      "createdAt": "作成日時: {{timestamp}}"
+    }
+  },
+  "system": {
+    "title": "コントロールプレーン",
+    "subtitle": "ステータス、健全性、設定、単価、管理操作を監視します。",
+    "hints": {
+      "overview": "更新すると、コントロールプレーンの健全性、設定、ログ一覧を取得します。構成のずれやノード遅延がある場合は、下のバックアップ／再同期を使用してください。"
+    },
+    "errors": {
+      "load": "システムデータの読み込みに失敗しました"
+    },
+    "cards": {
+      "status": "ステータス",
+      "health": "健全性",
+      "settings": "設定",
+      "healthAvailable": "利用可能",
+      "healthUnknown": "不明"
+    },
+    "status": {
+      "title": "システムステータス",
+      "refresh": "ステータスを更新",
+      "healthy": "すべてのシステムは正常に稼働しています",
+      "degraded": "サービスの劣化が検出されました",
+      "backup": "バックアップ",
+      "backingUp": "バックアップ中...",
+      "resync": "再同期",
+      "resyncing": "再同期中..."
+    },
+    "backup": {
+      "title": "バックアップ",
+      "subtitle": "構成を保存するための増分バックアップを実行します。",
+      "action": "バックアップ開始",
+      "triggered": "バックアップが開始されました",
+      "lastResponse": "最終応答: {{response}}"
+    },
+    "resync": {
+      "title": "再同期",
+      "subtitle": "上位コンポーネントとの再同期を強制します。",
+      "action": "再同期開始",
+      "triggered": "再同期が開始されました",
+      "lastResponse": "最終応答: {{response}}"
+    },
+    "logs": {
+      "hint": "左側でログファイルを選択するとストリーム表示されます。スクロールで追加分を取得します。ログ確認前にバックアップや再同期を実行できます。",
+      "title": "ログファイル",
+      "subtitle": "最近のアクティビティを確認するログファイルを選択してください。",
+      "loading": "ログを読み込み中...",
+      "detailTitle": "ログ: {{date}}",
+      "detailSubtitle": "スクロールしてさらに読み込みます。最新のエントリが先頭に表示されます。",
+      "loadingMore": "さらに読み込み中..."
+    }
+  }
+}

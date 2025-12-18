@@ -17,14 +17,17 @@ const toPercentLabel = (value?: number) => formatPercent((value ?? 0) * 100);
 const percentWidth = (value?: number) =>
   `${Math.min(100, Math.max(0, (value ?? 0) * 100)).toFixed(1)}%`;
 
-const formatCores = (value?: number) =>
-  value !== undefined && value !== null ? `${value.toFixed(2)} cores` : "N/A";
-
-const formatGigabytes = (value?: number) =>
-  value !== undefined && value !== null ? `${value.toFixed(1)} GB` : "N/A";
-
 export const EfficiencyPage = () => {
   const { t } = useI18n();
+  const formatCores = (value?: number) =>
+    value !== undefined && value !== null
+      ? t("common.units.cores", { value: value.toFixed(2) })
+      : t("common.notAvailable");
+
+  const formatGigabytes = (value?: number) =>
+    value !== undefined && value !== null
+      ? t("common.units.gigabytes", { value: value.toFixed(1) })
+      : t("common.notAvailable");
   const [params, setParams] = useState<MetricsQueryOptions>(() => {
     const range = getDefaultDateRange();
     return withAutoGranularity(range) ?? range;
@@ -43,50 +46,68 @@ export const EfficiencyPage = () => {
   const summaryCards = useMemo(
     () => [
       {
-        label: "Overall efficiency",
+        label: t("efficiency.summary.overall.label"),
         value: toPercentLabel(nodeEfficiency.data?.overall_efficiency),
-        description: `Granularity: ${granularity}`,
+        description: t("efficiency.summary.overall.description", {
+          granularity,
+        }),
       },
       {
-        label: "CPU efficiency",
+        label: t("efficiency.summary.cpu.label"),
         value: toPercentLabel(nodeEfficiency.data?.cpu_efficiency),
         description: nodeEfficiency.data?.total_cpu_allocatable_cores
-          ? `${formatCores(nodeEfficiency.data.total_cpu_allocatable_cores)} allocatable`
+          ? t("efficiency.summary.allocatable", {
+              value: formatCores(
+                nodeEfficiency.data.total_cpu_allocatable_cores
+              ),
+            })
           : undefined,
       },
       {
-        label: "Memory efficiency",
+        label: t("efficiency.summary.memory.label"),
         value: toPercentLabel(nodeEfficiency.data?.memory_efficiency),
         description: nodeEfficiency.data?.total_memory_allocatable_gb
-          ? `${formatGigabytes(nodeEfficiency.data.total_memory_allocatable_gb)} allocatable`
+          ? t("efficiency.summary.allocatable", {
+              value: formatGigabytes(
+                nodeEfficiency.data.total_memory_allocatable_gb
+              ),
+            })
           : undefined,
       },
       {
-        label: "Storage efficiency",
+        label: t("efficiency.summary.storage.label"),
         value: toPercentLabel(nodeEfficiency.data?.storage_efficiency),
         description: nodeEfficiency.data?.total_storage_allocatable_gb
-          ? `${formatGigabytes(nodeEfficiency.data.total_storage_allocatable_gb)} allocatable`
+          ? t("efficiency.summary.allocatable", {
+              value: formatGigabytes(
+                nodeEfficiency.data.total_storage_allocatable_gb
+              ),
+            })
           : undefined,
       },
     ],
-    [granularity, nodeEfficiency.data]
+    [formatCores, formatGigabytes, granularity, nodeEfficiency.data, t]
   );
 
   const efficiencyRows = useMemo(
     () => [
-      { key: "cpu", label: "CPU", value: nodeEfficiency.data?.cpu_efficiency },
+      {
+        key: "cpu",
+        label: t("common.resources.cpu"),
+        value: nodeEfficiency.data?.cpu_efficiency,
+      },
       {
         key: "memory",
-        label: "Memory",
+        label: t("common.resources.memory"),
         value: nodeEfficiency.data?.memory_efficiency,
       },
       {
         key: "storage",
-        label: "Storage",
+        label: t("common.resources.storage"),
         value: nodeEfficiency.data?.storage_efficiency,
       },
     ],
-    [nodeEfficiency.data]
+    [nodeEfficiency.data, t]
   );
 
   const handleParamsChange = useCallback(
@@ -119,8 +140,7 @@ export const EfficiencyPage = () => {
       />
 
       <ExplainHint visible={showExplain}>
-        Use the filters to set your time window; refresh pulls aligned efficiency
-        data using auto-selected granularity.
+        {t("efficiency.hints.filters")}
       </ExplainHint>
 
       {errorMessage && (
@@ -136,13 +156,12 @@ export const EfficiencyPage = () => {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <SharedCard
-          title="Resource efficiency"
-          subtitle="Node utilization by resource type"
+          title={t("efficiency.resourceCard.title")}
+          subtitle={t("efficiency.resourceCard.subtitle")}
           isLoading={nodeEfficiency.isLoading}
         >
           <ExplainHint visible={showExplain}>
-            Bars show efficiency by resource. Hover for precise percentages; the
-            right-hand cards summarize the snapshot details.
+            {t("efficiency.hints.resourceCard")}
           </ExplainHint>
           <div className="space-y-4">
             {efficiencyRows.map((row) => (
@@ -165,13 +184,15 @@ export const EfficiencyPage = () => {
         </SharedCard>
 
         <SharedCard
-          title="Snapshot details"
-          subtitle="Auto-selects minute/hour/day granularity based on the window"
+          title={t("efficiency.snapshotCard.title")}
+          subtitle={t("efficiency.snapshotCard.subtitle")}
           isLoading={nodeEfficiency.isLoading}
         >
           <dl className="space-y-3 text-sm text-gray-700 dark:text-gray-200">
             <div className="flex items-center justify-between">
-              <dt className="text-gray-500 dark:text-gray-400">Start</dt>
+              <dt className="text-gray-500 dark:text-gray-400">
+                {t("common.date.start")}
+              </dt>
               <dd className="font-semibold">
                 {formatDateTime(
                   nodeEfficiency.data?.start ?? params.start ?? ""
@@ -179,20 +200,22 @@ export const EfficiencyPage = () => {
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-gray-500 dark:text-gray-400">End</dt>
+              <dt className="text-gray-500 dark:text-gray-400">
+                {t("common.date.end")}
+              </dt>
               <dd className="font-semibold">
                 {formatDateTime(nodeEfficiency.data?.end ?? params.end ?? "")}
               </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-gray-500 dark:text-gray-400">
-                Granularity (auto)
+                {t("efficiency.snapshotCard.granularityLabel")}
               </dt>
               <dd className="font-semibold capitalize">{granularity}</dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-gray-500 dark:text-gray-400">
-                CPU allocatable
+                {t("efficiency.snapshotCard.cpuAllocatable")}
               </dt>
               <dd className="font-semibold">
                 {formatCores(nodeEfficiency.data?.total_cpu_allocatable_cores)}
@@ -200,7 +223,7 @@ export const EfficiencyPage = () => {
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-gray-500 dark:text-gray-400">
-                Memory allocatable
+                {t("efficiency.snapshotCard.memoryAllocatable")}
               </dt>
               <dd className="font-semibold">
                 {formatGigabytes(
@@ -210,7 +233,7 @@ export const EfficiencyPage = () => {
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-gray-500 dark:text-gray-400">
-                Storage allocatable
+                {t("efficiency.snapshotCard.storageAllocatable")}
               </dt>
               <dd className="font-semibold">
                 {formatGigabytes(

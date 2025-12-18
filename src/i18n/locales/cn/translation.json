@@ -1,0 +1,628 @@
+{
+  "common": {
+    "brandName": "RustCost",
+    "refresh": "搜索",
+    "retry": "重试",
+    "loading": "加载中",
+    "errorTitle": "无法加载数据",
+    "actions": {
+      "expand": "展开",
+      "collapse": "折叠",
+      "close": "关闭",
+      "cancel": "取消",
+      "generating": "生成中...",
+      "saving": "保存中...",
+      "save": "保存",
+      "reset": "重置",
+      "add": "添加",
+      "remove": "移除",
+      "removeSymbol": "x",
+      "clear": "清除",
+      "ok": "确定"
+    },
+    "aria": {
+      "breadcrumb": "面包屑"
+    },
+    "states": {
+      "on": "开启",
+      "off": "关闭",
+      "enabled": "已启用",
+      "disabled": "已禁用"
+    },
+    "table": {
+      "loading": "表格加载中",
+      "empty": "暂无数据"
+    },
+    "metrics": {
+      "loading": "指标加载中"
+    },
+    "timezone": {
+      "label": "时区",
+      "placeholder": "搜索时区（例如：Asia/Seoul）",
+      "noMatches": "无匹配结果",
+      "selected": "已选择"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "memory": "内存",
+      "storage": "存储"
+    },
+    "units": {
+      "cores": "{{value}} 核",
+      "gigabytes": "{{value}} GB"
+    },
+    "notAvailable": "不可用",
+    "versionLabel": "版本 {{version}}",
+    "updatedLabel": "更新时间：{{timestamp}}",
+    "createdLabel": "创建时间：{{timestamp}}",
+    "timeRange": "时间范围",
+    "date": {
+      "start": "开始日期",
+      "end": "结束日期"
+    },
+    "limit": "限制",
+    "sort": "排序"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "trends": "趋势",
+    "efficiency": "效率",
+    "workloads": "工作负载",
+    "resources": "资源",
+    "allocation": "分配",
+    "metrics": "指标",
+    "alerts": "告警",
+    "system": "系统",
+    "settings": "设置",
+    "unitPrices": "单价",
+    "nodes": "节点",
+    "pods": "Pod",
+    "containers": "容器",
+    "deployments": "Deployment",
+    "statefulSets": "StatefulSet",
+    "daemonSets": "DaemonSet",
+    "jobsCronJobs": "Job 与 CronJob",
+    "services": "服务",
+    "ingresses": "Ingress",
+    "namespaces": "命名空间",
+    "persistentVolumes": "PV",
+    "persistentVolumeClaims": "PVC"
+  },
+  "header": {
+    "logoAlt": "标志",
+    "explain": {
+      "show": "显示说明",
+      "hide": "隐藏说明"
+    }
+  },
+  "sidebar": {
+    "navigation": "导航",
+    "versionPrefix": "版本",
+    "actions": {
+      "expandSidebar": "展开侧边栏",
+      "collapseSidebar": "收起侧边栏"
+    }
+  },
+  "theme": {
+    "toggleAriaLabel": "切换深色模式"
+  },
+  "pdf": {
+    "badge": "PDF 导出",
+    "title": "导出为 PDF",
+    "subtitle": "使用报告数据生成适用于 A4 的 PDF。",
+    "documentTitle": "RustCost 报告",
+    "generatedLabel": "生成时间：{{timestamp}}",
+    "closeAriaLabel": "关闭 PDF 覆盖层",
+    "preview": {
+      "placeholder": "文档布局（A4）预览。图表或其他内容可稍后插入。"
+    },
+    "print": {
+      "placeholder": "在此渲染图表或其他内容。"
+    },
+    "options": {
+      "title": "选项",
+      "body": "使用左侧显示的数据渲染干净的 A4 PDF。无论应用模式如何，均使用浅色主题。"
+    },
+    "actions": {
+      "printSave": "打印 / 保存 PDF"
+    },
+    "error": {
+      "openWindow": "无法打开打印窗口",
+      "generatePreview": "生成 PDF 预览失败"
+    }
+  },
+  "dashboard": {
+    "title": "RustCost 概览",
+    "subtitle": "统一查看成本与效率信号。",
+    "actions": {
+      "exportPdf": "导出 PDF"
+    },
+    "costSeries": {
+      "totalCost": "总成本",
+      "cpu": "CPU",
+      "memory": "内存",
+      "storage": "存储"
+    },
+    "summary": {
+      "totalCost": {
+        "label": "总成本",
+        "description": "所有集群成本"
+      },
+      "cpuCost": {
+        "label": "CPU 成本",
+        "description": "计算开销"
+      },
+      "memoryCost": {
+        "label": "内存成本",
+        "description": "RAM 开销"
+      },
+      "storageNetwork": {
+        "label": "存储 + 网络",
+        "description": "临时、持久化、网络"
+      }
+    },
+    "costFields": {
+      "storageCost": "存储成本",
+      "networkCost": "网络成本"
+    },
+    "chart": {
+      "title": "集群成本趋势",
+      "subtitle": "所选时间窗口内的成本构成"
+    },
+    "hints": {
+      "filters": "筛选条件会应用于下方所有组件。设置日期范围后，点击刷新以获取仪表盘中对齐的数据。",
+      "summaryCards": "汇总卡片显示所选时间窗口内的总成本、CPU、内存以及存储+网络成本，并随上方筛选条件刷新。",
+      "costTrend": "成本趋势图按时间展示各成本组成部分。悬停可查看精确数值；X 轴遵循所选日期范围。",
+      "systemStatus": "系统状态汇总后端服务报告的平台健康状况与告警。"
+    },
+    "pdf": {
+      "documentTitle": "RustCost 成本报告"
+    },
+    "overview": {
+      "title": "关键信号"
+    },
+    "metrics": {
+      "nodes": "节点成本与使用情况",
+      "pods": "Pod 效率",
+      "trends": "使用趋势",
+      "efficiency": "效率分析"
+    },
+    "cards": {
+      "nodeCpu": {
+        "title": "节点 CPU 使用率",
+        "description": "全集群毫核消耗"
+      },
+      "nodeMemory": {
+        "title": "节点内存使用率",
+        "description": "Pod 内存占用汇总"
+      },
+      "podEfficiency": {
+        "title": "Pod 效率",
+        "description": "平均工作负载效率评分"
+      },
+      "podCost": {
+        "title": "Pod 成本",
+        "description": "筛选后 Pod 的报告支出"
+      }
+    }
+  },
+  "trends": {
+    "title": "趋势",
+    "subtitle": "探索历史性能与成本趋势。",
+    "chart": {
+      "cluster": "集群利用率趋势",
+      "namespace": "命名空间 CPU 趋势"
+    }
+  },
+  "efficiency": {
+    "title": "效率",
+    "subtitle": "比较不同命名空间和工作负载的效率。",
+    "table": {
+      "namespace": "命名空间效率",
+      "deployment": "Deployment 效率"
+    },
+    "summary": {
+      "overall": {
+        "label": "整体效率",
+        "description": "粒度：{{granularity}}"
+      },
+      "cpu": {
+        "label": "CPU 效率"
+      },
+      "memory": {
+        "label": "内存效率"
+      },
+      "storage": {
+        "label": "存储效率"
+      },
+      "allocatable": "{{value}} 可分配"
+    },
+    "resourceCard": {
+      "title": "资源效率",
+      "subtitle": "按资源类型的节点利用率"
+    },
+    "snapshotCard": {
+      "title": "快照详情",
+      "subtitle": "根据时间窗口自动选择分钟/小时/天粒度",
+      "granularityLabel": "粒度（自动）",
+      "cpuAllocatable": "CPU 可分配",
+      "memoryAllocatable": "内存可分配",
+      "storageAllocatable": "存储可分配"
+    },
+    "hints": {
+      "filters": "使用筛选条件设置时间窗口；刷新将使用自动选择的粒度拉取对齐的效率数据。",
+      "resourceCard": "柱状图显示按资源的效率。悬停可查看精确百分比；右侧卡片汇总快照详情。"
+    }
+  },
+  "allocation": {
+    "title": "节点分配",
+    "subtitle": "按团队、服务或环境筛选 Kubernetes 节点，调整元数据，并按节点跟踪成本。",
+    "hints": {
+      "backend": "后端：list_k8s_nodes（team/service/env 查询）+ patch_info_k8s_node_filter + get_metric_k8s_nodes_cost。使用筛选条件查询，然后编辑所选节点的元数据。"
+    },
+    "errors": {
+      "nodesLoad": "加载节点清单失败",
+      "costsLoad": "加载节点成本失败",
+      "metadataUpdate": "更新节点元数据失败"
+    },
+    "messages": {
+      "metadataSaved": "节点元数据已更新。"
+    },
+    "team": {
+      "unassigned": "未分配"
+    },
+    "teamCoverage": {
+      "label": "团队",
+      "title": "团队覆盖率",
+      "summary": "按团队标签分组的 {{count}} 个节点",
+      "chartType": "饼图",
+      "empty": "未找到节点。"
+    },
+    "chart": {
+      "title": "节点成本趋势",
+      "subtitle": "每节点成本（总 USD）"
+    },
+    "filters": {
+      "team": "团队",
+      "service": "服务",
+      "environment": "环境",
+      "apply": "应用筛选",
+      "searchLabel": "按节点名称搜索",
+      "placeholders": {
+        "team": "团队标签",
+        "service": "服务标签",
+        "environment": "dev / stage / prod",
+        "search": "例如：ip-10-0-0-1"
+      }
+    },
+    "nodes": {
+      "title": "节点",
+      "loading": "节点加载中...",
+      "count": "{{count}} 个节点",
+      "unknown": "未知节点",
+      "meta": "团队：{{team}} �� 服务：{{service}} �� 环境：{{env}}",
+      "capacity": "cpu：{{cpu}} �� 内存：{{memory}} GiB",
+      "emptyFiltered": "没有符合筛选条件的节点。"
+    },
+    "metadata": {
+      "title": "编辑节点元数据",
+      "patchFor": "为 {{node}} 打补丁标签",
+      "empty": "请选择要编辑团队 / 服务 / 环境的节点",
+      "team": "团队",
+      "service": "服务",
+      "environment": "环境",
+      "save": "保存元数据",
+      "fixedPrice": "固定价格：{{price}}{{period}}",
+      "periodPrefix": "每 {{period}} "
+    }
+  },
+  "workloads": {
+    "title": "工作负载指标",
+    "subtitle": "集群资源使用与成本概览",
+    "hints": {
+      "overview": "日期筛选同时驱动使用量和成本汇总。在进入详细子页面前请刷新以拉取对齐的指标。"
+    },
+    "errors": {
+      "loadMetrics": "加载集群指标失败。"
+    },
+    "subPages": {
+      "title": "子页面",
+      "metrics": "指标",
+      "resources": "资源"
+    },
+    "sections": {
+      "resourceUsage": "资源使用汇总",
+      "costSummary": "成本汇总"
+    },
+    "summary": {
+      "avgCpu": {
+        "label": "平均 CPU",
+        "description": "平均使用的 CPU 核数"
+      },
+      "avgMemory": {
+        "label": "平均内存",
+        "description": "平均内存使用量"
+      },
+      "avgNetwork": {
+        "label": "平均网络",
+        "description": "平均网络吞吐量"
+      },
+      "avgStorage": {
+        "label": "平均存储",
+        "description": "平均存储消耗"
+      },
+      "maxCpu": {
+        "label": "最大 CPU",
+        "description": "峰值 CPU 使用量"
+      },
+      "maxMemory": {
+        "label": "最大内存",
+        "description": "峰值内存使用量"
+      },
+      "maxNetwork": {
+        "label": "最大网络",
+        "description": "峰值网络吞吐量"
+      },
+      "nodes": {
+        "label": "节点",
+        "description": "集群中的节点总数"
+      }
+    },
+    "costSummary": {
+      "cpuCost": {
+        "label": "CPU 成本",
+        "description": "CPU 计算成本"
+      },
+      "memoryCost": {
+        "label": "内存成本",
+        "description": "内存 / RAM 成本"
+      },
+      "networkCost": {
+        "label": "网络成本",
+        "description": "集群网络传输成本"
+      },
+      "ephemeralStorage": {
+        "label": "临时存储",
+        "description": "临时磁盘使用成本"
+      },
+      "persistentStorage": {
+        "label": "持久化存储",
+        "description": "持久卷成本"
+      },
+      "totalCost": {
+        "label": "总成本",
+        "description": "所有资源的总成本"
+      }
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "调整偏好并同步数据源。",
+    "general": {
+      "language": "语言",
+      "darkMode": "深色模式",
+      "version": "版本",
+      "updated": "已更新"
+    },
+    "metrics": {
+      "scrapeInterval": "采集间隔（秒）",
+      "batchSize": "批量大小",
+      "gpuMetrics": "GPU 指标",
+      "networkMetrics": "网络指标"
+    },
+    "billing": {
+      "openUnitPrices": "打开单价",
+      "description": "管理成本分配单价。"
+    },
+    "sections": {
+      "general": "常规",
+      "metricsRetention": "指标与保留",
+      "billing": "计费"
+    },
+    "hints": {
+      "overview": "设置反映实时控制平面值。使用单价管理计费输入，并在下方卡片中调整指标采集。",
+      "timezone": "时区选择会应用于日期选择器和图表标签，确保团队一致读取时间戳。"
+    },
+    "errors": {
+      "load": "加载设置失败"
+    }
+  },
+  "unitPrices": {
+    "title": "单价",
+    "subtitle": "修改用于工作负载成本分配的原始价格。",
+    "loading": "单价加载中...",
+    "hints": {
+      "overview": "编辑用于分配的价格输入。刷新以获取当前值；保存需确认以避免误覆盖。",
+      "editing": "按资源类型调整按需和抢占式价格。空字段将保持不变；使用保存以持久化，或取消以恢复到上次加载状态。"
+    },
+    "errors": {
+      "load": "加载单价失败",
+      "save": "保存单价失败"
+    },
+    "messages": {
+      "updated": "单价更新成功。"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "cpuSpot": "CPU（抢占式）",
+      "memory": "内存",
+      "memorySpot": "内存（抢占式）",
+      "gpu": "GPU",
+      "gpuSpot": "GPU（抢占式）",
+      "storage": "存储",
+      "networkLocal": "网络（本地）",
+      "networkRegional": "网络（区域）",
+      "networkExternal": "网络（外部）"
+    },
+    "units": {
+      "coreHour": "/核·小时",
+      "gbHour": "/GB·小时",
+      "hour": "/小时",
+      "gb": "/GB"
+    },
+    "modals": {
+      "noChanges": {
+        "title": "未检测到更改",
+        "message": "没有需要保存的修改。"
+      },
+      "confirmSave": {
+        "title": "确认保存",
+        "message": "确定要更新单价吗？"
+      },
+      "confirmDiscard": {
+        "title": "放弃更改？",
+        "message": "未保存的更改将丢失。是否继续？",
+        "ok": "放弃",
+        "cancel": "保留"
+      }
+    }
+  },
+  "alerts": {
+    "eyebrow": "可观测性",
+    "title": "告警设置",
+    "subtitle": "管理由后端提供的告警投递目标、主题和评估规则。",
+    "loading": "告警设置加载中...",
+    "hints": {
+      "refresh": "刷新将从后端拉取告警投递设置。更改会应用于下方列出的所有通道；编辑后请记得保存。",
+      "configure": "先配置投递目标，然后定义由后端评估指标的规则。使用底部的保存/重置控件提交或放弃修改。"
+    },
+    "metrics": {
+      "cpuUsage": "CPU 使用率 %",
+      "memoryUsage": "内存使用率 %",
+      "diskUsage": "磁盘使用率 %",
+      "gpuUsage": "GPU 使用率 %"
+    },
+    "severity": {
+      "info": "信息",
+      "warning": "警告",
+      "critical": "严重"
+    },
+    "defaults": {
+      "subject": "RustCost 告警"
+    },
+    "errors": {
+      "loadSettings": "加载告警设置失败",
+      "updateSettings": "更新告警设置失败",
+      "saveSettings": "保存告警设置失败"
+    },
+    "messages": {
+      "updated": "告警设置已更新。"
+    },
+    "delivery": {
+      "badge": "投递",
+      "title": "投递偏好",
+      "subtitle": "开启或关闭内置健康告警，并为所有通道设置统一主题。",
+      "clusterHealth": "集群健康",
+      "rustcostHealth": "RustCost 健康",
+      "subjectLabel": "全局主题",
+      "subjectPlaceholder": "RustCost 告警",
+      "subjectHelp": "作为所有通道的主题行。",
+      "linkbackLabel": "回链 URL（可选）",
+      "linkbackPlaceholder": "https://dashboard.example.com/alerts",
+      "linkbackHelp": "包含在告警内容中以便快速导航。"
+    },
+    "recipients": {
+      "title": "邮件接收人",
+      "subtitle": "逐个添加地址。所有接收人都会收到每一条告警。",
+      "placeholder": "user@example.com",
+      "removeAriaLabel": "移除 {{email}}",
+      "empty": "尚未添加接收人。",
+      "count": "已配置 {{count}} 位接收人。"
+    },
+    "webhooks": {
+      "title": "Webhook",
+      "subtitle": "将告警发送到聊天系统。留空以禁用该通道。",
+      "slack": "Slack Webhook",
+      "teams": "Microsoft Teams Webhook",
+      "discord": "Discord Webhook",
+      "slackPlaceholder": "https://hooks.slack.com/...",
+      "teamsPlaceholder": "https://outlook.office.com/webhook/...",
+      "discordPlaceholder": "https://discord.com/api/webhooks/..."
+    },
+    "rules": {
+      "title": "告警规则",
+      "subtitle": "由后端调度器评估的声明式条件。",
+      "add": "添加规则",
+      "newRuleName": "新告警规则",
+      "defaultName": "规则",
+      "idLabel": "ID：{{id}}",
+      "enable": "启用",
+      "fields": {
+        "name": "名称",
+        "namePlaceholder": "节点 CPU 过高",
+        "metric": "指标",
+        "operator": "运算符",
+        "threshold": "阈值",
+        "thresholdPlaceholder": "80",
+        "duration": "持续时间（秒）",
+        "durationPlaceholder": "60",
+        "severity": "严重级别"
+      },
+      "empty": "尚未配置告警规则。添加一个以开始评估指标。"
+    },
+    "actions": {
+      "saveSettings": "保存告警设置"
+    },
+    "notifications": {
+      "ariaLabel": "您有 {{count}} 条活动告警",
+      "title": "告警",
+      "loading": "告警加载中...",
+      "empty": "暂无活动告警",
+      "loadError": "加载告警失败",
+      "resolveError": "解决告警失败",
+      "resolving": "解决中...",
+      "resolve": "解决",
+      "createdAt": "创建时间：{{timestamp}}"
+    }
+  },
+  "system": {
+    "title": "控制平面",
+    "subtitle": "监控状态、健康、设置、单价以及管理操作。",
+    "hints": {
+      "overview": "刷新以拉取实时控制平面健康状态、设置和日志清单。当配置漂移或节点滞后时，可使用下方的备份/重新同步操作。"
+    },
+    "errors": {
+      "load": "加载系统数据失败"
+    },
+    "cards": {
+      "status": "状态",
+      "health": "健康",
+      "settings": "设置",
+      "healthAvailable": "可用",
+      "healthUnknown": "未知"
+    },
+    "status": {
+      "title": "系统状态",
+      "refresh": "刷新状态",
+      "healthy": "所有系统运行正常",
+      "degraded": "检测到服务降级",
+      "backup": "备份",
+      "backingUp": "备份中...",
+      "resync": "重新同步",
+      "resyncing": "重新同步中..."
+    },
+    "backup": {
+      "title": "备份",
+      "subtitle": "触发增量备份以捕获配置。",
+      "action": "开始备份",
+      "triggered": "备份已触发",
+      "lastResponse": "上次响应：{{response}}"
+    },
+    "resync": {
+      "title": "重新同步",
+      "subtitle": "强制与上游组件重新同步。",
+      "action": "开始重新同步",
+      "triggered": "重新同步已触发",
+      "lastResponse": "上次响应：{{response}}"
+    },
+    "logs": {
+      "hint": "在左侧选择日志文件以流式查看条目；滚动会加载更多内容。在查看日志前，可使用上方操作触发新的备份或重新同步。",
+      "title": "日志文件",
+      "subtitle": "选择日志文件以查看最近活动。",
+      "loading": "日志加载中...",
+      "detailTitle": "日志：{{date}}",
+      "detailSubtitle": "滚动加载更多。最新条目优先显示。",
+      "loadingMore": "加载更多..."
+    }
+  }
+}

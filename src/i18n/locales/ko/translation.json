@@ -1,8 +1,72 @@
 {
+  "common": {
+    "brandName": "RustCost",
+    "refresh": "검색",
+    "retry": "재시도",
+    "loading": "로딩 중",
+    "errorTitle": "데이터를 불러올 수 없습니다",
+    "actions": {
+      "expand": "확장",
+      "collapse": "접기",
+      "close": "닫기",
+      "cancel": "취소",
+      "generating": "생성 중...",
+      "saving": "저장 중...",
+      "save": "저장",
+      "reset": "초기화",
+      "add": "추가",
+      "remove": "제거",
+      "removeSymbol": "x",
+      "clear": "지우기",
+      "ok": "확인"
+    },
+    "aria": {
+      "breadcrumb": "탐색 경로"
+    },
+    "states": {
+      "on": "켜짐",
+      "off": "꺼짐",
+      "enabled": "활성화됨",
+      "disabled": "비활성화됨"
+    },
+    "table": {
+      "loading": "테이블 로딩 중",
+      "empty": "데이터가 없습니다"
+    },
+    "metrics": {
+      "loading": "메트릭 로딩 중"
+    },
+    "timezone": {
+      "label": "시간대",
+      "placeholder": "시간대 검색 (예: Asia/Seoul)",
+      "noMatches": "일치하는 항목 없음",
+      "selected": "선택됨"
+    },
+    "resources": {
+      "cpu": "CPU",
+      "memory": "메모리",
+      "storage": "스토리지"
+    },
+    "units": {
+      "cores": "{{value}} 코어",
+      "gigabytes": "{{value}} GB"
+    },
+    "notAvailable": "해당 없음",
+    "versionLabel": "버전 {{version}}",
+    "updatedLabel": "업데이트: {{timestamp}}",
+    "createdLabel": "생성: {{timestamp}}",
+    "timeRange": "시간 범위",
+    "date": {
+      "start": "시작 날짜",
+      "end": "종료 날짜"
+    },
+    "limit": "제한",
+    "sort": "정렬"
+  },
   "nav": {
     "dashboard": "대시보드",
-    "trends": "트렌드",
-    "efficiency": "효율성",
+    "trends": "추세",
+    "efficiency": "효율",
     "workloads": "워크로드",
     "resources": "리소스",
     "allocation": "할당",
@@ -14,90 +78,551 @@
     "nodes": "노드",
     "pods": "파드",
     "containers": "컨테이너",
-    "deployments": "배포",
-    "statefulSets": "스테이트풀셋",
-    "daemonSets": "데몬셋",
-    "jobsCronJobs": "잡 · 크론잡",
+    "deployments": "디플로이먼트",
+    "statefulSets": "StatefulSet",
+    "daemonSets": "DaemonSet",
+    "jobsCronJobs": "잡 & 크론잡",
     "services": "서비스",
     "ingresses": "인그레스",
     "namespaces": "네임스페이스",
-    "persistentVolumes": "퍼시스턴트 볼륨",
-    "persistentVolumeClaims": "퍼시스턴트 볼륨 클레임"
+    "persistentVolumes": "PV",
+    "persistentVolumeClaims": "PVC"
   },
-  "common": {
-    "refresh": "검색",
-    "retry": "재시도",
-    "loading": "불러오는 중",
-    "errorTitle": "데이터를 불러오지 못했습니다",
-    "timeRange": "기간",
-    "date": {
-      "start": "시작 날짜",
-      "end": "종료 날짜"
+  "header": {
+    "logoAlt": "로고",
+    "explain": {
+      "show": "설명 표시",
+      "hide": "설명 숨기기"
+    }
+  },
+  "sidebar": {
+    "navigation": "내비게이션",
+    "versionPrefix": "버전",
+    "actions": {
+      "expandSidebar": "사이드바 확장",
+      "collapseSidebar": "사이드바 접기"
+    }
+  },
+  "theme": {
+    "toggleAriaLabel": "다크 모드 전환"
+  },
+  "pdf": {
+    "badge": "PDF 내보내기",
+    "title": "PDF로 내보내기",
+    "subtitle": "보고서 데이터를 사용해 A4 형식의 PDF를 생성합니다.",
+    "documentTitle": "RustCost 보고서",
+    "generatedLabel": "생성됨: {{timestamp}}",
+    "closeAriaLabel": "PDF 오버레이 닫기",
+    "preview": {
+      "placeholder": "문서 레이아웃(A4) 미리보기입니다. 차트나 추가 콘텐츠는 이후에 삽입할 수 있습니다."
     },
-    "limit": "개수",
-    "sort": "정렬"
+    "print": {
+      "placeholder": "여기에 차트 또는 추가 콘텐츠를 렌더링합니다."
+    },
+    "options": {
+      "title": "옵션",
+      "body": "왼쪽에 표시된 데이터를 사용해 깔끔한 A4 PDF를 렌더링합니다. 앱 모드와 관계없이 라이트 테마를 사용합니다."
+    },
+    "actions": {
+      "printSave": "PDF 인쇄 / 저장"
+    },
+    "error": {
+      "openWindow": "인쇄 창을 열 수 없습니다",
+      "generatePreview": "PDF 미리보기를 생성하지 못했습니다"
+    }
   },
   "dashboard": {
     "title": "RustCost 개요",
-    "subtitle": "비용과 효율 신호를 한눈에 확인하세요.",
+    "subtitle": "비용 및 효율 신호를 통합적으로 확인합니다.",
+    "actions": {
+      "exportPdf": "PDF 내보내기"
+    },
+    "costSeries": {
+      "totalCost": "총 비용",
+      "cpu": "CPU",
+      "memory": "메모리",
+      "storage": "스토리지"
+    },
+    "summary": {
+      "totalCost": {
+        "label": "총 비용",
+        "description": "전체 클러스터 비용"
+      },
+      "cpuCost": {
+        "label": "CPU 비용",
+        "description": "컴퓨팅 지출"
+      },
+      "memoryCost": {
+        "label": "메모리 비용",
+        "description": "RAM 지출"
+      },
+      "storageNetwork": {
+        "label": "스토리지 + 네트워크",
+        "description": "임시, 영구, 네트워크"
+      }
+    },
+    "costFields": {
+      "storageCost": "스토리지 비용",
+      "networkCost": "네트워크 비용"
+    },
+    "chart": {
+      "title": "클러스터 비용 추세",
+      "subtitle": "선택한 기간의 비용 구성 요소"
+    },
+    "hints": {
+      "filters": "필터는 아래의 모든 위젯에 적용됩니다. 날짜 범위를 설정한 후 새로고침을 눌러 대시보드 전반의 데이터를 동기화하세요.",
+      "summaryCards": "요약 카드는 선택한 기간의 총 비용, CPU, 메모리, 스토리지+네트워크 비용을 표시합니다. 상단 필터와 함께 새로고침됩니다.",
+      "costTrend": "비용 추세는 각 비용 구성 요소를 시간에 따라 표시합니다. 마우스를 올리면 정확한 값을 확인할 수 있으며, X축은 선택한 날짜 범위를 따릅니다.",
+      "systemStatus": "시스템 상태는 백엔드 서비스에서 보고된 플랫폼 상태와 알림을 요약합니다."
+    },
+    "pdf": {
+      "documentTitle": "RustCost 비용 보고서"
+    },
     "overview": {
       "title": "주요 지표"
     },
     "metrics": {
       "nodes": "노드 비용 및 사용량",
-      "pods": "파드 효율성",
-      "trends": "사용 추이",
-      "efficiency": "효율성 분석"
+      "pods": "파드 효율",
+      "trends": "사용 추세",
+      "efficiency": "효율 분석"
     },
     "cards": {
       "nodeCpu": {
         "title": "노드 CPU 사용량",
-        "description": "클러스터 전체의 milli-core 소비량"
+        "description": "클러스터 전체 밀리코어 사용량"
       },
       "nodeMemory": {
         "title": "노드 메모리 사용량",
-        "description": "파드 메모리 사용량 집계"
+        "description": "파드 메모리 사용량 합계"
       },
       "podEfficiency": {
-        "title": "파드 효율성",
+        "title": "파드 효율",
         "description": "평균 워크로드 효율 점수"
       },
       "podCost": {
         "title": "파드 비용",
-        "description": "필터링된 파드의 보고 비용"
+        "description": "필터된 파드의 보고된 지출"
       }
     }
   },
   "trends": {
-    "title": "트렌드",
-    "subtitle": "성능과 비용의 추세를 살펴보세요.",
+    "title": "추세",
+    "subtitle": "과거 성능 및 비용 추세를 탐색합니다.",
     "chart": {
-      "cluster": "클러스터 활용도 추세",
+      "cluster": "클러스터 사용률 추세",
       "namespace": "네임스페이스 CPU 추세"
     }
   },
   "efficiency": {
-    "title": "효율성",
-    "subtitle": "네임스페이스와 워크로드의 효율을 비교하세요.",
+    "title": "효율",
+    "subtitle": "네임스페이스와 워크로드 간 효율을 비교합니다.",
     "table": {
-      "namespace": "네임스페이스 효율성",
-      "deployment": "배포 효율성"
+      "namespace": "네임스페이스 효율",
+      "deployment": "디플로이먼트 효율"
+    },
+    "summary": {
+      "overall": {
+        "label": "전체 효율",
+        "description": "세분성: {{granularity}}"
+      },
+      "cpu": {
+        "label": "CPU 효율"
+      },
+      "memory": {
+        "label": "메모리 효율"
+      },
+      "storage": {
+        "label": "스토리지 효율"
+      },
+      "allocatable": "{{value}} 할당 가능"
+    },
+    "resourceCard": {
+      "title": "리소스 효율",
+      "subtitle": "리소스 유형별 노드 사용률"
+    },
+    "snapshotCard": {
+      "title": "스냅샷 세부 정보",
+      "subtitle": "기간에 따라 분/시간/일 단위 세분성을 자동 선택",
+      "granularityLabel": "세분성 (자동)",
+      "cpuAllocatable": "CPU 할당 가능",
+      "memoryAllocatable": "메모리 할당 가능",
+      "storageAllocatable": "스토리지 할당 가능"
+    },
+    "hints": {
+      "filters": "필터를 사용해 시간 범위를 설정하세요. 새로고침 시 자동 선택된 세분성을 사용해 효율 데이터를 동기화합니다.",
+      "resourceCard": "막대는 리소스별 효율을 표시합니다. 마우스를 올리면 정확한 비율을 확인할 수 있으며, 오른쪽 카드에는 스냅샷 세부 정보가 요약됩니다."
+    }
+  },
+  "allocation": {
+    "title": "노드 할당",
+    "subtitle": "팀, 서비스 또는 환경별로 Kubernetes 노드를 필터링하고 메타데이터를 조정하며 노드별 비용을 추적합니다.",
+    "hints": {
+      "backend": "백엔드: list_k8s_nodes (team/service/env 쿼리) + patch_info_k8s_node_filter + get_metric_k8s_nodes_cost. 필터로 조회한 뒤 선택한 노드의 메타데이터를 편집하세요."
+    },
+    "errors": {
+      "nodesLoad": "노드 인벤토리를 불러오지 못했습니다",
+      "costsLoad": "노드 비용을 불러오지 못했습니다",
+      "metadataUpdate": "노드 메타데이터 업데이트에 실패했습니다"
+    },
+    "messages": {
+      "metadataSaved": "노드 메타데이터가 업데이트되었습니다."
+    },
+    "team": {
+      "unassigned": "미할당"
+    },
+    "teamCoverage": {
+      "label": "팀",
+      "title": "팀 커버리지",
+      "summary": "팀 라벨로 그룹화된 노드 {{count}}개",
+      "chartType": "파이",
+      "empty": "노드를 찾을 수 없습니다."
+    },
+    "chart": {
+      "title": "노드 비용 추세",
+      "subtitle": "노드별 비용 (총 USD)"
+    },
+    "filters": {
+      "team": "팀",
+      "service": "서비스",
+      "environment": "환경",
+      "apply": "필터 적용",
+      "searchLabel": "노드 이름으로 검색",
+      "placeholders": {
+        "team": "팀 라벨",
+        "service": "서비스 라벨",
+        "environment": "dev / stage / prod",
+        "search": "예: ip-10-0-0-1"
+      }
+    },
+    "nodes": {
+      "title": "노드",
+      "loading": "노드 로딩 중...",
+      "count": "노드 {{count}}개",
+      "unknown": "알 수 없는 노드",
+      "meta": "팀: {{team}} �� 서비스: {{service}} �� 환경: {{env}}",
+      "capacity": "cpu: {{cpu}} �� 메모리: {{memory}} GiB",
+      "emptyFiltered": "필터와 일치하는 노드가 없습니다."
+    },
+    "metadata": {
+      "title": "노드 메타데이터 편집",
+      "patchFor": "{{node}}에 대한 라벨 패치",
+      "empty": "팀 / 서비스 / 환경을 편집할 노드를 선택하세요",
+      "team": "팀",
+      "service": "서비스",
+      "environment": "환경",
+      "save": "메타데이터 저장",
+      "fixedPrice": "고정 가격: {{price}}{{period}}",
+      "periodPrefix": "{{period}}당 "
+    }
+  },
+  "workloads": {
+    "title": "워크로드 메트릭",
+    "subtitle": "클러스터 리소스 사용량 및 비용 개요",
+    "hints": {
+      "overview": "날짜 필터는 사용량과 비용 요약 모두에 적용됩니다. 상세 하위 페이지로 이동하기 전에 새로고침하여 메트릭을 동기화하세요."
+    },
+    "errors": {
+      "loadMetrics": "클러스터 메트릭을 불러오지 못했습니다."
+    },
+    "subPages": {
+      "title": "하위 페이지",
+      "metrics": "메트릭",
+      "resources": "리소스"
+    },
+    "sections": {
+      "resourceUsage": "리소스 사용 요약",
+      "costSummary": "비용 요약"
+    },
+    "summary": {
+      "avgCpu": {
+        "label": "평균 CPU",
+        "description": "평균 CPU 코어 사용량"
+      },
+      "avgMemory": {
+        "label": "평균 메모리",
+        "description": "평균 메모리 사용량"
+      },
+      "avgNetwork": {
+        "label": "평균 네트워크",
+        "description": "평균 네트워크 처리량"
+      },
+      "avgStorage": {
+        "label": "평균 스토리지",
+        "description": "평균 스토리지 사용량"
+      },
+      "maxCpu": {
+        "label": "최대 CPU",
+        "description": "최대 CPU 사용량"
+      },
+      "maxMemory": {
+        "label": "최대 메모리",
+        "description": "최대 메모리 사용량"
+      },
+      "maxNetwork": {
+        "label": "최대 네트워크",
+        "description": "최대 네트워크 처리량"
+      },
+      "nodes": {
+        "label": "노드",
+        "description": "클러스터 내 총 노드 수"
+      }
+    },
+    "costSummary": {
+      "cpuCost": {
+        "label": "CPU 비용",
+        "description": "CPU 컴퓨팅 비용"
+      },
+      "memoryCost": {
+        "label": "메모리 비용",
+        "description": "메모리/RAM 비용"
+      },
+      "networkCost": {
+        "label": "네트워크 비용",
+        "description": "클러스터 네트워크 전송 비용"
+      },
+      "ephemeralStorage": {
+        "label": "임시 스토리지",
+        "description": "임시 디스크 사용 비용"
+      },
+      "persistentStorage": {
+        "label": "영구 스토리지",
+        "description": "영구 볼륨 비용"
+      },
+      "totalCost": {
+        "label": "총 비용",
+        "description": "모든 리소스의 총 비용"
+      }
     }
   },
   "settings": {
     "title": "설정",
-    "subtitle": "환경을 조정하고 데이터 소스를 동기화하세요."
+    "subtitle": "환경 설정을 조정하고 데이터 소스를 동기화합니다.",
+    "general": {
+      "language": "언어",
+      "darkMode": "다크 모드",
+      "version": "버전",
+      "updated": "업데이트됨"
+    },
+    "metrics": {
+      "scrapeInterval": "스크레이프 간격 (초)",
+      "batchSize": "배치 크기",
+      "gpuMetrics": "GPU 메트릭",
+      "networkMetrics": "네트워크 메트릭"
+    },
+    "billing": {
+      "openUnitPrices": "단가 열기",
+      "description": "비용 할당 단가를 관리합니다."
+    },
+    "sections": {
+      "general": "일반",
+      "metricsRetention": "메트릭 및 보존",
+      "billing": "청구"
+    },
+    "hints": {
+      "overview": "설정은 실시간 컨트롤 플레인 값을 반영합니다. 단가를 사용해 청구 입력을 관리하고 아래 카드에서 메트릭 수집을 조정하세요.",
+      "timezone": "시간대 선택은 날짜 선택기와 차트 레이블 전반에 적용되어 팀이 타임스탬프를 일관되게 확인할 수 있습니다."
+    },
+    "errors": {
+      "load": "설정을 불러오지 못했습니다"
+    }
+  },
+  "unitPrices": {
+    "title": "단가",
+    "subtitle": "워크로드 비용 할당에 사용되는 원시 가격을 수정합니다.",
+    "loading": "단가 로딩 중...",
+    "hints": {
+      "overview": "할당에 사용되는 가격 입력을 편집합니다. 새로고침하여 현재 값을 불러오며, 실수로 덮어쓰는 것을 방지하기 위해 저장 시 확인이 필요합니다.",
+      "editing": "리소스 유형별 온디맨드 및 스팟 요금을 조정합니다. 비어 있는 필드는 변경되지 않으며, 저장으로 반영하거나 취소로 마지막 로드 상태로 되돌릴 수 있습니다."
+    },
+    "errors": {
+      "load": "단가를 불러오지 못했습니다",
+      "save": "단가 저장에 실패했습니다"
+    },
+    "messages": {
+      "updated": "단가가 성공적으로 업데이트되었습니다."
+    },
+    "resources": {
+      "cpu": "CPU",
+      "cpuSpot": "CPU (스팟)",
+      "memory": "메모리",
+      "memorySpot": "메모리 (스팟)",
+      "gpu": "GPU",
+      "gpuSpot": "GPU (스팟)",
+      "storage": "스토리지",
+      "networkLocal": "네트워크 (로컬)",
+      "networkRegional": "네트워크 (리전)",
+      "networkExternal": "네트워크 (외부)"
+    },
+    "units": {
+      "coreHour": "/코어 시간",
+      "gbHour": "/GB 시간",
+      "hour": "/시간",
+      "gb": "/GB"
+    },
+    "modals": {
+      "noChanges": {
+        "title": "변경 사항 없음",
+        "message": "저장할 변경 사항이 없습니다."
+      },
+      "confirmSave": {
+        "title": "저장 확인",
+        "message": "단가를 업데이트하시겠습니까?"
+      },
+      "confirmDiscard": {
+        "title": "변경 사항을 버리시겠습니까?",
+        "message": "저장되지 않은 변경 사항이 손실됩니다. 계속하시겠습니까?",
+        "ok": "버리기",
+        "cancel": "유지"
+      }
+    }
+  },
+  "alerts": {
+    "eyebrow": "관측성",
+    "title": "알림 설정",
+    "subtitle": "백엔드에서 제공되는 알림 전달 대상, 제목 및 평가 규칙을 관리합니다.",
+    "loading": "알림 설정 로딩 중...",
+    "hints": {
+      "refresh": "새로고침하면 백엔드에서 알림 전달 설정을 불러옵니다. 변경 사항은 아래의 모든 채널에 적용되며, 편집 후 저장을 잊지 마세요.",
+      "configure": "먼저 전달 대상을 구성한 다음 백엔드에서 메트릭을 평가하는 규칙을 정의하세요. 하단의 저장/초기화 컨트롤로 변경 사항을 반영하거나 취소할 수 있습니다."
+    },
+    "metrics": {
+      "cpuUsage": "CPU 사용률 %",
+      "memoryUsage": "메모리 사용률 %",
+      "diskUsage": "디스크 사용률 %",
+      "gpuUsage": "GPU 사용률 %"
+    },
+    "severity": {
+      "info": "정보",
+      "warning": "경고",
+      "critical": "치명적"
+    },
+    "defaults": {
+      "subject": "RustCost 알림"
+    },
+    "errors": {
+      "loadSettings": "알림 설정을 불러오지 못했습니다",
+      "updateSettings": "알림 설정 업데이트에 실패했습니다",
+      "saveSettings": "알림 설정 저장에 실패했습니다"
+    },
+    "messages": {
+      "updated": "알림 설정이 업데이트되었습니다."
+    },
+    "delivery": {
+      "badge": "전달",
+      "title": "전달 환경 설정",
+      "subtitle": "내장 상태 알림을 켜거나 끄고 모든 채널에 공통으로 사용할 제목을 설정합니다.",
+      "clusterHealth": "클러스터 상태",
+      "rustcostHealth": "RustCost 상태",
+      "subjectLabel": "전역 제목",
+      "subjectPlaceholder": "RustCost 알림",
+      "subjectHelp": "모든 채널의 제목으로 사용됩니다.",
+      "linkbackLabel": "되돌아가기 URL (선택)",
+      "linkbackPlaceholder": "https://dashboard.example.com/alerts",
+      "linkbackHelp": "빠른 탐색을 위해 알림 본문에 포함됩니다."
+    },
+    "recipients": {
+      "title": "이메일 수신자",
+      "subtitle": "주소를 하나씩 추가하세요. 모든 수신자는 모든 알림을 받습니다.",
+      "placeholder": "user@example.com",
+      "removeAriaLabel": "{{email}} 제거",
+      "empty": "아직 추가된 수신자가 없습니다.",
+      "count": "수신자 {{count}}명 구성됨."
+    },
+    "webhooks": {
+      "title": "웹훅",
+      "subtitle": "채팅 시스템으로 알림을 전송합니다. 비워두면 해당 채널이 비활성화됩니다.",
+      "slack": "Slack 웹훅",
+      "teams": "Microsoft Teams 웹훅",
+      "discord": "Discord 웹훅",
+      "slackPlaceholder": "https://hooks.slack.com/...",
+      "teamsPlaceholder": "https://outlook.office.com/webhook/...",
+      "discordPlaceholder": "https://discord.com/api/webhooks/..."
+    },
+    "rules": {
+      "title": "알림 규칙",
+      "subtitle": "백엔드 스케줄러에서 평가되는 선언적 조건입니다.",
+      "add": "규칙 추가",
+      "newRuleName": "새 알림 규칙",
+      "defaultName": "규칙",
+      "idLabel": "ID: {{id}}",
+      "enable": "활성화",
+      "fields": {
+        "name": "이름",
+        "namePlaceholder": "노드의 높은 CPU",
+        "metric": "메트릭",
+        "operator": "연산자",
+        "threshold": "임계값",
+        "thresholdPlaceholder": "80",
+        "duration": "지속 시간 (초)",
+        "durationPlaceholder": "60",
+        "severity": "심각도"
+      },
+      "empty": "아직 구성된 알림 규칙이 없습니다. 추가하여 메트릭 평가를 시작하세요."
+    },
+    "actions": {
+      "saveSettings": "알림 설정 저장"
+    },
+    "notifications": {
+      "ariaLabel": "활성 알림 {{count}}개가 있습니다",
+      "title": "알림",
+      "loading": "알림 로딩 중...",
+      "empty": "활성 알림 없음",
+      "loadError": "알림을 불러오지 못했습니다",
+      "resolveError": "알림을 해결하지 못했습니다",
+      "resolving": "해결 중...",
+      "resolve": "해결",
+      "createdAt": "생성: {{timestamp}}"
+    }
   },
   "system": {
+    "title": "컨트롤 플레인",
+    "subtitle": "상태, 건강, 설정, 단가 및 관리 작업을 모니터링합니다.",
+    "hints": {
+      "overview": "새로고침하여 실시간 컨트롤 플레인 상태, 설정 및 로그 인벤토리를 불러옵니다. 구성 불일치나 노드 지연 시 아래의 백업/재동기화 작업을 사용하세요."
+    },
+    "errors": {
+      "load": "시스템 데이터를 불러오지 못했습니다"
+    },
+    "cards": {
+      "status": "상태",
+      "health": "건강",
+      "settings": "설정",
+      "healthAvailable": "사용 가능",
+      "healthUnknown": "알 수 없음"
+    },
     "status": {
       "title": "시스템 상태",
       "refresh": "상태 새로고침",
-      "healthy": "모든 시스템이 정상입니다",
-      "degraded": "서비스 성능 저하가 감지되었습니다",
+      "healthy": "모든 시스템 정상 작동",
+      "degraded": "서비스 성능 저하 감지",
       "backup": "백업",
       "backingUp": "백업 중...",
-      "resync": "동기화",
-      "resyncing": "동기화 중..."
+      "resync": "재동기화",
+      "resyncing": "재동기화 중..."
+    },
+    "backup": {
+      "title": "백업",
+      "subtitle": "구성을 캡처하기 위해 증분 백업을 트리거합니다.",
+      "action": "백업 시작",
+      "triggered": "백업이 트리거되었습니다",
+      "lastResponse": "마지막 응답: {{response}}"
+    },
+    "resync": {
+      "title": "재동기화",
+      "subtitle": "상위 구성 요소와의 강제 재동기화를 수행합니다.",
+      "action": "재동기화 시작",
+      "triggered": "재동기화가 트리거되었습니다",
+      "lastResponse": "마지막 응답: {{response}}"
+    },
+    "logs": {
+      "hint": "왼쪽에서 로그 파일을 선택하면 항목이 스트리밍됩니다. 스크롤 시 추가 청크를 불러옵니다. 로그를 확인하기 전에 위의 작업으로 새 백업이나 재동기화를 트리거할 수 있습니다.",
+      "title": "로그 파일",
+      "subtitle": "최근 활동을 보려면 로그 파일을 선택하세요.",
+      "loading": "로그 로딩 중...",
+      "detailTitle": "로그: {{date}}",
+      "detailSubtitle": "스크롤하여 더 불러오기. 최신 항목이 먼저 표시됩니다.",
+      "loadingMore": "더 불러오는 중..."
     }
   }
 }

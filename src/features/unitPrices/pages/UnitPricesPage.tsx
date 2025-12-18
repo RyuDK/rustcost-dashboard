@@ -34,7 +34,7 @@ export const UnitPricesPage = () => {
     async () => {
       const res = await infoApi.fetchInfoUnitPrices();
       if (!res.is_successful || !res.data) {
-        throw new Error(res.error_msg ?? "Failed to load unit prices");
+        throw new Error(res.error_msg ?? t("unitPrices.errors.load"));
       }
       return res.data as InfoUnitPrice;
     },
@@ -125,14 +125,14 @@ export const UnitPricesPage = () => {
       const res = await infoApi.upsertInfoUnitPrices(form);
 
       if (!res.is_successful) {
-        throw new Error(res.error_msg ?? "Failed to save unit prices");
+        throw new Error(res.error_msg ?? t("unitPrices.errors.save"));
       }
 
-      setSaveMessage("Unit prices updated successfully.");
+      setSaveMessage(t("unitPrices.messages.updated"));
       await refetch();
     } catch (err) {
       setSaveMessage(
-        err instanceof Error ? err.message : "Failed to save unit prices"
+        err instanceof Error ? err.message : t("unitPrices.errors.save")
       );
     } finally {
       setSaving(false);
@@ -166,8 +166,8 @@ export const UnitPricesPage = () => {
   return (
     <SharedPageLayout>
       <SharedPageHeader
-        title="Unit Prices"
-        description="Modify raw pricing used for workload cost allocation."
+        title={t("unitPrices.title")}
+        description={t("unitPrices.subtitle")}
         breadcrumbItems={[{ label: t("nav.unitPrices") }]}
         primaryAction={{
           label: t("common.refresh"),
@@ -176,8 +176,7 @@ export const UnitPricesPage = () => {
       />
 
       <ExplainHint visible={showExplain}>
-        Edit price inputs used for allocation. Refresh to pull current values;
-        saves require confirmation to avoid accidental overwrites.
+        {t("unitPrices.hints.overview")}
       </ExplainHint>
 
       {/* --- Errors --- */}
@@ -189,79 +188,78 @@ export const UnitPricesPage = () => {
 
       {isLoading && (
         <div className="flex justify-center py-20">
-          <LoadingSpinner label="Loading Unit Prices..." />
+          <LoadingSpinner label={t("unitPrices.loading")} />
         </div>
       )}
 
       {!isLoading && data && (
         <>
           <ExplainHint visible={showExplain}>
-            Adjust on-demand and spot rates by resource type. Empty fields stay
-            unchanged; use Save to persist or Cancel to revert to the last load.
+            {t("unitPrices.hints.editing")}
           </ExplainHint>
           {/* --- Editable Grid --- */}
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <EditablePrice
-              title="CPU"
-              unit="/core hr"
+              title={t("unitPrices.resources.cpu")}
+              unit={t("unitPrices.units.coreHour")}
               value={form.cpu_core_hour}
               onChange={(v) => updateField("cpu_core_hour", v)}
             />
             <EditablePrice
-              title="CPU (Spot)"
-              unit="/core hr"
+              title={t("unitPrices.resources.cpuSpot")}
+              unit={t("unitPrices.units.coreHour")}
               value={form.cpu_spot_core_hour}
               onChange={(v) => updateField("cpu_spot_core_hour", v)}
             />
 
             <EditablePrice
-              title="Memory"
-              unit="/GB hr"
+              title={t("unitPrices.resources.memory")}
+              unit={t("unitPrices.units.gbHour")}
               value={form.memory_gb_hour}
               onChange={(v) => updateField("memory_gb_hour", v)}
             />
             <EditablePrice
-              title="Memory (Spot)"
-              unit="/GB hr"
+              title={t("unitPrices.resources.memorySpot")}
+              unit={t("unitPrices.units.gbHour")}
               value={form.memory_spot_gb_hour}
               onChange={(v) => updateField("memory_spot_gb_hour", v)}
             />
 
             <EditablePrice
-              title="GPU"
-              unit="/hr"
+              title={t("unitPrices.resources.gpu")}
+              unit={t("unitPrices.units.hour")}
               value={form.gpu_hour}
               onChange={(v) => updateField("gpu_hour", v)}
             />
             <EditablePrice
-              title="GPU (Spot)"
-              unit="/hr"
+              title={t("unitPrices.resources.gpuSpot")}
+              unit={t("unitPrices.units.hour")}
               value={form.gpu_spot_hour}
               onChange={(v) => updateField("gpu_spot_hour", v)}
             />
 
             <EditablePrice
-              title="Storage"
-              unit="/GB hr"
+              title={t("unitPrices.resources.storage")}
+              unit={t("unitPrices.units.gbHour")}
               value={form.storage_gb_hour}
               onChange={(v) => updateField("storage_gb_hour", v)}
             />
 
             <EditablePrice
-              title="Network (Local)"
-              unit="/GB"
+              title={t("unitPrices.resources.networkLocal")}
+              unit={t("unitPrices.units.gb")}
               value={form.network_local_gb}
               onChange={(v) => updateField("network_local_gb", v)}
             />
             <EditablePrice
-              title="Network (Regional)"
-              unit="/GB"
+              title={t("unitPrices.resources.networkRegional")}
+              unit={t("unitPrices.units.gb")}
               value={form.network_regional_gb}
               onChange={(v) => updateField("network_regional_gb", v)}
             />
             <EditablePrice
-              title="Network (External)"
-              unit="/GB"
+              title={t("unitPrices.resources.networkExternal")}
+              unit={t("unitPrices.units.gb")}
               value={form.network_external_gb}
               onChange={(v) => updateField("network_external_gb", v)}
             />
@@ -274,7 +272,7 @@ export const UnitPricesPage = () => {
               disabled={isSaving}
               className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300"
             >
-              Cancel
+              {t("common.actions.cancel")}
             </button>
 
             <button
@@ -282,7 +280,7 @@ export const UnitPricesPage = () => {
               disabled={isSaving}
               className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50"
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? t("common.actions.saving") : t("common.actions.save")}
             </button>
           </div>
 
@@ -299,9 +297,9 @@ export const UnitPricesPage = () => {
       {/* No changes modal */}
       <SharedConfirmModal
         open={showNoChanges}
-        title="No Changes Detected"
-        message="There are no modifications to save."
-        okText="OK"
+        title={t("unitPrices.modals.noChanges.title")}
+        message={t("unitPrices.modals.noChanges.message")}
+        okText={t("common.actions.ok")}
         cancelText=""
         onOk={() => setShowNoChanges(false)}
         onCancel={() => setShowNoChanges(false)}
@@ -310,10 +308,10 @@ export const UnitPricesPage = () => {
       {/* Save confirmation */}
       <SharedConfirmModal
         open={showConfirmSave}
-        title="Confirm Save"
-        message="Are you sure you want to update the unit prices?"
-        okText="Save"
-        cancelText="Cancel"
+        title={t("unitPrices.modals.confirmSave.title")}
+        message={t("unitPrices.modals.confirmSave.message")}
+        okText={t("common.actions.save")}
+        cancelText={t("common.actions.cancel")}
         onOk={() => {
           setShowConfirmSave(false);
           void handleSave();
@@ -324,10 +322,10 @@ export const UnitPricesPage = () => {
       {/* Cancel confirmation */}
       <SharedConfirmModal
         open={showConfirmCancel}
-        title="Discard Changes?"
-        message="Your unsaved changes will be lost. Continue?"
-        okText="Discard"
-        cancelText="Stay"
+        title={t("unitPrices.modals.confirmDiscard.title")}
+        message={t("unitPrices.modals.confirmDiscard.message")}
+        okText={t("unitPrices.modals.confirmDiscard.ok")}
+        cancelText={t("unitPrices.modals.confirmDiscard.cancel")}
         onOk={() => handleCancel()}
         onCancel={() => setShowConfirmCancel(false)}
       />

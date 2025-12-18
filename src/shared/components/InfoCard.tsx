@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 export interface InfoCardRow {
   label: string;
@@ -41,7 +42,30 @@ export const InfoCard = ({
   error,
   className = "",
 }: InfoCardProps) => (
-  <div className={twMerge(BASE_INFO_CARD_STYLES.container, className)}>
+  <InfoCardBody
+    title={title}
+    rows={rows}
+    description={description}
+    footer={footer}
+    isLoading={isLoading}
+    error={error}
+    className={className}
+  />
+);
+
+const InfoCardBody = ({
+  title,
+  rows,
+  description,
+  footer,
+  isLoading = false,
+  error,
+  className = "",
+}: InfoCardProps) => {
+  const { t } = useI18n();
+
+  return (
+    <div className={twMerge(BASE_INFO_CARD_STYLES.container, className)}>
     <header>
       <h3 className={BASE_INFO_CARD_STYLES.title}>{title}</h3>
       {description && (
@@ -51,7 +75,7 @@ export const InfoCard = ({
 
     {isLoading && (
       <LoadingSpinner
-        label="Loading"
+        label={t("common.loading")}
         className={BASE_INFO_CARD_STYLES.loading}
       />
     )}
@@ -71,4 +95,5 @@ export const InfoCard = ({
 
     {footer && <div className={BASE_INFO_CARD_STYLES.footer}>{footer}</div>}
   </div>
-);
+  );
+};

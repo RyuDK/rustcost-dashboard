@@ -1,6 +1,7 @@
 import { twMerge } from "tailwind-merge";
 import { useTheme } from "@/app/providers/themeContext";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface ThemeToggleProps {
   className?: string;
@@ -13,6 +14,7 @@ const BASE_THEME_TOGGLE_STYLES = {
 };
 
 export const ThemeToggle = ({ className = "" }: ThemeToggleProps) => {
+  const { t } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
 
@@ -20,7 +22,7 @@ export const ThemeToggle = ({ className = "" }: ThemeToggleProps) => {
     <button
       onClick={toggleTheme}
       className={twMerge(BASE_THEME_TOGGLE_STYLES.button, className)}
-      aria-label="Toggle dark mode"
+      aria-label={t("theme.toggleAriaLabel")}
       aria-pressed={isDark}
       type="button"
     >

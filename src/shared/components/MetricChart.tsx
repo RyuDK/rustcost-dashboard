@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import ReactECharts from "echarts-for-react";
 import { LoadingSpinner } from "./LoadingSpinner";
 import type { TrendMetricPoint } from "@/types/metrics";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 export interface MetricChartSeries {
   key: keyof TrendMetricPoint;
@@ -36,6 +37,7 @@ export const MetricChart = ({
   error,
   className = "",
 }: MetricChartProps) => {
+  const { t } = useI18n();
   const safeMetrics = useMemo(
     () => (Array.isArray(metrics) ? metrics : []),
     [metrics]
@@ -91,7 +93,10 @@ export const MetricChart = ({
 
       <div className={BASE_METRIC_CHART_STYLES.body}>
         {isLoading && (
-          <LoadingSpinner label="Loading metrics" className="h-full" />
+          <LoadingSpinner
+            label={t("common.metrics.loading")}
+            className="h-full"
+          />
         )}
 
         {error && <div className={BASE_METRIC_CHART_STYLES.error}>{error}</div>}

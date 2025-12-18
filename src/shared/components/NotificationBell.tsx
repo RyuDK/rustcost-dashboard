@@ -11,6 +11,7 @@ import {
 } from "@/shared/api/state/alerts";
 import type { PopupActions } from "reactjs-popup/dist/types";
 import { formatDateTime, useTimezone } from "@/shared/time";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface NotificationBellProps {
   className?: string;
@@ -34,6 +35,7 @@ const severityBadge = (severity: string) => {
 };
 
 export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
+  const { t } = useI18n();
   const popupRef = useRef<PopupActions | null>(null);
   const [alerts, setAlerts] = useState<AlertEvent[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,7 +54,9 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
       const res = await fetchActiveAlerts();
       setAlerts(res.data?.active_alerts ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load alerts");
+      setError(
+        err instanceof Error ? err.message : t("alerts.notifications.loadError")
+      );
     } finally {
       setLoading(false);
     }
@@ -69,7 +73,11 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
       await resolveAlert(id);
       setAlerts((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to resolve alert");
+      setError(
+        err instanceof Error
+          ? err.message
+          : t("alerts.notifications.resolveError")
+      );
     } finally {
       setResolvingId(null);
     }
@@ -101,7 +109,9 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
       }}
       trigger={
         <button
-          aria-label={`You have ${unreadCount} active alerts`}
+          aria-label={t("alerts.notifications.ariaLabel", {
+            count: unreadCount,
+          })}
           type="button"
           className={twMerge(BASE_STYLES.wrapper, className)}
         >
@@ -116,7 +126,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
     >
       <div className={BASE_STYLES.panel}>
         <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 text-sm font-semibold dark:border-gray-800">
-          <span>Alerts</span>
+          <span>{t("alerts.notifications.title")}</span>
           <button
             type="button"
             className="text-xs font-semibold text-(--primary) hover:underline"
@@ -125,12 +135,16 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
               popupRef.current?.close();
             }}
           >
-            Clear
+            {t("common.actions.clear")}
           </button>
         </div>
 
         <div className="max-h-80 overflow-y-auto p-3 space-y-2 text-sm">
-          {loading && <p className="text-gray-500">Loading alerts...</p>}
+          {loading && (
+            <p className="text-gray-500">
+              {t("alerts.notifications.loading")}
+            </p>
+          )}
           {error && (
             <p className="text-red-500">
               {error}{" "}
@@ -139,12 +153,14 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
                 className="underline"
                 onClick={() => void loadAlerts()}
               >
-                Retry
+                {t("common.retry")}
               </button>
             </p>
           )}
           {!loading && !error && alerts.length === 0 && (
-            <p className="text-gray-500">No active alerts</p>
+            <p className="text-gray-500">
+              {t("alerts.notifications.empty")}
+            </p>
           )}
           {alerts.map((alert) => (
             <div
@@ -166,14 +182,18 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
                   disabled={resolvingId === alert.id}
                   onClick={() => void handleResolve(alert.id)}
                 >
-                  {resolvingId === alert.id ? "Resolving..." : "Resolve"}
+                  {resolvingId === alert.id
+                    ? t("alerts.notifications.resolving")
+                    : t("alerts.notifications.resolve")}
                 </button>
               </div>
               <p className="mt-1 text-[13px] text-gray-800 dark:text-gray-100">
                 {alert.message}
               </p>
               <p className="mt-1 text-[11px] text-gray-500">
-                Created: {formatDateTime(alert.created_at, { timeZone })}
+                {t("alerts.notifications.createdAt", {
+                  timestamp: formatDateTime(alert.created_at, { timeZone }),
+                })}
               </p>
             </div>
           ))}

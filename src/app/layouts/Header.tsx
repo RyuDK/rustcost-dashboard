@@ -9,10 +9,12 @@ import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const navigate = useNavigate();
-  const { language, setLanguage } = useI18n();
+  const { language, setLanguage, t } = useI18n();
   const dispatch = useAppDispatch();
   const showExplain = useAppSelector((state) => state.preferences.showExplain);
-  const explainLabel = showExplain ? "Hide Explain" : "Explain";
+  const explainLabel = showExplain
+    ? t("header.explain.hide")
+    : t("header.explain.show");
 
   return (
     <header
@@ -37,10 +39,12 @@ export const Header = () => {
       >
         <img
           src="/logo-square.webp"
-          alt="Logo"
+          alt={t("header.logoAlt")}
           className="h-10 w-10 object-contain"
         />
-        <h1 className="text-xl font-semibold text-(--text)">RustCost</h1>
+        <h1 className="text-xl font-semibold text-(--text)">
+          {t("common.brandName")}
+        </h1>
       </button>
 
       <div className="flex items-center gap-3">

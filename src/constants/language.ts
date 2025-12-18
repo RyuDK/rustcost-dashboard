@@ -5,6 +5,8 @@ export const DEFAULT_LANGUAGE: LanguageCode = "en";
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { code: "en", label: "English" },
   { code: "ko", label: "한국어" },
+  { code: "cn", label: "中文" },
+  { code: "jp", label: "日本語" },
 ];
 
 export const SUPPORTED_LANGUAGES: readonly LanguageCode[] =

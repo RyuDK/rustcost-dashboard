@@ -24,24 +24,39 @@ export const SettingsPage = () => {
 
   const generalRows = data
     ? [
-        { label: "Language", value: data.language },
-        { label: "Dark Mode", value: data.is_dark_mode ? "On" : "Off" },
-        { label: "Version", value: data.version },
-        { label: "Updated", value: formatDateTime(data.updated_at, { timeZone }) },
+        { label: t("settings.general.language"), value: data.language },
+        {
+          label: t("settings.general.darkMode"),
+          value: data.is_dark_mode
+            ? t("common.states.on")
+            : t("common.states.off"),
+        },
+        { label: t("settings.general.version"), value: data.version },
+        {
+          label: t("settings.general.updated"),
+          value: formatDateTime(data.updated_at, { timeZone }),
+        },
       ]
     : [];
 
   const metricsRows = data
     ? [
-        { label: "Scrape Interval (s)", value: data.scrape_interval_sec },
-        { label: "Batch Size", value: data.metrics_batch_size },
         {
-          label: "GPU Metrics",
-          value: data.enable_gpu_metrics ? "Enabled" : "Disabled",
+          label: t("settings.metrics.scrapeInterval"),
+          value: data.scrape_interval_sec,
+        },
+        { label: t("settings.metrics.batchSize"), value: data.metrics_batch_size },
+        {
+          label: t("settings.metrics.gpuMetrics"),
+          value: data.enable_gpu_metrics
+            ? t("common.states.enabled")
+            : t("common.states.disabled"),
         },
         {
-          label: "Network Metrics",
-          value: data.enable_network_metrics ? "Enabled" : "Disabled",
+          label: t("settings.metrics.networkMetrics"),
+          value: data.enable_network_metrics
+            ? t("common.states.enabled")
+            : t("common.states.disabled"),
         },
       ]
     : [];
@@ -59,7 +74,7 @@ export const SettingsPage = () => {
         dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-400
       "
     >
-      Open Unit Prices
+      {t("settings.billing.openUnitPrices")}
     </Link>
   );
 
@@ -73,14 +88,13 @@ export const SettingsPage = () => {
       />
 
       <ExplainHint visible={showExplain}>
-        Settings reflect live control plane values. Use Unit Prices to manage
-        billing inputs and tweak metrics collection from the cards below.
+        {t("settings.hints.overview")}
       </ExplainHint>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* General */}
         <InfoCard
-          title="General"
+          title={t("settings.sections.general")}
           rows={generalRows}
           isLoading={settings.isLoading}
           error={
@@ -89,14 +103,14 @@ export const SettingsPage = () => {
               : settings.error
               ? String(settings.error)
               : !settings.data?.is_successful
-              ? settings.data?.error_msg ?? "Failed to load settings"
+              ? settings.data?.error_msg ?? t("settings.errors.load")
               : undefined
           }
         />
 
         {/* Metrics */}
         <InfoCard
-          title="Metrics & Retention"
+          title={t("settings.sections.metricsRetention")}
           rows={metricsRows}
           isLoading={settings.isLoading}
           error={
@@ -105,15 +119,15 @@ export const SettingsPage = () => {
               : settings.error
               ? String(settings.error)
               : !settings.data?.is_successful
-              ? settings.data?.error_msg ?? "Failed to load settings"
+              ? settings.data?.error_msg ?? t("settings.errors.load")
               : undefined
           }
         />
 
         {/* Billing */}
         <InfoCard
-          title="Billing"
-          description="Manage cost-allocation unit prices."
+          title={t("settings.sections.billing")}
+          description={t("settings.billing.description")}
           rows={[]} // no rows → this card is just a section header + footer
           footer={billingFooter}
           isLoading={false}
@@ -121,8 +135,7 @@ export const SettingsPage = () => {
       </div>
 
       <ExplainHint visible={showExplain}>
-        Timezone selection applies across date pickers and chart labels so teams
-        read timestamps consistently.
+        {t("settings.hints.timezone")}
       </ExplainHint>
       <SharedTimezoneSelector />
     </SharedPageLayout>

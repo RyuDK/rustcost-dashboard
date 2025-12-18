@@ -124,12 +124,12 @@ export function SystemPage() {
       setSettings(settingsRes);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to load system data"
+        err instanceof Error ? err.message : t("system.errors.load")
       );
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void loadSystemData();
@@ -149,12 +149,12 @@ export function SystemPage() {
    * ------------------------------------------ */
   const triggerBackup = async () => {
     await systemApi.triggerSystemBackup();
-    setBackupResult("Backup triggered");
+    setBackupResult(t("system.backup.triggered"));
   };
 
   const triggerResync = async () => {
     await systemApi.triggerSystemResync();
-    setResyncResult("Resync triggered");
+    setResyncResult(t("system.resync.triggered"));
   };
 
   /** -------------------------------------------
@@ -173,8 +173,8 @@ export function SystemPage() {
   return (
     <SharedPageLayout>
       <SharedPageHeader
-        title="Control Plane"
-        description="Monitor status, health, settings, unit prices, and administrative actions."
+        title={t("system.title")}
+        description={t("system.subtitle")}
         breadcrumbItems={[{ label: t("nav.system") }]}
         primaryAction={{
           label: t("common.refresh"),
@@ -183,9 +183,7 @@ export function SystemPage() {
       />
 
       <ExplainHint visible={showExplain}>
-        Refresh to pull live control-plane health, settings, and log inventory.
-        Use backup/resync actions below when configuration drifts or nodes fall
-        behind.
+        {t("system.hints.overview")}
       </ExplainHint>
 
       {error && (

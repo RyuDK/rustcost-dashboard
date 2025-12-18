@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { useI18n } from "@/app/providers/i18n/useI18n";
 
 interface Column<T> {
   key: string;
@@ -51,70 +52,75 @@ export const MetricTable = <T extends { id: string | number }>({
   columns,
   isLoading = false,
   error,
-  emptyMessage = "No data available",
+  emptyMessage,
   className = "",
-}: MetricTableProps<T>) => (
-  <div className={twMerge(BASE_METRIC_TABLE_STYLES.container, className)}>
-    <div className={BASE_METRIC_TABLE_STYLES.header}>
-      <h3 className={BASE_METRIC_TABLE_STYLES.title}>{title}</h3>
-    </div>
+}: MetricTableProps<T>) => {
+  const { t } = useI18n();
+  const resolvedEmptyMessage = emptyMessage ?? t("common.table.empty");
 
-    <div className={BASE_METRIC_TABLE_STYLES.tableWrapper}>
-      {isLoading && (
-        <LoadingSpinner
-          label="Loading table"
-          className={BASE_METRIC_TABLE_STYLES.loading}
-        />
-      )}
-      {error && <div className={BASE_METRIC_TABLE_STYLES.error}>{error}</div>}
+  return (
+    <div className={twMerge(BASE_METRIC_TABLE_STYLES.container, className)}>
+      <div className={BASE_METRIC_TABLE_STYLES.header}>
+        <h3 className={BASE_METRIC_TABLE_STYLES.title}>{title}</h3>
+      </div>
 
-      {!isLoading && !error && (
-        <table className={BASE_METRIC_TABLE_STYLES.table}>
-          <thead className={BASE_METRIC_TABLE_STYLES.thead}>
-            <tr>
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className={twMerge(
-                    BASE_METRIC_TABLE_STYLES.headerCell,
-                    ALIGNMENT_CLASSNAME[column.align ?? "left"]
-                  )}
-                >
-                  {column.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className={BASE_METRIC_TABLE_STYLES.tbody}>
-            {data.length > 0 ? (
-              data.map((row) => (
-                <tr key={row.id} className={BASE_METRIC_TABLE_STYLES.row}>
-                  {columns.map((column) => (
-                    <td
-                      key={column.key}
-                      className={twMerge(
-                        BASE_METRIC_TABLE_STYLES.cell,
-                        ALIGNMENT_CLASSNAME[column.align ?? "left"]
-                      )}
-                    >
-                      {column.render(row)}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            ) : (
+      <div className={BASE_METRIC_TABLE_STYLES.tableWrapper}>
+        {isLoading && (
+          <LoadingSpinner
+            label={t("common.table.loading")}
+            className={BASE_METRIC_TABLE_STYLES.loading}
+          />
+        )}
+        {error && <div className={BASE_METRIC_TABLE_STYLES.error}>{error}</div>}
+
+        {!isLoading && !error && (
+          <table className={BASE_METRIC_TABLE_STYLES.table}>
+            <thead className={BASE_METRIC_TABLE_STYLES.thead}>
               <tr>
-                <td
-                  className={BASE_METRIC_TABLE_STYLES.emptyCell}
-                  colSpan={columns.length}
-                >
-                  {emptyMessage}
-                </td>
+                {columns.map((column) => (
+                  <th
+                    key={column.key}
+                    className={twMerge(
+                      BASE_METRIC_TABLE_STYLES.headerCell,
+                      ALIGNMENT_CLASSNAME[column.align ?? "left"]
+                    )}
+                  >
+                    {column.header}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody className={BASE_METRIC_TABLE_STYLES.tbody}>
+              {data.length > 0 ? (
+                data.map((row) => (
+                  <tr key={row.id} className={BASE_METRIC_TABLE_STYLES.row}>
+                    {columns.map((column) => (
+                      <td
+                        key={column.key}
+                        className={twMerge(
+                          BASE_METRIC_TABLE_STYLES.cell,
+                          ALIGNMENT_CLASSNAME[column.align ?? "left"]
+                        )}
+                      >
+                        {column.render(row)}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    className={BASE_METRIC_TABLE_STYLES.emptyCell}
+                    colSpan={columns.length}
+                  >
+                    {resolvedEmptyMessage}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};

@@ -17,55 +17,6 @@ import type {
 } from "@/shared/api/info";
 import { formatDateTime, useTimezone } from "@/shared/time";
 
-const metricOptions: { label: string; value: AlertMetricType }[] = [
-  { label: "CPU usage %", value: "CpuUsagePercent" },
-  { label: "Memory usage %", value: "MemoryUsagePercent" },
-  { label: "Disk usage %", value: "DiskUsagePercent" },
-  { label: "GPU usage %", value: "GpuUsagePercent" },
-];
-
-const operatorOptions: { label: string; value: AlertOperator }[] = [
-  { label: ">", value: "GreaterThan" },
-  { label: ">=", value: "GreaterThanOrEqual" },
-  { label: "<", value: "LessThan" },
-  { label: "<=", value: "LessThanOrEqual" },
-];
-
-const severityOptions: { label: string; value: AlertSeverity }[] = [
-  { label: "Info", value: "Info" },
-  { label: "Warning", value: "Warning" },
-  { label: "Critical", value: "Critical" },
-];
-
-const defaultAlertState: InfoAlertEntity = {
-  enable_cluster_health_alert: false,
-  enable_rustcost_health_alert: false,
-  global_alert_subject: "RustCost Alert",
-  linkback_url: null,
-  email_recipients: [],
-  slack_webhook_url: null,
-  teams_webhook_url: null,
-  discord_webhook_url: null,
-  rules: [],
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  version: "1.0.0",
-};
-
-const createRule = (): AlertRule => ({
-  id:
-    typeof crypto !== "undefined" && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `rule-${Date.now()}`,
-  name: "New alert rule",
-  metric_type: "CpuUsagePercent",
-  operator: "GreaterThan",
-  threshold: 80,
-  for_duration_sec: 60,
-  severity: "Warning",
-  enabled: true,
-});
-
 const sanitizeComparable = (value: InfoAlertEntity) => ({
   enable_cluster_health_alert: value.enable_cluster_health_alert,
   enable_rustcost_health_alert: value.enable_rustcost_health_alert,
@@ -80,12 +31,60 @@ const sanitizeComparable = (value: InfoAlertEntity) => ({
 
 export function AlertsPage() {
   const { t } = useI18n();
+  const metricOptions: { label: string; value: AlertMetricType }[] = [
+    { label: t("alerts.metrics.cpuUsage"), value: "CpuUsagePercent" },
+    { label: t("alerts.metrics.memoryUsage"), value: "MemoryUsagePercent" },
+    { label: t("alerts.metrics.diskUsage"), value: "DiskUsagePercent" },
+    { label: t("alerts.metrics.gpuUsage"), value: "GpuUsagePercent" },
+  ];
+
+  const operatorOptions: { label: string; value: AlertOperator }[] = [
+    { label: ">", value: "GreaterThan" },
+    { label: ">=", value: "GreaterThanOrEqual" },
+    { label: "<", value: "LessThan" },
+    { label: "<=", value: "LessThanOrEqual" },
+  ];
+
+  const severityOptions: { label: string; value: AlertSeverity }[] = [
+    { label: t("alerts.severity.info"), value: "Info" },
+    { label: t("alerts.severity.warning"), value: "Warning" },
+    { label: t("alerts.severity.critical"), value: "Critical" },
+  ];
+
+  const defaultAlertState: InfoAlertEntity = {
+    enable_cluster_health_alert: false,
+    enable_rustcost_health_alert: false,
+    global_alert_subject: t("alerts.defaults.subject"),
+    linkback_url: null,
+    email_recipients: [],
+    slack_webhook_url: null,
+    teams_webhook_url: null,
+    discord_webhook_url: null,
+    rules: [],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    version: "1.0.0",
+  };
+
+  const createRule = (): AlertRule => ({
+    id:
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `rule-${Date.now()}`,
+    name: t("alerts.rules.newRuleName"),
+    metric_type: "CpuUsagePercent",
+    operator: "GreaterThan",
+    threshold: 80,
+    for_duration_sec: 60,
+    severity: "Warning",
+    enabled: true,
+  });
   const { data, error, isLoading, refetch } = useFetch<InfoAlertEntity>(
     ["info-alerts"],
     async () => {
       const res = await infoApi.fetchInfoAlerts();
       if (!res.is_successful || !res.data) {
-        throw new Error(res.error_msg ?? "Failed to load alert settings");
+        throw new Error(res.error_msg ?? t("alerts.errors.loadSettings"));
       }
       return res.data;
     },
@@ -190,14 +189,14 @@ export function AlertsPage() {
       const res = await infoApi.upsertInfoAlerts(payload);
 
       if (!res.is_successful) {
-        throw new Error(res.error_msg ?? "Failed to update alert settings");
+        throw new Error(res.error_msg ?? t("alerts.errors.updateSettings"));
       }
 
-      setSaveMessage(res.data?.message ?? "Alert settings updated.");
+      setSaveMessage(res.data?.message ?? t("alerts.messages.updated"));
       await refetch();
     } catch (err) {
       setSaveMessage(
-        err instanceof Error ? err.message : "Failed to save alert settings"
+        err instanceof Error ? err.message : t("alerts.errors.saveSettings")
       );
     } finally {
       setSaving(false);
@@ -212,9 +211,9 @@ export function AlertsPage() {
   return (
     <SharedPageLayout>
       <SharedPageHeader
-        eyebrow="Observability"
-        title="Alert Settings"
-        description="Manage alert delivery targets, subjects, and evaluation rules served by the backend."
+        eyebrow={t("alerts.eyebrow")}
+        title={t("alerts.title")}
+        description={t("alerts.subtitle")}
         breadcrumbItems={[{ label: t("nav.alerts") }]}
         primaryAction={{
           label: t("common.refresh"),
@@ -223,8 +222,7 @@ export function AlertsPage() {
       />
 
       <ExplainHint visible={showExplain}>
-        Refresh pulls alert delivery settings from the backend. Changes apply to
-        all channels listed below—remember to save after editing.
+        {t("alerts.hints.refresh")}
       </ExplainHint>
 
       {errorMessage && (
@@ -235,29 +233,26 @@ export function AlertsPage() {
 
       {isLoading && (
         <div className="flex justify-center py-16">
-          <LoadingSpinner label="Loading alert settings..." />
+          <LoadingSpinner label={t("alerts.loading")} />
         </div>
       )}
 
       {!isLoading && (
         <div className="space-y-6">
           <ExplainHint visible={showExplain}>
-            Configure delivery targets first, then define rules that evaluate
-            metrics server-side. Use save/reset controls at the bottom to commit
-            or discard edits.
+            {t("alerts.hints.configure")}
           </ExplainHint>
           <section className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm shadow-slate-100 ring-1 ring-slate-100 dark:from-slate-900 dark:to-slate-950 dark:border-slate-800 dark:shadow-none dark:ring-0">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="space-y-1.5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-300">
-                  Delivery
+                  {t("alerts.delivery.badge")}
                 </p>
                 <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                  Delivery preferences
+                  {t("alerts.delivery.title")}
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Turn built-in health alerts on or off and set a shared subject
-                  for all channels.
+                  {t("alerts.delivery.subtitle")}
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -273,7 +268,7 @@ export function AlertsPage() {
                     }
                     className="h-4 w-4 accent-blue-600"
                   />
-                  Cluster health
+                  {t("alerts.delivery.clusterHealth")}
                 </label>
                 <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-500 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-blue-400">
                   <input
@@ -287,7 +282,7 @@ export function AlertsPage() {
                     }
                     className="h-4 w-4 accent-blue-600"
                   />
-                  RustCost health
+                  {t("alerts.delivery.rustcostHealth")}
                 </label>
               </div>
             </div>
@@ -295,7 +290,7 @@ export function AlertsPage() {
             <div className="mt-6 grid gap-5 md:grid-cols-2">
               <label className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-inner shadow-slate-100 dark:border-slate-800 dark:bg-slate-900/60 dark:shadow-none">
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  Global subject
+                  {t("alerts.delivery.subjectLabel")}
                 </span>
                 <input
                   type="text"
@@ -304,26 +299,26 @@ export function AlertsPage() {
                     updateField("global_alert_subject", e.target.value)
                   }
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                  placeholder="RustCost Alert"
+                  placeholder={t("alerts.delivery.subjectPlaceholder")}
                 />
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  Used as the subject line for all channels.
+                  {t("alerts.delivery.subjectHelp")}
                 </span>
               </label>
 
               <label className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-inner shadow-slate-100 dark:border-slate-800 dark:bg-slate-900/60 dark:shadow-none">
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  Linkback URL (optional)
+                  {t("alerts.delivery.linkbackLabel")}
                 </span>
                 <input
                   type="url"
                   value={draft.linkback_url ?? ""}
                   onChange={(e) => updateField("linkback_url", e.target.value)}
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                  placeholder="https://dashboard.example.com/alerts"
+                  placeholder={t("alerts.delivery.linkbackPlaceholder")}
                 />
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  Included in alert bodies for quick navigation.
+                  {t("alerts.delivery.linkbackHelp")}
                 </span>
               </label>
             </div>
@@ -332,10 +327,10 @@ export function AlertsPage() {
           <section className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-1 rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm shadow-slate-100 ring-1 ring-slate-100 dark:border-slate-800 dark:bg-[var(--surface-dark)]/60 dark:shadow-none dark:ring-0">
               <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-                Email recipients
+                {t("alerts.recipients.title")}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Add addresses one-by-one. All recipients receive every alert.
+                {t("alerts.recipients.subtitle")}
               </p>
               <div className="mt-4 flex gap-2">
                 <input
@@ -349,7 +344,7 @@ export function AlertsPage() {
                     }
                   }}
                   className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                  placeholder="user@example.com"
+                  placeholder={t("alerts.recipients.placeholder")}
                 />
                 <button
                   type="button"
@@ -357,7 +352,7 @@ export function AlertsPage() {
                   className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
                   disabled={!recipientInput.trim()}
                 >
-                  Add
+                  {t("common.actions.add")}
                 </button>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -371,36 +366,39 @@ export function AlertsPage() {
                       type="button"
                       onClick={() => removeRecipient(email)}
                       className="text-slate-400 hover:text-red-600 dark:hover:text-red-300"
-                      aria-label={`Remove ${email}`}
+                      aria-label={t("alerts.recipients.removeAriaLabel", {
+                        email,
+                      })}
                     >
-                      ✕
+                      {t("common.actions.removeSymbol")}
                     </button>
                   </span>
                 ))}
                 {!draft.email_recipients.length && (
                   <span className="text-xs text-slate-500 dark:text-slate-400">
-                    No recipients added yet.
+                    {t("alerts.recipients.empty")}
                   </span>
                 )}
               </div>
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                {draft.email_recipients.length} recipient
-                {draft.email_recipients.length === 1 ? "" : "s"} configured.
+                {t("alerts.recipients.count", {
+                  count: draft.email_recipients.length,
+                })}
               </p>
             </div>
 
             <div className="lg:col-span-2 rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm shadow-slate-100 ring-1 ring-slate-100 dark:border-slate-800 dark:bg-[var(--surface-dark)]/60 dark:shadow-none dark:ring-0">
               <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-                Webhooks
+                {t("alerts.webhooks.title")}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Send alerts to chat systems. Leave blank to disable a channel.
+                {t("alerts.webhooks.subtitle")}
               </p>
 
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <label className="flex flex-col gap-2">
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    Slack webhook
+                    {t("alerts.webhooks.slack")}
                   </span>
                   <input
                     type="url"
@@ -409,13 +407,13 @@ export function AlertsPage() {
                       updateField("slack_webhook_url", e.target.value)
                     }
                     className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                    placeholder="https://hooks.slack.com/..."
+                    placeholder={t("alerts.webhooks.slackPlaceholder")}
                   />
                 </label>
 
                 <label className="flex flex-col gap-2">
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    Microsoft Teams webhook
+                    {t("alerts.webhooks.teams")}
                   </span>
                   <input
                     type="url"
@@ -424,13 +422,13 @@ export function AlertsPage() {
                       updateField("teams_webhook_url", e.target.value)
                     }
                     className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                    placeholder="https://outlook.office.com/webhook/..."
+                    placeholder={t("alerts.webhooks.teamsPlaceholder")}
                   />
                 </label>
 
                 <label className="flex flex-col gap-2 md:col-span-2">
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    Discord webhook
+                    {t("alerts.webhooks.discord")}
                   </span>
                   <input
                     type="url"
@@ -439,7 +437,7 @@ export function AlertsPage() {
                       updateField("discord_webhook_url", e.target.value)
                     }
                     className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                    placeholder="https://discord.com/api/webhooks/..."
+                    placeholder={t("alerts.webhooks.discordPlaceholder")}
                   />
                 </label>
               </div>
@@ -450,10 +448,10 @@ export function AlertsPage() {
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-                  Alert rules
+                  {t("alerts.rules.title")}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Declarative conditions evaluated by the backend scheduler.
+                  {t("alerts.rules.subtitle")}
                 </p>
               </div>
               <button
@@ -466,7 +464,7 @@ export function AlertsPage() {
                 }
                 className="inline-flex items-center justify-center rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:border-blue-400"
               >
-                Add rule
+                {t("alerts.rules.add")}
               </button>
             </div>
 
@@ -479,18 +477,18 @@ export function AlertsPage() {
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                        {rule.name || "Rule"}
+                        {rule.name || t("alerts.rules.defaultName")}
                       </span>
                       <span className="rounded-full bg-slate-100 px-2 py-1 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                        ID: {rule.id}
+                        {t("alerts.rules.idLabel", { id: rule.id })}
                       </span>
                       {rule.enabled ? (
                         <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-emerald-700 dark:text-emerald-300">
-                          Enabled
+                          {t("common.states.enabled")}
                         </span>
                       ) : (
                         <span className="rounded-full bg-slate-200 px-2 py-1 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                          Disabled
+                          {t("common.states.disabled")}
                         </span>
                       )}
                     </div>
@@ -504,14 +502,14 @@ export function AlertsPage() {
                           }
                           className="h-4 w-4 accent-blue-600"
                         />
-                        Enable
+                        {t("alerts.rules.enable")}
                       </label>
                       <button
                         type="button"
                         onClick={() => removeRule(rule.id)}
                         className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:border-red-400 hover:bg-red-50 dark:border-red-800 dark:text-red-200 dark:hover:border-red-600 dark:hover:bg-red-500/10"
                       >
-                        Remove
+                        {t("common.actions.remove")}
                       </button>
                     </div>
                   </div>
@@ -519,7 +517,7 @@ export function AlertsPage() {
                   <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Name
+                        {t("alerts.rules.fields.name")}
                       </span>
                       <input
                         type="text"
@@ -528,13 +526,13 @@ export function AlertsPage() {
                           updateRule(rule.id, "name", e.target.value)
                         }
                         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                        placeholder="High CPU on node"
+                        placeholder={t("alerts.rules.fields.namePlaceholder")}
                       />
                     </label>
 
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Metric
+                        {t("alerts.rules.fields.metric")}
                       </span>
                       <select
                         value={rule.metric_type}
@@ -557,7 +555,7 @@ export function AlertsPage() {
 
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Operator
+                        {t("alerts.rules.fields.operator")}
                       </span>
                       <select
                         value={rule.operator}
@@ -580,7 +578,7 @@ export function AlertsPage() {
 
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Threshold
+                        {t("alerts.rules.fields.threshold")}
                       </span>
                       <input
                         type="number"
@@ -596,13 +594,13 @@ export function AlertsPage() {
                           )
                         }
                         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                        placeholder="80"
+                        placeholder={t("alerts.rules.fields.thresholdPlaceholder")}
                       />
                     </label>
 
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        For (seconds)
+                        {t("alerts.rules.fields.duration")}
                       </span>
                       <input
                         type="number"
@@ -618,13 +616,13 @@ export function AlertsPage() {
                           )
                         }
                         className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-                        placeholder="60"
+                        placeholder={t("alerts.rules.fields.durationPlaceholder")}
                       />
                     </label>
 
                     <label className="flex flex-col gap-2">
                       <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Severity
+                        {t("alerts.rules.fields.severity")}
                       </span>
                       <select
                         value={rule.severity}
@@ -650,8 +648,7 @@ export function AlertsPage() {
 
               {!draft.rules.length && (
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  No alert rules configured yet. Add one to start evaluating
-                  metrics.
+                  {t("alerts.rules.empty")}
                 </p>
               )}
             </div>
@@ -664,7 +661,7 @@ export function AlertsPage() {
                 onClick={handleReset}
                 className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                Reset
+                {t("common.actions.reset")}
               </button>
               <button
                 type="button"
@@ -672,7 +669,9 @@ export function AlertsPage() {
                 onClick={() => void handleSave()}
                 className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:opacity-50"
               >
-                {isSaving ? "Saving..." : "Save alert settings"}
+                {isSaving
+                  ? t("common.actions.saving")
+                  : t("alerts.actions.saveSettings")}
               </button>
               {saveMessage && (
                 <span className="text-sm text-slate-600 dark:text-slate-300">
@@ -683,13 +682,17 @@ export function AlertsPage() {
 
             <div className="rounded-2xl border border-slate-200/70 bg-white p-4 text-sm text-slate-600 shadow-sm shadow-slate-100 ring-1 ring-slate-100 dark:border-slate-800 dark:bg-[var(--surface-dark)]/40 dark:text-slate-300 dark:shadow-none dark:ring-0">
               <p className="font-semibold text-slate-900 dark:text-white">
-                Version {draft.version}
+                {t("common.versionLabel", { version: draft.version })}
               </p>
               <p>
-                Updated: {formatDateTime(draft.updated_at, { timeZone })}
+                {t("common.updatedLabel", {
+                  timestamp: formatDateTime(draft.updated_at, { timeZone }),
+                })}
               </p>
               <p>
-                Created: {formatDateTime(draft.created_at, { timeZone })}
+                {t("common.createdLabel", {
+                  timestamp: formatDateTime(draft.created_at, { timeZone }),
+                })}
               </p>
             </div>
           </section>
