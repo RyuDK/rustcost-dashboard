@@ -132,7 +132,7 @@ export const navItems: NavItem[] = [
   },
   {
     to: "/ai-report",
-    translationKey: "nav.aiRport",
+    translationKey: "nav.aiReport",
     icon: IoPricetagOutline,
   },
   {

@@ -86,7 +86,9 @@
     "ingresses": "인그레스",
     "namespaces": "네임스페이스",
     "persistentVolumes": "PV",
-    "persistentVolumeClaims": "PVC"
+    "persistentVolumeClaims": "PVC",
+    "aiReport": "AI 리포트",
+    "aiInsight": "AI 인사이트"
   },
   "header": {
     "logoAlt": "로고",
@@ -300,8 +302,8 @@
       "loading": "노드 로딩 중...",
       "count": "노드 {{count}}개",
       "unknown": "알 수 없는 노드",
-      "meta": "팀: {{team}} �� 서비스: {{service}} �� 환경: {{env}}",
-      "capacity": "cpu: {{cpu}} �� 메모리: {{memory}} GiB",
+      "meta": "팀: \"{{team}}\" / 서비스: \"{{service}}\" / 환경: \"{{env}}\"",
+      "capacity": "cpu: {{cpu}} 코어 메모리: {{memory}} GiB",
       "emptyFiltered": "필터와 일치하는 노드가 없습니다."
     },
     "metadata": {

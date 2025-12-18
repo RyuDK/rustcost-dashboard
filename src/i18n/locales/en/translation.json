@@ -302,7 +302,7 @@
       "loading": "Loading nodes...",
       "count": "{{count}} node(s)",
       "unknown": "unknown-node",
-      "meta": "team: {{team}} service: {{service}} env: {{env}}",
+      "meta": "team: \"{{team}}\" / service: \"{{service}}\" / env: \"{{env}}\"",
       "capacity": "cpu: {{cpu}} Core mem: {{memory}} GiB",
       "emptyFiltered": "No nodes matched the filters."
     },
