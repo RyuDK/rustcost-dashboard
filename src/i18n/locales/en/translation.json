@@ -70,6 +70,8 @@
     "workloads": "Workloads",
     "resources": "Resources",
     "allocation": "Allocation",
+    "aiReport": "AI Report",
+    "aiInsight": "AI Insight",
     "metrics": "Metrics",
     "alerts": "Alerts",
     "system": "System",
@@ -81,7 +83,7 @@
     "deployments": "Deployments",
     "statefulSets": "StatefulSets",
     "daemonSets": "DaemonSets",
-    "jobsCronJobs": "Jobs & CronJobs",
+    "jobsCronJobs": "Jobs \u0026 CronJobs",
     "services": "Services",
     "ingresses": "Ingresses",
     "namespaces": "Namespaces",
@@ -182,7 +184,7 @@
       "title": "Key Signals"
     },
     "metrics": {
-      "nodes": "Node Cost & Usage",
+      "nodes": "Node Cost \u0026 Usage",
       "pods": "Pod Efficiency",
       "trends": "Usage Trends",
       "efficiency": "Efficiency Breakdown"
@@ -300,8 +302,8 @@
       "loading": "Loading nodes...",
       "count": "{{count}} node(s)",
       "unknown": "unknown-node",
-      "meta": "team: {{team}} �� service: {{service}} �� env: {{env}}",
-      "capacity": "cpu: {{cpu}} �� mem: {{memory}} GiB",
+      "meta": "team: {{team}} service: {{service}} env: {{env}}",
+      "capacity": "cpu: {{cpu}} Core mem: {{memory}} GiB",
       "emptyFiltered": "No nodes matched the filters."
     },
     "metadata": {
@@ -318,7 +320,7 @@
   },
   "workloads": {
     "title": "Workload Metrics",
-    "subtitle": "Cluster resource usage & cost overview",
+    "subtitle": "Cluster resource usage \u0026 cost overview",
     "hints": {
       "overview": "Date filters drive both usage and cost summaries. Refresh to pull aligned metrics before navigating to detailed subpages."
     },
@@ -416,7 +418,7 @@
     },
     "sections": {
       "general": "General",
-      "metricsRetention": "Metrics & Retention",
+      "metricsRetention": "Metrics \u0026 Retention",
       "billing": "Billing"
     },
     "hints": {

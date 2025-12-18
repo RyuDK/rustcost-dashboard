@@ -3,7 +3,10 @@ import ReactECharts from "echarts-for-react";
 
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { infoApi, metricApi } from "@/shared/api";
-import { SharedMetricChart, type ChartSeries } from "@/shared/components/chart/SharedMetricChart";
+import {
+  SharedMetricChart,
+  type ChartSeries,
+} from "@/shared/components/chart/SharedMetricChart";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { ExplainHint } from "@/shared/components/ExplainHint";
 import { SharedPageHeader } from "@/shared/components/layout/SharedPageHeader";
@@ -90,9 +93,7 @@ export const AllocationPage = () => {
       );
     } catch (err) {
       setNodesError(
-        err instanceof Error
-          ? err.message
-          : t("allocation.errors.nodesLoad")
+        err instanceof Error ? err.message : t("allocation.errors.nodesLoad")
       );
     } finally {
       setIsLoadingNodes(false);
@@ -173,16 +174,14 @@ export const AllocationPage = () => {
   const filteredNodes = useMemo(() => {
     const term = filters.search.trim().toLowerCase();
     return term
-      ? nodes.filter((n) =>
-          (n.node_name ?? "").toLowerCase().includes(term)
-        )
+      ? nodes.filter((n) => (n.node_name ?? "").toLowerCase().includes(term))
       : nodes;
   }, [filters.search, nodes]);
 
   const teamSummary = useMemo(() => {
     const map = new Map<string, number>();
     nodes.forEach((node) => {
-      const team = node.team?.trim() || t("allocation.team.unassigned");
+      const team = node.team?.trim() || "NA";
       map.set(team, (map.get(team) ?? 0) + 1);
     });
     return Array.from(map.entries()).map(([team, count]) => ({ team, count }));
@@ -262,9 +261,7 @@ export const AllocationPage = () => {
         breadcrumbItems={[{ label: t("nav.allocation") }]}
       />
 
-      <ExplainHint>
-        {t("allocation.hints.backend")}
-      </ExplainHint>
+      <ExplainHint>{t("allocation.hints.backend")}</ExplainHint>
 
       <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[var(--surface-dark)]/40 md:grid-cols-4">
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -476,7 +473,10 @@ export const AllocationPage = () => {
               <input
                 value={metadataDraft.team ?? ""}
                 onChange={(e) =>
-                  setMetadataDraft((prev) => ({ ...prev, team: e.target.value }))
+                  setMetadataDraft((prev) => ({
+                    ...prev,
+                    team: e.target.value,
+                  }))
                 }
                 disabled={!selectedNode}
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"

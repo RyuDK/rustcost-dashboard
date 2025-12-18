@@ -1,4 +1,4 @@
-import {
+﻿import {
   IoSpeedometerOutline,
   IoTrendingUpOutline,
   IoConstructOutline,
@@ -128,6 +128,16 @@ export const navItems: NavItem[] = [
   {
     to: "/unit-prices",
     translationKey: "nav.unitPrices",
+    icon: IoPricetagOutline,
+  },
+  {
+    to: "/ai-report",
+    translationKey: "nav.aiRport",
+    icon: IoPricetagOutline,
+  },
+  {
+    to: "/ai-insight",
+    translationKey: "nav.aiInsight",
     icon: IoPricetagOutline,
   },
 ];

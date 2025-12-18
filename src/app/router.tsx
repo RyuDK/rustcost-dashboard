@@ -1,4 +1,4 @@
-import {
+﻿import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
@@ -12,6 +12,8 @@ import { AllocationPage } from "@/features/allocation/AllocationPage";
 import { AlertsPage } from "@/features/alerts/AlertsPage";
 import { SystemPage } from "@/features/system/SystemPage";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import { AiReportPage } from "@/features/aiReport/pages/AiReportPage";
+import { AiInsightPage } from "@/features/aiInsight/pages/AiInsightPage";
 import { LoadingPage } from "@/features/loading/pages/LoadingPage";
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
@@ -86,6 +88,8 @@ const router = createBrowserRouter([
         element: <NamespacesPage />,
       },
       { path: "allocation", element: <AllocationPage /> },
+      { path: "ai-report", element: <AiReportPage /> },
+      { path: "ai-insight", element: <AiInsightPage /> },
       { path: "alerts", element: <AlertsPage /> },
       { path: "system", element: <SystemPage /> },
       { path: "unit-prices", element: <UnitPricesPage /> },
@@ -112,11 +116,13 @@ export const AppWithLoading = () => {
   const needsResync =
     !isDebug && (!lastResync || !isLessThan3Hours(lastResync));
 
-  // If no resync done or stale — show loading screen
+  // If no resync done or stale ??show loading screen
   if (needsResync) {
     return <LoadingPage />;
   }
 
-  // If resynced — show main app
+  // If resynced ??show main app
   return <AppRouter />;
 };
+
+
