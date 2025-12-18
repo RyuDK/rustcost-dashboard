@@ -149,7 +149,10 @@ export const Sidebar = ({
           </nav>
         </div>
 
-        {/* footer */}
+        {/* footer */} 
+ 
+      
+      {sidebarOpen && (
         <div className="shrink-0 sticky bottom-0 z-10 bg-(--bg-muted) dark:bg-(--surface-dark) border-t border-(--border)">
           <div className="px-4 py-3 text-center text-[11px] leading-relaxed text-(--text-muted) dark:text-(--text-muted)">
             <div className="font-mono text-[11px]">{formattedNow}</div>
@@ -159,6 +162,7 @@ export const Sidebar = ({
             </div>
           </div>
         </div>
+      )}
       </div>
     </aside>
   );
