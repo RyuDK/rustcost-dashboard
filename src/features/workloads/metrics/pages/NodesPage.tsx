@@ -887,14 +887,14 @@ export const NodesPage = () => {
           {saveError ?? saveMessage}
         </div>
       )}
-
+      {/* 
       <MetricTable
         title="Node Cost (last point)"
         columns={tableColumns}
         data={filteredTable}
         isLoading={loading}
         emptyMessage="No nodes matched your search"
-      />
+      /> */}
 
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-(--text)">Node Sparklines</h3>
