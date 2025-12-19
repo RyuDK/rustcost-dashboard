@@ -19,7 +19,7 @@ interface NotificationBellProps {
 
 const BASE_STYLES = {
   wrapper:
-    "relative p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[var(--surface-dark)]/70 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all",
+    "relative p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[var(--surface-dark)]/70 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-(--primary) transition-all",
   icon: "h-6 w-6",
   badge:
     "absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full h-5 min-w-[20px] flex items-center justify-center px-1 whitespace-nowrap",
@@ -141,9 +141,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
 
         <div className="max-h-80 overflow-y-auto p-3 space-y-2 text-sm">
           {loading && (
-            <p className="text-gray-500">
-              {t("alerts.notifications.loading")}
-            </p>
+            <p className="text-gray-500">{t("alerts.notifications.loading")}</p>
           )}
           {error && (
             <p className="text-red-500">
@@ -158,9 +156,7 @@ export const NotificationBell = ({ className = "" }: NotificationBellProps) => {
             </p>
           )}
           {!loading && !error && alerts.length === 0 && (
-            <p className="text-gray-500">
-              {t("alerts.notifications.empty")}
-            </p>
+            <p className="text-gray-500">{t("alerts.notifications.empty")}</p>
           )}
           {alerts.map((alert) => (
             <div

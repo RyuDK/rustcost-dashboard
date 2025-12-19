@@ -23,7 +23,7 @@ const BASE_PDF_OVERLAY_STYLES = {
   modal:
     "w-full max-w-4xl rounded-2xl bg-[var(--surface)] p-6 text-[var(--text)] shadow-2xl",
   header: "flex items-start justify-between gap-4",
-  badge: "text-xs font-semibold uppercase tracking-[0.2em] text-amber-500",
+  badge: "text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]",
   title: "mt-1 text-2xl font-semibold",
   subtitle: "mt-1 text-sm text-[var(--text-muted)]",
   closeButton:
@@ -48,7 +48,7 @@ const BASE_PDF_OVERLAY_STYLES = {
   optionBody: "text-xs text-[var(--text-subtle)]",
   error: "rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700",
   primaryButton:
-    "rounded-lg bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] transition hover:bg-[color:var(--primary-hover)] disabled:opacity-60",
+    "rounded-lg bg-[color:var(--primary)] px-4 py-2 text-sm font-semibold text-white dark:text-[var(--accent-contrast)] transition hover:bg-[color:var(--primary-hover)] disabled:opacity-60",
   secondaryButton:
     "rounded-lg border border-[color:var(--border)] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:bg-[color:var(--bg-subtle)]",
   actions: "flex flex-col gap-2",
@@ -228,9 +228,7 @@ export const PdfPrintOverlay = ({
       };
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : t("pdf.error.generatePreview");
+        err instanceof Error ? err.message : t("pdf.error.generatePreview");
       setError(message);
     } finally {
       setIsPrinting(false);
@@ -262,9 +260,7 @@ export const PdfPrintOverlay = ({
       >
         <div className={BASE_PDF_OVERLAY_STYLES.header}>
           <div>
-            <p className={BASE_PDF_OVERLAY_STYLES.badge}>
-              {t("pdf.badge")}
-            </p>
+            <p className={BASE_PDF_OVERLAY_STYLES.badge}>{t("pdf.badge")}</p>
             <h2 id={dialogTitleId} className={BASE_PDF_OVERLAY_STYLES.title}>
               {resolvedTitle}
             </h2>

@@ -54,7 +54,7 @@ export const SystemStatus = () => {
               {t("system.status.healthy")}
             </p>
           ) : status.data?.data?.status === "degraded" ? (
-            <p className="text-sm text-amber-600 dark:text-amber-300">
+            <p className="text-sm text-[var(--primary)]">
               {t("system.status.degraded")}
             </p>
           ) : null}
@@ -63,7 +63,7 @@ export const SystemStatus = () => {
           <button
             type="button"
             onClick={handleRefresh}
-            className="rounded-md border border-amber-500 px-3 py-1.5 text-sm font-medium text-amber-600 transition hover:bg-amber-500/10 dark:text-amber-300"
+            className="rounded-md border border-[var(--primary)] px-3 py-1.5 text-sm font-medium text-[var(--primary)] transition hover:bg-[color:var(--primary)]/10"
           >
             {t("system.status.refresh")}
           </button>

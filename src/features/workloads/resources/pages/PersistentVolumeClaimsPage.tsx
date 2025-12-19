@@ -98,7 +98,7 @@ export const PersistentVolumeClaimsPage = () => {
             onClick={() => setSelected(row.raw)}
             className="text-left"
           >
-            <p className="text-sm font-semibold text-slate-900 underline decoration-amber-400 decoration-2 underline-offset-4 dark:text-white">
+            <p className="text-sm font-semibold text-slate-900 underline decoration-[color:var(--primary)] decoration-2 underline-offset-4 dark:text-white">
               {row.name}
             </p>
             <p className="text-xs text-slate-500">ns/{row.namespace}</p>

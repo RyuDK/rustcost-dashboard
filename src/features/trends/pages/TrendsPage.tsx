@@ -146,7 +146,7 @@ export const TrendsPage = () => {
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm dark:border-gray-800/70 dark:bg-[var(--surface-dark)]/60">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-300">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
               {t("trends.filters.title", { defaultValue: "Cost window" })}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -165,8 +165,8 @@ export const TrendsPage = () => {
                 onClick={() => handlePresetSelect(range)}
                 className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
                   activePreset === range.key
-                    ? "border-amber-500 bg-amber-50 text-amber-700 shadow-sm dark:border-amber-400 dark:bg-amber-500/10 dark:text-amber-200"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-amber-400 hover:text-amber-700 dark:border-gray-700 dark:bg-[var(--surface-dark)] dark:text-gray-200 dark:hover:border-amber-400"
+                    ? "border-[var(--primary)] bg-[color:var(--primary)]/10 text-[var(--primary)] shadow-sm"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-[var(--primary)] hover:text-[var(--primary)] dark:border-gray-700 dark:bg-[var(--surface-dark)] dark:text-gray-200"
                 }`}
               >
                 {range.label}
@@ -176,7 +176,7 @@ export const TrendsPage = () => {
             <button
               type="button"
               onClick={resetToDefault}
-              className="rounded-full border border-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 transition hover:border-amber-500 hover:text-amber-700 dark:border-gray-700 dark:text-gray-200 dark:hover:border-amber-400"
+              className="rounded-full border border-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 transition hover:border-[var(--primary)] hover:text-[var(--primary)] dark:border-gray-700 dark:text-gray-200"
             >
               {t("common.reset", { defaultValue: "Reset" })}
             </button>
@@ -192,7 +192,7 @@ export const TrendsPage = () => {
               type="date"
               value={params.start?.slice(0, 10) ?? ""}
               onChange={(event) => handleStartChange(event.target.value)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
+              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
             />
           </div>
 
@@ -204,7 +204,7 @@ export const TrendsPage = () => {
               type="date"
               value={params.end?.slice(0, 10) ?? ""}
               onChange={(event) => handleEndChange(event.target.value)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
+              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
             />
           </div>
 

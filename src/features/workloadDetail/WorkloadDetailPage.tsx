@@ -211,7 +211,7 @@ export function WorkloadDetailPage() {
     <SharedPageLayout>
       <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10">
         <header className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">
+          <p className="text-sm font-semibold uppercase tracking-wide text-[var(--primary)]">
             Workload Detail
           </p>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
@@ -276,7 +276,7 @@ export function WorkloadDetailPage() {
             {alerts.map((alert) => (
               <div
                 key={alert}
-                className="rounded-2xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+                className="rounded-2xl border border-[var(--primary)] bg-[color:var(--primary)]/10 p-4 text-sm text-[var(--primary)]"
               >
                 {alert}
               </div>

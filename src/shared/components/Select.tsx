@@ -18,9 +18,9 @@ type SelectProps = {
 const BASE_SELECT_STYLES = {
   container: "relative inline-flex items-center group",
   trigger:
-    "inline-flex h-10 min-w-[6rem] items-center gap-2 pl-8 pr-3 text-sm font-semibold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[var(--surface-dark)]/70 hover:border-(--primary) hover:text-(--primary) text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors",
+    "inline-flex h-10 min-w-[6rem] items-center gap-2 pl-8 pr-3 text-sm font-semibold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-[var(--surface-dark)]/70 hover:border-(--primary) hover:text-(--primary) text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-2 focus:ring-[var(--primary)] hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors",
   panel:
-    "absolute left-0 top-full mt-1 w-full min-w-[7rem] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[var(--surface-dark)]/70 shadow-lg z-50 overflow-hidden",
+    "absolute left-0 top-full mt-1 w-full min-w-[7rem] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[var(--surface-dark)] shadow-lg z-50 overflow-hidden",
   option:
     "cursor-pointer px-3 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700",
   iconWrapper:

@@ -18,14 +18,25 @@ export const LinkCard = ({
   className,
 }: LinkCardProps) => {
   const baseClasses = `
-    group flex items-center justify-between rounded-2xl border 
-    bg-white px-5 py-4 shadow-sm transition-all 
-    hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-lg 
-    dark:bg-[var(--surface-dark)]/60 dark:border-slate-800 
-    dark:hover:border-amber-400
-    focus-visible:outline-none focus-visible:ring-2 
-    focus-visible:ring-amber-400/70 focus-visible:ring-offset-2
-  `;
+  group flex items-center justify-between rounded-2xl
+  border border-[var(--border-subtle)]
+  bg-white px-5 py-4 shadow-sm transition-all
+
+  hover:-translate-y-0.5
+  hover:border-[var(--primary)]
+  hover:shadow-lg
+
+  dark:bg-[var(--surface-dark)]/60
+  dark:border-[var(--border-subtle)]
+  dark:hover:border-[var(--primary)]
+
+  focus-visible:outline-none
+  focus-visible:ring-2
+  focus-visible:ring-[var(--primary)]
+  focus-visible:ring-offset-2
+  focus-visible:ring-offset-[var(--surface)]
+  dark:focus-visible:ring-offset-[var(--surface-dark)]
+`;
 
   return (
     <NavLink
@@ -33,13 +44,13 @@ export const LinkCard = ({
       className={({ isActive }) =>
         twMerge(
           baseClasses,
-          isActive && "border-amber-400 shadow-md",
+          isActive && "border-(--primary-500) shadow-md",
           className
         )
       }
     >
       <div className="flex items-center gap-3">
-        {icon && <span className="text-amber-500">{icon}</span>}
+        {icon && <span className="text-(--primary-500)">{icon}</span>}
 
         <div className="space-y-0.5">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -54,7 +65,7 @@ export const LinkCard = ({
       <FiChevronRight
         size={20}
         className="
-          text-amber-500 transition-transform 
+          text-(--primary-500) transition-transform 
           duration-200 group-hover:translate-x-1
         "
       />

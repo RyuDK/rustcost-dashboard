@@ -104,7 +104,7 @@ const renderCondition = (condition: K8sCondition) => (
         className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
           condition.status === "True"
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
-            : "bg-amber-500/10 text-amber-600 dark:text-amber-300"
+            : "bg-[color:var(--primary)]/10 text-[var(--primary)]"
         }`}
       >
         {condition.status ?? "n/a"}
@@ -196,7 +196,7 @@ export const DeploymentsPage = () => {
             onClick={() => setSelectedDeployment(row.raw)}
             className="text-left"
           >
-            <p className="text-sm font-semibold text-slate-900 underline decoration-amber-400 decoration-2 underline-offset-4 dark:text-white">
+            <p className="text-sm font-semibold text-slate-900 underline decoration-[color:var(--primary)] decoration-2 underline-offset-4 dark:text-white">
               {row.name}
             </p>
             <p className="text-xs text-slate-500">ns/{row.namespace}</p>
@@ -255,7 +255,7 @@ export const DeploymentsPage = () => {
         type="button"
         onClick={() => setOffset((prev) => Math.max(prev - pageSize, 0))}
         disabled={offset === 0 || isLoading}
-        className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-amber-300 hover:text-amber-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300"
+        className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300"
       >
         Prev
       </button>
@@ -270,7 +270,7 @@ export const DeploymentsPage = () => {
           )
         }
         disabled={offset + pageSize >= totalCount || isLoading}
-        className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-amber-300 hover:text-amber-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300"
+        className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300"
       >
         Next
       </button>

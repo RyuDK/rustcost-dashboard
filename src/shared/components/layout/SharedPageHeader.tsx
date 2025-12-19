@@ -23,7 +23,7 @@ interface CommonPageHeaderProps {
 
 const actionStyles: Record<ActionVariant, string> = {
   primary: `
-    bg-[var(--button-bg1)] text-black shadow-sm
+    bg-[var(--button-bg1)] text-white shadow-sm
     hover:bg-[var(--button-bg1-hover)] active:bg-[var(--button-bg1-active)]
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--button-bg1)]
     dark:text-black
@@ -79,7 +79,7 @@ export const SharedPageHeader = ({
   >
     <div className="space-y-3">
       {eyebrow && (
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-500">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-(--primary-500) ">
           {eyebrow}
         </p>
       )}

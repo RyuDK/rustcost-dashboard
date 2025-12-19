@@ -33,7 +33,7 @@ const BASE_METRIC_TABLE_STYLES = {
   headerCell:
     "px-4 py-2 font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400",
   tbody: "divide-y divide-gray-100 dark:divide-gray-800",
-  row: "hover:bg-amber-50/40 dark:hover:bg-amber-500/10",
+  row: "hover:bg-[color:var(--primary)]/10 dark:hover:bg-[color:var(--primary)]/10",
   cell: "px-4 py-3 text-gray-700 dark:text-gray-200",
   emptyCell: "px-4 py-12 text-center text-gray-500 dark:text-gray-400",
 };

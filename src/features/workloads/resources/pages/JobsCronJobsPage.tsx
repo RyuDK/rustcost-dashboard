@@ -119,7 +119,7 @@ const renderCondition = (condition: K8sCondition) => (
         className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
           condition.status === "True"
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
-            : "bg-amber-500/10 text-amber-600 dark:text-amber-300"
+            : "bg-[color:var(--primary)]/10 text-[var(--primary)]"
         }`}
       >
         {condition.status ?? "n/a"}
@@ -202,7 +202,7 @@ export const JobsCronJobsPage = () => {
             onClick={() => setSelectedJob(row.raw)}
             className="text-left"
           >
-            <p className="text-sm font-semibold text-slate-900 underline decoration-amber-400 decoration-2 underline-offset-4 dark:text-white">
+            <p className="text-sm font-semibold text-slate-900 underline decoration-[color:var(--primary)] decoration-2 underline-offset-4 dark:text-white">
               {row.name}
             </p>
             <p className="text-xs text-slate-500">ns/{row.namespace}</p>
@@ -248,7 +248,7 @@ export const JobsCronJobsPage = () => {
             onClick={() => setSelectedCronJob(row.raw)}
             className="text-left"
           >
-            <p className="text-sm font-semibold text-slate-900 underline decoration-amber-400 decoration-2 underline-offset-4 dark:text-white">
+            <p className="text-sm font-semibold text-slate-900 underline decoration-[color:var(--primary)] decoration-2 underline-offset-4 dark:text-white">
               {row.name}
             </p>
             <p className="text-xs text-slate-500">ns/{row.namespace}</p>
@@ -274,7 +274,7 @@ export const JobsCronJobsPage = () => {
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
               row.suspend
-                ? "bg-amber-500/10 text-amber-600 dark:text-amber-300"
+                ? "bg-[color:var(--primary)]/10 text-[var(--primary)]"
                 : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
             }`}
           >

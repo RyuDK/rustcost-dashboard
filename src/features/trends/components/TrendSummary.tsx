@@ -7,10 +7,10 @@ export const TrendSummary = ({ trend }: { trend?: MetricCostTrendDto }) => {
   const isImproving = trend.cost_diff_usd < 0;
 
   return (
-    <div className="rounded-2xl border border-amber-100 bg-gradient-to-br from-white via-amber-50/40 to-emerald-50/50 p-5 shadow-sm dark:border-gray-800 dark:from-[var(--surface-dark)]/90 dark:via-[var(--surface-dark)]/70 dark:to-[var(--surface-dark)]/80">
+    <div className="rounded-2xl border border-[var(--primary)] bg-gradient-to-br from-white via-[color:var(--primary)]/15 to-emerald-50/50 p-5 shadow-sm dark:border-gray-800 dark:from-[var(--surface-dark)]/90 dark:via-[var(--surface-dark)]/70 dark:to-[var(--surface-dark)]/80">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-300">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
             Cost trend
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -58,7 +58,7 @@ export const TrendSummary = ({ trend }: { trend?: MetricCostTrendDto }) => {
         <SummaryItem
           label="Regression slope"
           value={formatScientific(trend.regression_slope_usd_per_granularity)}
-          color="text-amber-600"
+          color="text-[var(--primary)]"
         />
       </div>
     </div>

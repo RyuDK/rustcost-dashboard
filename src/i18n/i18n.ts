@@ -6,10 +6,14 @@ import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "@/constants/language";
 async function loadResources() {
   const en = await import("./locales/en/translation.json");
   const ko = await import("./locales/ko/translation.json");
+  const cn = await import("./locales/cn/translation.json");
+  const jp = await import("./locales/jp/translation.json");
 
   return {
     en: { translation: en.default },
     ko: { translation: ko.default },
+    cn: { translation: cn.default },
+    jp: { translation: jp.default },
   };
 }
 
