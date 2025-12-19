@@ -37,7 +37,7 @@ export const SharedMetricsFilterBar = ({
           type="date"
           value={toDateInputValue(params.start)}
           onChange={handleDateChange("start")}
-          className="w-44 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
+          className="w-44 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
         />
       </div>
 
@@ -49,7 +49,7 @@ export const SharedMetricsFilterBar = ({
           type="date"
           value={toDateInputValue(params.end)}
           onChange={handleDateChange("end")}
-          className="w-44 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
+          className="w-44 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-gray-700 dark:bg-[var(--surface-dark)]/70 dark:text-gray-100"
         />
       </div>
 

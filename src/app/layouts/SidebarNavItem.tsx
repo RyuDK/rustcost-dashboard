@@ -60,18 +60,18 @@ export const SidebarNavItem = ({
    * Visual states
    */
   const rowLeafActiveClasses = `
-    relative bg-white/[0.06] text-[var(--primary)]
-    before:absolute before:left-0 before:top-0 before:h-full before:w-[3px]
-    before:rounded-l-md before:bg-[#FACC15] before:content-['']
-  `;
+  relative bg-black/[0.03] dark:bg-white/[0.10] text-[var(--primary)]
+  before:absolute before:left-0 before:top-0 before:h-full before:w-[3px]
+  before:rounded-l-md before:bg-[var(--accent)] before:content-['']
+`;
 
   const rowAncestorActiveClasses = `
-    relative bg-white/[0.025] text-[var(--primary)]
-    [&_svg]:text-[var(--primary)]
-    before:absolute before:left-0 before:top-0 before:h-full
-    before:w-[2px] before:bg-[#FACC15]/50 before:content-['']
-    hover:bg-white/[0.04]
-  `;
+  relative bg-black/[0.02] dark:bg-white/[0.08] text-[var(--primary)]
+  [&_svg]:text-[var(--primary)]
+  before:absolute before:left-0 before:top-0 before:h-full
+  before:w-[2px] before:bg-blue-500/50 dark:before:bg-[#FACC15]/50 before:content-['']
+  hover:bg-black/[0.06] dark:hover:bg-white/[0.10]
+`;
 
   const rowInactiveClasses = `
     text-[var(--text-muted)]

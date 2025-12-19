@@ -272,7 +272,7 @@ export const AllocationPage = () => {
               setFilters((prev) => ({ ...prev, team: e.target.value }))
             }
             placeholder={t("allocation.filters.placeholders.team")}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -283,7 +283,7 @@ export const AllocationPage = () => {
               setFilters((prev) => ({ ...prev, service: e.target.value }))
             }
             placeholder={t("allocation.filters.placeholders.service")}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -294,7 +294,7 @@ export const AllocationPage = () => {
               setFilters((prev) => ({ ...prev, env: e.target.value }))
             }
             placeholder={t("allocation.filters.placeholders.environment")}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
         <div className="flex items-end gap-2">
@@ -311,7 +311,7 @@ export const AllocationPage = () => {
               setFilters({ team: "", service: "", env: "", search: "" });
               setRange(getDefaultRange());
             }}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-amber-300 hover:text-amber-600 dark:border-slate-700 dark:text-slate-200"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-[var(--primary)] hover:text-[var(--primary)] dark:border-slate-700 dark:text-slate-200"
           >
             {t("common.actions.reset")}
           </button>
@@ -327,7 +327,7 @@ export const AllocationPage = () => {
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
             placeholder={t("allocation.filters.placeholders.search")}
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
         </label>
       </div>
@@ -408,7 +408,7 @@ export const AllocationPage = () => {
             <button
               type="button"
               onClick={() => void loadNodes()}
-              className="rounded-lg border border-amber-400 px-3 py-1 text-xs font-semibold text-amber-700 transition hover:border-amber-500 hover:text-amber-800 dark:border-amber-700 dark:text-amber-200"
+              className="rounded-lg border border-[var(--primary)] px-3 py-1 text-xs font-semibold text-[var(--primary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)]"
             >
               {t("common.refresh")}
             </button>
@@ -425,7 +425,7 @@ export const AllocationPage = () => {
                   className={`rounded-xl border px-4 py-3 text-left shadow-sm transition ${
                     isSelected
                       ? "border-emerald-400 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-900/30"
-                      : "border-slate-200 bg-white hover:border-amber-300 dark:border-slate-800 dark:bg-slate-900/40"
+                      : "border-slate-200 bg-white hover:border-[var(--primary)] dark:border-slate-800 dark:bg-slate-900/40"
                   }`}
                 >
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
@@ -511,7 +511,7 @@ export const AllocationPage = () => {
               type="button"
               onClick={() => void handleSaveMetadata()}
               disabled={!selectedNode || isSavingMeta}
-              className="w-full rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50"
+              className="w-full rounded-lg bg-[var(--button-bg1)] px-4 py-2 text-sm font-semibold text-[var(--accent-contrast)] transition hover:bg-[var(--button-bg1-hover)] disabled:opacity-50"
             >
               {isSavingMeta
                 ? t("common.actions.saving")

@@ -53,7 +53,7 @@ export const Header = () => {
           aria-pressed={showExplain}
           onClick={() => dispatch(setShowExplain(!showExplain))}
           className={`
-            inline-flex h-10 items-center rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-500
+            inline-flex h-10 items-center rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
             ${
               showExplain
                 ? "border-(--primary) bg-(--primary)/10 text-(--primary)"

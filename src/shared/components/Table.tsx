@@ -47,7 +47,7 @@ const BASE_TABLE_STYLES = {
   headerLabel: "inline-flex items-center gap-1",
   sortIcon: "text-[10px] text-gray-400",
   tbody: "divide-y divide-gray-100 dark:divide-gray-800",
-  row: "odd:bg-white even:bg-gray-50/60 hover:bg-amber-50/60 dark:odd:bg-gray-900 dark:even:bg-gray-900/70 dark:hover:bg-amber-500/10",
+  row: "odd:bg-white even:bg-gray-50/60 hover:bg-[color:var(--primary)]/10 dark:odd:bg-gray-900 dark:even:bg-gray-900/70 dark:hover:bg-[color:var(--primary)]/10",
   cell: "px-4 py-3 text-sm text-gray-700 dark:text-gray-200",
   emptyRow: "",
   emptyCell: "px-4 py-10 text-center text-gray-500 dark:text-gray-400",
@@ -62,7 +62,7 @@ const ALIGNMENT_CLASSNAME: Record<Alignment, string> = {
 };
 
 const FOCUS_RING =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900";
 
 const getEfficiencyTone = (value?: number) => {
   if (!Number.isFinite(value ?? NaN)) {
@@ -74,7 +74,7 @@ const getEfficiencyTone = (value?: number) => {
   }
 
   if ((value as number) < 70) {
-    return "text-amber-500 dark:text-amber-400";
+    return "text-[var(--primary)]";
   }
 
   return "text-emerald-500 dark:text-emerald-400";

@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-
 import { SharedPageLayout } from "@/shared/components/layout/SharedPageLayout";
 import { SharedMetricsFilterBar } from "@/shared/components/filter/SharedMetricsFilterBar";
 import { SharedMetricsSummaryCards } from "@/shared/components/metrics/SharedMetricsSummaryCards";
@@ -65,6 +63,18 @@ type UsagePoint = {
 const getSeriesKey = (s: MetricSeries): string =>
   ((s as any)?.key ?? (s as any)?.target ?? s.name ?? "") as string;
 
+/** --- Shared UI class tokens for this page (theme-aware via CSS vars) --- */
+const surfaceCard =
+  "rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-sm dark:bg-(--surface-dark)/40 dark:border-[var(--border)]";
+const inputBase =
+  "rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] shadow-sm dark:bg-(--surface-dark)/70 dark:text-[var(--text)]";
+const inputFocus =
+  "focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]";
+const btnSecondary =
+  "rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:border-[var(--primary)] hover:text-[var(--primary)] dark:border-[var(--border)] dark:text-[var(--text)]";
+const btnPrimary =
+  "rounded-md bg-[var(--button-bg1)] text-white dark:text-black transition hover:bg-[var(--button-bg1-hover)] active:bg-[var(--button-bg1-active)] disabled:opacity-50";
+
 export const NodesPage = () => {
   const { t } = useI18n();
   const { lng } = useRouterParams();
@@ -107,12 +117,10 @@ export const NodesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ destructure guard methods so deps can stay stable even if guard object isn't
   const { begin: beginMetrics, isLatest: isLatestMetrics } =
     useLatestRequestGuard();
   const { begin: beginInfo, isLatest: isLatestInfo } = useLatestRequestGuard();
 
-  // ✅ memoize fetchItems to avoid inventory object churn / refetch loops
   const fetchNodes = useCallback(async () => {
     const res = await stateApi.k8s.fetchK8sRuntimeState();
     return res.data?.nodes ?? [];
@@ -136,7 +144,7 @@ export const NodesPage = () => {
         err instanceof Error ? err.message : "Failed to load node inventory"
       );
     }
-  }, [inventory.refreshItems]);
+  }, [inventory]);
 
   const loadNodeReadiness = useCallback(async () => {
     try {
@@ -159,7 +167,6 @@ export const NodesPage = () => {
 
   const loadMetrics = useCallback(async () => {
     const token = beginMetrics();
-
     setLoading(true);
     setError(null);
 
@@ -204,7 +211,6 @@ export const NodesPage = () => {
         })
       );
 
-      // keep your existing runtime guard, but remove misleading fallbacks later
       if (rawRes && typeof rawRes === "object" && "data" in rawRes) {
         setNodeRaw(rawRes.data ?? null);
       } else {
@@ -220,18 +226,10 @@ export const NodesPage = () => {
     }
   }, [params, selectedNode, beginMetrics, isLatestMetrics]);
 
-  useEffect(() => {
-    void loadNodes();
-  }, [loadNodes]);
-
-  useEffect(() => {
-    void loadNodeReadiness();
-  }, [loadNodeReadiness]);
-
-  // ✅ depend only on loadMetrics (it already captures params/selectedNode)
+  useEffect(() => void loadNodes(), [loadNodes]);
+  useEffect(() => void loadNodeReadiness(), [loadNodeReadiness]);
   useDebouncedEffect(() => void loadMetrics(), [loadMetrics], 300);
 
-  /** reset local editable node-metadata state on selection change */
   useEffect(() => {
     setFilterPayload({ team: "", service: "", env: "" });
     setPricePayload({ fixed_instance_usd: undefined, price_period: undefined });
@@ -337,7 +335,6 @@ export const NodesPage = () => {
     return m;
   }, [rawSeries]);
 
-  // ✅ no misleading fallback: if keys don't align -> []
   const costChartSeriesData: CostPoint[] = useMemo(() => {
     if (!selectedNode) return [];
     const match = trendSeriesMap.get(selectedNode);
@@ -365,6 +362,7 @@ export const NodesPage = () => {
     );
   }, [nodeRaw]);
 
+  // NOTE: Chart series colors are semantic per-metric; keep as-is unless you want theme-driven palettes.
   const costChartSeries: ChartSeries<CostPoint>[] = useMemo(
     () => [
       {
@@ -502,7 +500,6 @@ export const NodesPage = () => {
     [filteredNodes]
   );
 
-  // ✅ no misleading fallback: if a node has no matching series -> empty chart data
   const sparklineCards = useMemo(() => {
     return sparklineNodes.map((nodeName) => {
       const s = rawSeriesMap.get(nodeName);
@@ -605,10 +602,10 @@ export const NodesPage = () => {
           <button
             type="button"
             onClick={() => setReadyOnly((p) => !p)}
-            className={`rounded-lg border px-3 py-2 text-sm font-semibold ${
+            className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
               readyOnly
                 ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200"
-                : "border-gray-300 text-gray-700 hover:border-amber-300 hover:text-amber-600 dark:border-gray-700 dark:text-gray-200"
+                : "border-(--border) text-(--text) hover:border-(--primary) hover:text-(--primary) dark:border-(--border) dark:text-(--text)"
             }`}
             aria-pressed={readyOnly}
           >
@@ -622,9 +619,10 @@ export const NodesPage = () => {
         toggle to filter inventory, and reset to clear scoped filters quickly.
       </ExplainHint>
 
-      <div className="mt-4 flex flex-wrap gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-(--surface-dark)/40 md:p-6">
+      {/* Filters card */}
+      <div className={`mt-4 flex flex-wrap gap-4 p-4 md:p-6 ${surfaceCard}`}>
         <div className="flex flex-1 flex-wrap gap-3">
-          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-(--text-subtle)">
             Team
             <input
               value={(params as any).team ?? ""}
@@ -634,11 +632,12 @@ export const NodesPage = () => {
                   team: e.target.value || undefined,
                 }))
               }
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-(--surface-dark)/70 dark:text-gray-100"
+              className={`${inputBase} ${inputFocus}`}
               placeholder="team name"
             />
           </label>
-          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+
+          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-(--text-subtle)">
             Service
             <input
               value={(params as any).service ?? ""}
@@ -648,11 +647,12 @@ export const NodesPage = () => {
                   service: e.target.value || undefined,
                 }))
               }
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-(--surface-dark)/70 dark:text-gray-100"
+              className={`${inputBase} ${inputFocus}`}
               placeholder="service"
             />
           </label>
-          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+
+          <label className="flex min-w-[150px] flex-1 flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-(--text-subtle)">
             Environment
             <input
               value={(params as any).env ?? ""}
@@ -662,7 +662,7 @@ export const NodesPage = () => {
                   env: e.target.value || undefined,
                 }))
               }
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-(--surface-dark)/70 dark:text-gray-100"
+              className={`${inputBase} ${inputFocus}`}
               placeholder="dev / stage / prod"
             />
           </label>
@@ -671,7 +671,7 @@ export const NodesPage = () => {
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-amber-300 hover:text-amber-600 dark:border-gray-700 dark:text-gray-200"
+            className={btnSecondary}
             onClick={() => {
               setParams(
                 (prev) =>
@@ -693,7 +693,7 @@ export const NodesPage = () => {
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700">
+        <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-3 text-red-700 dark:border-red-700 dark:bg-red-900/30 dark:text-red-200">
           {error}
         </div>
       )}
@@ -727,31 +727,33 @@ export const NodesPage = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-(--surface-dark)/40">
+        {/* Team/Service filters editor */}
+        <div className={`space-y-4 rounded-xl p-4 ${surfaceCard}`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <p className="text-sm font-semibold text-(--text)">
                 Team / Service filters
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-(--text-subtle)">
                 Update node metadata for allocation or filtering.{" "}
                 {selectedNode
                   ? `Target: ${selectedNode}`
                   : "Select a node first."}
               </p>
             </div>
+
             <button
               type="button"
               onClick={handleSaveFilter}
               disabled={isSavingFilter || !selectedNode || isLoadingInfo}
-              className="rounded-md bg-amber-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50"
+              className={`${btnPrimary} px-3 py-1 text-xs font-semibold`}
             >
               {isSavingFilter ? "Saving..." : "Save filters"}
             </button>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <label className="text-xs text-gray-600 dark:text-gray-400">
+            <label className="text-xs text-(--text-subtle)">
               Team
               <input
                 value={filterPayload.team ?? ""}
@@ -762,11 +764,12 @@ export const NodesPage = () => {
                   }))
                 }
                 disabled={isLoadingInfo || !selectedNode}
-                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-(--surface-dark) dark:text-gray-100"
+                className={`mt-1 w-full rounded-md border border-(--border) bg-(--surface) px-2 py-1 text-sm text-(--text) dark:bg-(--surface-dark) ${inputFocus}`}
                 placeholder="team"
               />
             </label>
-            <label className="text-xs text-gray-600 dark:text-gray-400">
+
+            <label className="text-xs text-(--text-subtle)">
               Service
               <input
                 value={filterPayload.service ?? ""}
@@ -777,11 +780,12 @@ export const NodesPage = () => {
                   }))
                 }
                 disabled={isLoadingInfo || !selectedNode}
-                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-(--surface-dark) dark:text-gray-100"
+                className={`mt-1 w-full rounded-md border border-(--border) bg-(--surface) px-2 py-1 text-sm text-(--text) dark:bg-(--surface-dark) ${inputFocus}`}
                 placeholder="service"
               />
             </label>
-            <label className="text-xs text-gray-600 dark:text-gray-400">
+
+            <label className="text-xs text-(--text-subtle)">
               Environment
               <input
                 value={filterPayload.env ?? ""}
@@ -789,38 +793,40 @@ export const NodesPage = () => {
                   setFilterPayload((prev) => ({ ...prev, env: e.target.value }))
                 }
                 disabled={isLoadingInfo || !selectedNode}
-                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-(--surface-dark) dark:text-gray-100"
+                className={`mt-1 w-full rounded-md border border-(--border) bg-(--surface) px-2 py-1 text-sm text-(--text) dark:bg-(--surface-dark) ${inputFocus}`}
                 placeholder="dev / stage / prod"
               />
             </label>
           </div>
         </div>
 
-        <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-(--surface-dark)/40">
+        {/* Pricing editor */}
+        <div className={`space-y-4 rounded-xl p-4 ${surfaceCard}`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-50">
+              <p className="text-sm font-semibold text-(--text)">
                 Node pricing
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-(--text-subtle)">
                 Set fixed instance pricing for cost calculations.{" "}
                 {selectedNode
                   ? `Target: ${selectedNode}`
                   : "Select a node first."}
               </p>
             </div>
+
             <button
               type="button"
               onClick={handleSavePrice}
               disabled={isSavingPrice || !selectedNode || isLoadingInfo}
-              className="rounded-md bg-amber-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50"
+              className={`${btnPrimary} px-3 py-1 text-xs font-semibold`}
             >
               {isSavingPrice ? "Saving..." : "Save price"}
             </button>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-xs text-gray-600 dark:text-gray-400">
+            <label className="text-xs text-(--text-subtle)">
               Fixed price (USD)
               <input
                 type="number"
@@ -836,13 +842,13 @@ export const NodesPage = () => {
                   }))
                 }
                 disabled={isLoadingInfo || !selectedNode}
-                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-(--surface-dark) dark:text-gray-100"
+                className={`mt-1 w-full rounded-md border border-(--border) bg-(--surface) px-2 py-1 text-sm text-(--text) dark:bg-(--surface-dark) ${inputFocus}`}
                 placeholder="e.g., 1.23"
                 step="0.01"
               />
             </label>
 
-            <label className="text-xs text-gray-600 dark:text-gray-400">
+            <label className="text-xs text-(--text-subtle)">
               Billing period
               <select
                 value={pricePayload.price_period ?? ""}
@@ -856,7 +862,7 @@ export const NodesPage = () => {
                   }))
                 }
                 disabled={isLoadingInfo || !selectedNode}
-                className="mt-1 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-(--surface-dark) dark:text-gray-100"
+                className={`mt-1 w-full rounded-md border border-(--border) bg-(--surface) px-2 py-1 text-sm text-(--text) dark:bg-(--surface-dark) ${inputFocus}`}
               >
                 <option value="">Select period</option>
                 {pricePeriodOptions.map((opt) => (
@@ -891,20 +897,19 @@ export const NodesPage = () => {
       />
 
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-          Node Sparklines
-        </h3>
+        <h3 className="text-lg font-semibold text-(--text)">Node Sparklines</h3>
+
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {sparklineCards.map((card) => (
             <div
               key={card.nodeName}
-              className="rounded-xl border border-(--border) bg-(--surface)/70 p-4 shadow-sm dark:border-(--border) dark:bg-(--surface-dark)/50"
+              className="rounded-xl border border-(--border-subtle) bg-(--surface)/70 p-4 shadow-sm dark:border-(--border) dark:bg-(--surface-dark)/50"
             >
               <div className="mb-2 flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <h4 className="text-sm font-semibold text-(--text)">
                   {card.nodeName}
                 </h4>
-                <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                <span className="text-[11px] uppercase tracking-wide text-(--text-subtle)">
                   up to 10 nodes
                 </span>
               </div>

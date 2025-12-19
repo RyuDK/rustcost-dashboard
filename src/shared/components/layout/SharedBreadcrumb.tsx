@@ -18,7 +18,7 @@ export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => {
   return (
     <nav
       aria-label={t("common.aria.breadcrumb")}
-      className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500"
+      className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-(--primary-500)"
     >
       {items.map((item) => {
         const content = (
@@ -31,7 +31,7 @@ export const SharedBreadcrumb = ({ items }: CommonBreadcrumbProps) => {
         return (
           <span
             key={item.to ?? item.label}
-            className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-500 hover:text-amber-400 transition-colors after:content-['>'] last:after:content-none"
+            className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-(--primary-500) hover:text-(--primary-400) transition-colors after:content-['>'] last:after:content-none"
           >
             {item.to ? <Link to={item.to}>{content}</Link> : content}
           </span>

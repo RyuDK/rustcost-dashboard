@@ -72,7 +72,7 @@ const StatusBadge = ({
       className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
         isHealthy
           ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-200"
-          : "bg-amber-500/10 text-amber-700 dark:text-amber-300"
+          : "bg-[color:var(--primary)]/10 text-[var(--primary)]"
       }`}
     >
       {status || "Unknown"}
@@ -86,7 +86,7 @@ const pillList = (items: string[], color: "amber" | "slate" = "slate") =>
       key={item}
       className={`rounded-full ${
         color === "amber"
-          ? "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200"
+          ? "bg-[color:var(--primary)]/10 text-[var(--primary)]"
           : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
       } px-3 py-1 text-xs font-semibold`}
     >
@@ -130,7 +130,7 @@ export const ContainersPage = () => {
             onClick={() => setSelected(row.raw)}
             className="text-left"
           >
-            <p className="text-sm font-semibold text-slate-900 underline decoration-amber-400 decoration-2 underline-offset-4 dark:text-white">
+            <p className="text-sm font-semibold text-slate-900 underline decoration-[color:var(--primary)] decoration-2 underline-offset-4 dark:text-white">
               {row.name}
             </p>
             <p className="text-xs text-slate-500">

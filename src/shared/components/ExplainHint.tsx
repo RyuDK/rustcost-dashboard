@@ -19,15 +19,15 @@ export const ExplainHint = ({ children, visible }: ExplainHintProps) => {
       className="
         flex items-start gap-3 rounded-xl border px-4 py-3 text-xs leading-relaxed
         border-slate-200 bg-slate-50 text-slate-700 shadow-sm
-        dark:border-amber-400/40
+        dark:border-[var(--primary)]
         dark:bg-transparent
-        dark:bg-linear-to-r dark:from-black/80 dark:via-black/70 dark:to-amber-900/20
+        dark:bg-linear-to-r dark:from-black/80 dark:via-black/70 dark:to-[color:var(--primary)]/20
         dark:text-white
         dark:shadow-[0_12px_30px_-16px_rgba(0,0,0,0.6)]
         dark:backdrop-blur
       "
     >
-      <span className="mt-0.5 text-blue-600 dark:text-amber-300">
+      <span className="mt-0.5 text-[var(--primary)]">
         <IoInformationCircle className="text-base" />
       </span>
 
