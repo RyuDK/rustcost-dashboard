@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import { TrendChart } from "@/features/trends/components/TrendChart";
 import { createDefaultMetricsParams } from "@/features/dashboard/hooks/useMetrics";
@@ -123,6 +123,14 @@ export const TrendsPage = () => {
 
   const clusterTrends = useClusterTrendMetrics(params);
   const namespaceTrends = useNamespaceTrendMetrics(params);
+  const serializedParams = useMemo(() => JSON.stringify(params), [params]);
+
+  useEffect(() => {
+    // Trigger refresh once per param change without causing continuous re-fetches
+    void clusterTrends.refetch?.();
+    void namespaceTrends.refetch?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serializedParams]);
 
   const renderError = (err: unknown) => {
     if (err instanceof Error) return err.message;

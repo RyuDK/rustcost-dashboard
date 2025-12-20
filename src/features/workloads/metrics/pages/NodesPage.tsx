@@ -144,7 +144,7 @@ export const NodesPage = () => {
         err instanceof Error ? err.message : "Failed to load node inventory"
       );
     }
-  }, [inventory]);
+  }, [inventory.refreshItems]);
 
   const loadNodeReadiness = useCallback(async () => {
     try {
@@ -701,7 +701,7 @@ export const NodesPage = () => {
       <SharedMetricsSummaryCards cards={summaryCards} isLoading={loading} />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <SharedMetricChart
+        {/* <SharedMetricChart
           title="Cost Trend"
           subtitle={
             selectedNode ? `Cost trend for ${selectedNode}` : "Cost trend"
@@ -710,7 +710,7 @@ export const NodesPage = () => {
           series={costChartSeries}
           isLoading={loading}
           getXAxisLabel={(point) => (point.time as string) ?? ""}
-        />
+        /> */}
 
         <SharedMetricChart
           title="Usage (Raw)"

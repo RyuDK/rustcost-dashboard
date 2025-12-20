@@ -1,4 +1,4 @@
-// src/features/workloads/metrics/pages/PodsPage.tsx
+﻿// src/features/workloads/metrics/pages/PodsPage.tsx
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -33,6 +33,7 @@ import { MetricsInventorySelector } from "@/features/metrics/components/MetricsI
 import { useInventorySelection } from "@/shared/hooks/useInventorySelection";
 import { useLatestRequestGuard } from "@/shared/hooks/useLatestRequestGuard";
 import { useAppSelector } from "@/store/hook";
+import { useRef } from "react";
 
 type PodRow = {
   id: string;
@@ -64,6 +65,14 @@ const getSeriesKey = (s: MetricSeries): string => {
   return (anyS?.key ?? anyS?.target ?? s.name ?? "") as string;
 };
 
+const getLabelFallbacks = (label?: string | null): string[] => {
+  if (!label) return [];
+  const trimmed = label.trim();
+  const parts = trimmed.split("/");
+  const nameOnly = parts.length > 1 ? parts[parts.length - 1] : trimmed;
+  return [trimmed, nameOnly].filter(Boolean);
+};
+
 export const PodsPage = () => {
   const { t } = useI18n();
   const { lng } = useParams();
@@ -87,6 +96,8 @@ export const PodsPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { begin, isLatest } = useLatestRequestGuard();
+  const serializedParams = useMemo(() => JSON.stringify(params), [params]);
+  const lastFetchKeyRef = useRef<string | null>(null);
 
   // --- inventory (pods) ---
   const fetchPods = useCallback(async (): Promise<PodOption[]> => {
@@ -109,7 +120,7 @@ export const PodsPage = () => {
   const selectedPodUid = inventory.selectedKey; // uid
   const selectedPod = inventory.selectedItem; // { uid, label }
 
-  // inventory 로딩 (deps 안정화: refreshItems만)
+  // inventory 로딩 (deps ?�정?? refreshItems�?
   useEffect(() => {
     (async () => {
       try {
@@ -120,23 +131,29 @@ export const PodsPage = () => {
         );
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inventory.refreshItems]);
+
+  // auto-select first pod when inventory is ready
+  useEffect(() => {
+    if (!selectedPodUid && pods.length > 0) {
+      inventory.setSelectedKey(pods[0].uid);
+      setSearch(pods[0].label);
+    }
+  }, [pods, selectedPodUid, inventory, setSearch]);
 
   const loadMetrics = useCallback(async () => {
     const token = begin();
-
     setLoading(true);
     setError(null);
 
     try {
       const [summaryRes, listRes, rawRes, podsRawRes] = await Promise.all([
         metricApi.fetchPodsCostSummary(params),
-        metricApi.fetchPodsCost({ ...params, limit: 10, offset: 0 }),
+        metricApi.fetchPodsCost({ ...params, limit: 100, offset: 0 }),
         selectedPodUid
           ? metricApi.fetchPodRaw({ podUid: selectedPodUid }, params)
           : Promise.resolve<MetricGetResponse | null>(null),
-        metricApi.fetchPodsRaw({ ...params, limit: 10, offset: 0 }),
+        metricApi.fetchPodsRaw({ ...params, limit: 100, offset: 0 }),
       ]);
 
       if (!isLatest(token)) return;
@@ -180,8 +197,17 @@ export const PodsPage = () => {
     }
   }, [begin, isLatest, params, selectedPodUid]);
 
-  // metrics fetch (deps 안정화: loadMetrics만)
-  useDebouncedEffect(() => void loadMetrics(), [loadMetrics], 300);
+  // metrics fetch (deps ?�정?? loadMetrics�?
+  useDebouncedEffect(
+    () => {
+      const fetchKey = `${serializedParams}::${selectedPodUid ?? "all"}`;
+      if (fetchKey === lastFetchKeyRef.current) return;
+      lastFetchKeyRef.current = fetchKey;
+      void loadMetrics();
+    },
+    [serializedParams, selectedPodUid, loadMetrics],
+    400
+  );
 
   // --- derived lists (search) ---
   const filteredPods = useMemo(() => {
@@ -228,7 +254,12 @@ export const PodsPage = () => {
     const m = new Map<string, MetricSeries>();
     for (const s of trendSeries) {
       const key = getSeriesKey(s);
+      const anyS = s as any;
+      const names = getLabelFallbacks(anyS?.name);
       if (key) m.set(key, s);
+      names.forEach((name) => {
+        if (name && !m.has(name)) m.set(name, s);
+      });
     }
     return m;
   }, [trendSeries]);
@@ -237,18 +268,25 @@ export const PodsPage = () => {
     const m = new Map<string, MetricSeries>();
     for (const s of rawSeries) {
       const key = getSeriesKey(s);
+      const anyS = s as any;
+      const names = getLabelFallbacks(anyS?.name);
       if (key) m.set(key, s);
+      names.forEach((name) => {
+        if (name && !m.has(name)) m.set(name, s);
+      });
     }
     return m;
   }, [rawSeries]);
 
   // --- chart data ---
-  // cost trend는 "label(namespace/name)" 기준으로만 매칭 (uid mismatch 방지)
   const costChartSeriesData: CostPoint[] = useMemo(() => {
-    const labelKey = selectedPod?.label?.trim();
-    if (!labelKey) return [];
+    const key = selectedPodUid;
+    if (!key) return [];
+    const labelFallbacks = getLabelFallbacks(selectedPod?.label);
 
-    const match = trendSeriesMap.get(labelKey);
+    const match =
+      trendSeriesMap.get(key) ||
+      labelFallbacks.map((label) => trendSeriesMap.get(label)).find(Boolean);
     if (!match) return [];
 
     return (
@@ -260,7 +298,7 @@ export const PodsPage = () => {
         storage_cost_usd: pt.cost?.storage_cost_usd ?? 0,
       })) ?? []
     );
-  }, [selectedPod?.label, trendSeriesMap]);
+  }, [selectedPodUid, trendSeriesMap]);
 
   const podRawSeriesData: UsagePoint[] = useMemo(() => {
     const s = podRaw?.series?.[0];
@@ -354,7 +392,7 @@ export const PodsPage = () => {
     []
   );
 
-  // --- sparklines (fallback 제거: 매칭 없으면 빈 데이터) ---
+  // --- sparklines (fallback ?�거: 매칭 ?�으�?�??�이?? ---
   const sparklinePods = useMemo(
     () => filteredPods.slice(0, 10),
     [filteredPods]
@@ -362,7 +400,11 @@ export const PodsPage = () => {
 
   const sparklineCards = useMemo(() => {
     return sparklinePods.map((pod) => {
-      const s = rawSeriesMap.get(pod.label); // uid fallback 제거
+      const s =
+        rawSeriesMap.get(pod.uid) ||
+        getLabelFallbacks(pod.label)
+          .map((label) => rawSeriesMap.get(label))
+          .find(Boolean);
 
       const metrics =
         s?.points?.map((pt) => ({
@@ -553,3 +595,10 @@ export const PodsPage = () => {
     </SharedPageLayout>
   );
 };
+
+
+
+
+
+
+
