@@ -94,36 +94,18 @@ function formatCost(value: number): string {
     return "$0.00";
   }
 
+  const roundedToCents = currencyFormatter.format(value);
   const absolute = Math.abs(value);
-  if (absolute >= 0.01) {
-    return currencyFormatter.format(value);
+
+  // For very small values, keep three decimal places to avoid long tails or scientific notation.
+  if (absolute > 0 && absolute < 0.01) {
+    const rounded = Number(value.toFixed(3));
+    const safe = Math.abs(rounded) < 0.0005 ? 0 : rounded; // avoid -0.000
+    const sign = safe < 0 ? "-" : "";
+    return `${sign}$${Math.abs(safe).toFixed(3)}`;
   }
 
-  if (absolute === 0) {
-    return "$0.00";
-  }
-
-  const precise = noExponents(absolute);
-  return `${value < 0 ? "-" : ""}$${precise}`;
-}
-
-function noExponents(n: number): string {
-  const data = String(n).split(/[eE]/);
-  if (data.length === 1) return data[0];
-
-  let z = "";
-  let mag = Number(data[1]) + 1;
-  const sign = n < 0 ? "-" : "";
-  const str = data[0].replace(".", "");
-
-  if (mag < 0) {
-    z = sign + "0.";
-    while (mag++) z += "0";
-    return z + str.replace("-", "");
-  }
-  mag -= str.length;
-  while (mag--) z += "0";
-  return sign + str + z;
+  return roundedToCents;
 }
 
 function formatPercent(val: number): string {
@@ -131,5 +113,10 @@ function formatPercent(val: number): string {
 }
 
 function formatScientific(val: number): string {
-  return val.toExponential(3);
+  if (!Number.isFinite(val)) {
+    return "0.000";
+  }
+  const rounded = Number(val.toFixed(3));
+  const safe = Math.abs(rounded) < 0.0005 ? 0 : rounded; // avoid -0.000
+  return safe.toFixed(3);
 }
