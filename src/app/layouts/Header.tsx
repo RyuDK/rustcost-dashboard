@@ -1,11 +1,12 @@
 // Header.tsx
-import { ThemeToggle } from "@/shared/components/ThemeToggle";
+import { ThemeToggle } from "@/shared/components/buttons/ThemeToggleButton";
 import { useI18n } from "@/app/providers/i18n/useI18n";
 import LangSelect from "@/app/layouts/components/LangSelect";
-import { NotificationBell } from "@/shared/components/NotificationBell";
+import { NotificationBell } from "@/shared/components/buttons/NotificationBellButton";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { setShowExplain } from "@/store/slices/preferenceSlice";
 import { useNavigate } from "react-router-dom";
+import { RefreshButton } from "@/shared/components/buttons/RefreshButton";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -68,6 +69,7 @@ export const Header = () => {
         <LangSelect value={language} onChange={setLanguage} />
         <NotificationBell />
         <ThemeToggle />
+        <RefreshButton />
       </div>
     </header>
   );
