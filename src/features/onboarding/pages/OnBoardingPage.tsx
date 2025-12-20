@@ -7,6 +7,7 @@ import { completeOnboarding } from "@/store/slices/systemSlice";
 import { FiExternalLink, FiGithub } from "react-icons/fi";
 import { ThemeToggle } from "@/shared/components/buttons/ThemeToggleButton";
 import LangSelect from "@/app/layouts/components/LangSelect";
+import type { LanguageCode } from "@/types/i18n";
 
 type LanguageParams = { lng?: string };
 
@@ -24,6 +25,13 @@ export const OnBoardingPage = () => {
       navigate(`${prefix}/`, { replace: true });
     }
   }, [isFirstTime, navigate, prefix]);
+
+  const handleLanguageChange = (next: LanguageCode) => {
+    const nextLang = next || language;
+    setLanguage(nextLang);
+    // Force a full reload so locale assets and onboarding route match the new language
+    window.location.assign(`${buildLanguagePrefix(nextLang)}/onboarding`);
+  };
 
   const handleAcknowledge = () => {
     dispatch(completeOnboarding());
@@ -54,7 +62,7 @@ export const OnBoardingPage = () => {
             </div>
           </button>
           <div className="flex items-center gap-3">
-            <LangSelect value={language} onChange={setLanguage} />
+            <LangSelect value={language} onChange={handleLanguageChange} />
             <ThemeToggle />
           </div>
         </header>
