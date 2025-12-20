@@ -626,5 +626,35 @@
       "detailSubtitle": "Scroll to load more. Latest entries first.",
       "loadingMore": "Loading more..."
     }
+  },
+  "onboarding": {
+    "title": "It takes about a day to unlock full insights",
+    "subtitle": "RustCost needs roughly 24 hours of data to build accurate dashboards and recommendations.",
+    "badge": "Day 1 collection",
+    "cards": {
+      "collect": {
+        "title": "Let data collection run",
+        "desc": "Keep the agent running today so we can capture steady usage and cost patterns."
+      },
+      "quality": {
+        "title": "Accuracy improves over time",
+        "desc": "Early charts may look sparse; they will fill in automatically as telemetry arrives."
+      },
+      "readiness": {
+        "title": "Dashboards unlock automatically",
+        "desc": "We will light up trends, efficiency, and alerts once the first dataset is ready."
+      }
+    },
+    "note": "You can browse around now. Some panels might stay empty until the first full day of data completes.",
+    "cta": "Got it - continue",
+    "docs": {
+      "title": "Review the docs",
+      "desc": "See how data collection, dashboards, and recommendations work."
+    },
+    "github": {
+      "title": "Support & issues on GitHub",
+      "desc": "Star the repo, open issues, or follow along with releases."
+    },
+    "footerHint": "Keep the core server running so metrics can be collected continuously."
   }
 }

@@ -1,8 +1,4 @@
-﻿import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+﻿import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RootLayout } from "./layouts/RootLayout";
 import { TrendsPage } from "@/features/trends/pages/TrendsPage";
 import { EfficiencyPage } from "@/features/efficiency/pages/EfficiencyPage";
@@ -39,6 +35,26 @@ import { WorkloadsPage } from "@/features/workloads/pages/WorkloadsPage";
 import { PodsPage as PodsResourcePage } from "@/features/workloads/resources/pages/PodsPage";
 import { NodesPage as NodesResourcePage } from "@/features/workloads/resources/pages/NodesPage";
 import { ContainersPage as ContainersResourcePage } from "@/features/workloads/resources/pages/ContainersPage";
+import { OnBoardingPage } from "@/features/onboarding/pages/OnBoardingPage";
+import { useParams, Navigate } from "react-router-dom";
+import { normalizeLanguageCode } from "@/constants/language";
+import type { JSX } from "react";
+
+const AppGate = ({ children }: { children: JSX.Element }) => {
+  const params = useParams<{ lng?: string }>();
+  const language = normalizeLanguageCode(params.lng);
+  const isFirstTime = useSelector(
+    (state: RootState) => state.system.isFirstTime
+  );
+
+  if (isFirstTime) {
+    return (
+      <Navigate to={`${buildLanguagePrefix(language)}/onboarding`} replace />
+    );
+  }
+
+  return children;
+};
 
 const router = createBrowserRouter([
   {
@@ -46,8 +62,16 @@ const router = createBrowserRouter([
     element: <Navigate to={buildLanguagePrefix()} replace />,
   },
   {
+    path: "/:lng/onboarding",
+    element: <OnBoardingPage />,
+  },
+  {
     path: "/:lng",
-    element: <RootLayout />,
+    element: (
+      <AppGate>
+        <RootLayout />
+      </AppGate>
+    ),
     children: [
       { index: true, element: <DashboardPage /> },
       { path: "trends", element: <TrendsPage /> },
@@ -103,6 +127,9 @@ export const AppWithLoading = () => {
   const lastResync = useSelector(
     (state: RootState) => state.system.last_resync_time_utc
   );
+  const isFirstTime = useSelector(
+    (state: RootState) => state.system.isFirstTime
+  );
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.pathname === "/") {
       window.history.replaceState(null, "", buildLanguagePrefix());
@@ -116,6 +143,10 @@ export const AppWithLoading = () => {
   const needsResync =
     !isDebug && (!lastResync || !isLessThan3Hours(lastResync));
 
+  if (isFirstTime) {
+    return <AppRouter />;
+  }
+
   // If no resync done or stale ??show loading screen
   if (needsResync) {
     return <LoadingPage />;
@@ -124,5 +155,3 @@ export const AppWithLoading = () => {
   // If resynced ??show main app
   return <AppRouter />;
 };
-
-
