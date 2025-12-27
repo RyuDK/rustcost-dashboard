@@ -11,6 +11,7 @@ import { buildLanguagePrefix } from "@/constants/language";
 import { formatDateTime, useTimezone } from "@/shared/time";
 import { ExplainHint } from "@/shared/components/ExplainHint";
 import { useAppSelector } from "@/store/hook";
+import { LlmSettingsSection } from "@/features/settings/components/LlmSettingsSection";
 
 export const SettingsPage = () => {
   const { t } = useI18n();
@@ -133,6 +134,8 @@ export const SettingsPage = () => {
           isLoading={false}
         />
       </div>
+
+      <LlmSettingsSection />
 
       <ExplainHint visible={showExplain}>
         {t("settings.hints.timezone")}

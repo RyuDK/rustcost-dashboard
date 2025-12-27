@@ -575,6 +575,156 @@
       "createdAt": "作成日時: {{timestamp}}"
     }
   },
+  "llmSettings": {
+    "badge": "LLM",
+    "title": "LLM Settings",
+    "subtitle": "Manage provider, routing, and generation limits for outbound LLM calls.",
+    "loading": "Loading LLM settings...",
+    "actions": {
+      "refresh": "Refresh LLM",
+      "save": "Save LLM settings"
+    },
+    "fields": {
+      "provider": "Provider",
+      "providerHint": "Provider must be HuggingFace before using chat.",
+      "baseUrl": "Base URL",
+      "baseUrlHint": "Optional override for the provider base URL. Leave blank to clear.",
+      "token": "Token / API key",
+      "tokenPlaceholder": "hf_xxx or sk-...",
+      "tokenHint": "Token is stored server-side and returned masked. Leave blank to keep existing.",
+      "tokenMasked": "Saved token",
+      "tokenHidden": "Show saved token",
+      "clearToken": "Clear saved token on save",
+      "model": "Model",
+      "modelPlaceholder": "gpt-4o-mini or Qwen/Qwen2.5-7B-Instruct:together",
+      "maxTokens": "Max output tokens",
+      "temperature": "Temperature",
+      "topP": "top_p",
+      "topK": "top_k",
+      "presencePenalty": "Presence penalty",
+      "frequencyPenalty": "Frequency penalty",
+      "timeoutMs": "Timeout (ms)",
+      "stream": "Stream responses",
+      "stopSequences": "Stop sequences",
+      "stopSequencesPlaceholder": "###, END, <stop>",
+      "stopSequencesHint": "Comma-separated; empty input clears existing stop sequences.",
+      "organization": "Organization",
+      "user": "User"
+    },
+    "errors": {
+      "load": "Failed to load LLM settings",
+      "provider": "Provider is required.",
+      "baseUrl": "Base URL must be a valid URL.",
+      "maxTokens": "Max output tokens must be greater than 0.",
+      "timeout": "Timeout must be greater than 0.",
+      "temperature": "Temperature must be between 0 and 2.",
+      "topP": "top_p must be between 0 and 1.",
+      "presence": "Presence penalty must be between -2 and 2.",
+      "frequency": "Frequency penalty must be between -2 and 2.",
+      "topK": "top_k must be 0 or greater.",
+      "validation": "Fix highlighted fields before saving.",
+      "save": "Failed to save LLM settings"
+    },
+    "messages": {
+      "saved": "LLM settings saved."
+    },
+    "hints": {
+      "overview": "Pulls the stored LLM configuration; updates overwrite the backend copy. Leave token blank to keep it masked.",
+      "security": "Tokens are persisted server-side and masked in responses. Use the clear toggle to revoke.",
+      "stream": "Enable streaming if the provider supports it.",
+      "payload": "Empty strings clear optional fields; stop sequences are sent as a comma list."
+    },
+    "summary": {
+      "title": "Last saved",
+      "subtitle": "Stored configuration",
+      "description": "Values returned by the backend, including masked token and timestamps.",
+      "updated": "Updated",
+      "unsaved": "You have unsaved changes."
+    }
+  },
+  "aiInsight": {
+    "title": "AI Insight",
+    "subtitle": "Send prompts to the configured Hugging Face chat proxy and inspect responses.",
+    "loading": "Sending request...",
+    "controls": {
+      "badge": "Request",
+      "title": "LLM Request Options",
+      "subtitle": "Overrides are optional; blank fields use stored defaults."
+    },
+    "fields": {
+      "model": "Model override",
+      "modelHint": "Leave blank to use the stored model.",
+      "temperature": "Temperature",
+      "topP": "top_p",
+      "maxTokens": "Max tokens",
+      "stream": "Stream (if supported)",
+      "useContext": "Use backend context",
+      "includeCluster": "Include cluster summary",
+      "includeAlerts": "Include alerts summary",
+      "timeWindow": "Time window (minutes)",
+      "timeWindowHint": "Used for cluster summary when enabled."
+    },
+    "prompt": {
+      "title": "Prompt",
+      "placeholder": "Ask a question or provide instructions...",
+      "hint": "Provider must be set to Hugging Face with a stored token."
+    },
+    "response": {
+      "title": "Response",
+      "placeholder": "Run a prompt to see the model response here.",
+      "viewRaw": "View raw JSON",
+      "hideRaw": "Hide raw JSON"
+    },
+    "actions": {
+      "send": "Send"
+    },
+    "errors": {
+      "promptRequired": "Enter a prompt before sending.",
+      "requestFailed": "Failed to send request."
+    }
+  },
+  "aiReport": {
+    "title": "AI Report",
+    "subtitle": "Generate a contextualized report using backend-enriched data (cluster + alerts) via Hugging Face chat.",
+    "loading": "Generating report...",
+    "controls": {
+      "badge": "Report",
+      "title": "Report Options",
+      "subtitle": "Choose overrides and which context to include."
+    },
+    "fields": {
+      "model": "Model override",
+      "modelHint": "Leave blank to use the stored model.",
+      "temperature": "Temperature",
+      "topP": "top_p",
+      "maxTokens": "Max tokens",
+      "stream": "Stream (if supported)",
+      "useContext": "Use backend context",
+      "includeCluster": "Include cluster summary",
+      "includeAlerts": "Include alerts summary",
+      "timeWindow": "Time window (minutes)",
+      "timeWindowHint": "Used when building cluster summary."
+    },
+    "prompt": {
+      "title": "Report prompt",
+      "placeholder": "Describe the report you want generated...",
+      "default": "Create a concise health and cost efficiency report for the cluster. Summarize key signals, call out issues or risks, and end with 3 action items.",
+      "hint": "Context (cluster/alerts) is prepended server-side when enabled."
+    },
+    "response": {
+      "title": "Report output",
+      "placeholder": "Run the generator to see the report here.",
+      "viewRaw": "View raw JSON",
+      "hideRaw": "Hide raw JSON"
+    },
+    "actions": {
+      "generate": "Generate report"
+    },
+    "errors": {
+      "promptRequired": "Enter a prompt before generating.",
+      "requestFailed": "Failed to generate report."
+    }
+  },
   "system": {
     "title": "コントロールプレーン",
     "subtitle": "ステータス、健全性、設定、単価、管理操作を監視します。",
